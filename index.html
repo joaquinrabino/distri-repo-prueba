@@ -447,6 +447,116 @@ button {
 
 
 
+.range-row {
+
+  display: grid;
+
+  grid-template-columns: 1fr 1fr;
+
+  gap: 8px;
+
+  padding: 10px;
+
+  border: 1px solid var(--accent);
+
+  border-radius: 8px;
+
+  background: var(--accent-soft);
+
+}
+
+
+
+.range-field {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 4px;
+
+  min-width: 0;
+
+}
+
+
+
+.range-field span {
+
+  font-size: 11px;
+
+  font-weight: 600;
+
+  color: var(--ink-soft);
+
+}
+
+
+
+.range-field input {
+
+  width: 100%;
+
+  min-width: 0;
+
+  padding: 7px 8px;
+
+  border: 1px solid var(--border-strong);
+
+  border-radius: 7px;
+
+  background: var(--surface);
+
+  outline: none;
+
+  font-size: 13px;
+
+}
+
+
+
+.range-field input:focus {
+
+  border-color: var(--accent);
+
+}
+
+
+
+.range-clear {
+
+  grid-column: 1 / -1;
+
+  justify-self: end;
+
+  appearance: none;
+
+  border: none;
+
+  background: transparent;
+
+  color: var(--accent);
+
+  font-size: 12px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  padding: 0 2px;
+
+}
+
+
+
+.range-clear:hover {
+
+  text-decoration: underline;
+
+}
+
+
+
 .search-icon {
 
   position: absolute;
@@ -1601,11 +1711,20 @@ button {
 
     width: 100%;
 
-    max-height: 40vh;
-
     border-right: none;
 
     border-bottom: 1px solid var(--border);
+
+  }
+
+  /* Los controles de arriba siempre visibles;
+     la lista de clientes scrollea sola */
+
+  .client-list {
+
+    flex: none;
+
+    max-height: 38vh;
 
   }
 
@@ -1758,6 +1877,49 @@ button {
             class="filter-select"
             aria-label="Filtrar clientes por vencimiento"
           ></select>
+
+
+
+          <div
+            id="rangeRow"
+            class="range-row"
+            style="display:none;"
+          >
+
+            <label class="range-field">
+
+              <span>Vence desde</span>
+
+              <input
+                id="rangeDesde"
+                type="date"
+              />
+
+            </label>
+
+
+            <label class="range-field">
+
+              <span>Vence hasta</span>
+
+              <input
+                id="rangeHasta"
+                type="date"
+              />
+
+            </label>
+
+
+            <button
+              id="rangeClear"
+              type="button"
+              class="range-clear"
+              title="Borrar fechas"
+            >
+              Limpiar fechas
+            </button>
+
+          </div>
 
 
 
@@ -2012,7 +2174,11 @@ button {
 
     search: "",
 
-    filtro: "todos"
+    filtro: "todos",
+
+    rangoDesde: "",
+
+    rangoHasta: ""
 
   };
 
@@ -2071,6 +2237,41 @@ button {
       test: function (dias) {
         return dias === null;
       }
+    },
+
+    {
+      key: "rango",
+      label: "Por rango de fechas…",
+      /* fin = fecha de fin del acuerdo en formato AAAA-MM-DD,
+         así se puede comparar directamente como texto */
+      test: function (dias, fin) {
+
+        if (!fin) {
+          return false;
+        }
+
+        var desde = state.rangoDesde;
+
+        var hasta = state.rangoHasta;
+
+
+        if (desde && hasta && desde > hasta) {
+
+          var tmp = desde;
+
+          desde = hasta;
+
+          hasta = tmp;
+
+        }
+
+
+        return (
+          (!desde || fin >= desde) &&
+          (!hasta || fin <= hasta)
+        );
+
+      }
     }
 
   ];
@@ -2103,6 +2304,18 @@ button {
 
     filterSelect:
       document.getElementById("filterSelect"),
+
+    rangeRow:
+      document.getElementById("rangeRow"),
+
+    rangeDesde:
+      document.getElementById("rangeDesde"),
+
+    rangeHasta:
+      document.getElementById("rangeHasta"),
+
+    rangeClear:
+      document.getElementById("rangeClear"),
 
     toast:
       document.getElementById("toast")
@@ -2543,7 +2756,8 @@ button {
             filtro.test(
               daysUntil(
                 c.vigenciaFin
-              )
+              ),
+              c.vigenciaFin
             )
           );
 
@@ -2608,11 +2822,23 @@ button {
                 return f.test(
                   daysUntil(
                     c.vigenciaFin
-                  )
+                  ),
+                  c.vigenciaFin
                 );
 
               }
             ).length;
+
+
+          /* En "rango" el número solo tiene sentido
+             cuando ya se eligió alguna fecha */
+
+          var showCount =
+            f.key !== "rango" ||
+            (
+              f.key === state.filtro &&
+              (state.rangoDesde || state.rangoHasta)
+            );
 
 
           return (
@@ -2626,7 +2852,11 @@ button {
               ) +
             '>' +
               escapeHtml(f.label) +
-              ' (' + count + ')' +
+              (
+                showCount
+                  ? ' (' + count + ')'
+                  : ""
+              ) +
             '</option>'
           );
 
@@ -2638,6 +2868,12 @@ button {
       "active",
       state.filtro !== "todos"
     );
+
+
+    els.rangeRow.style.display =
+      state.filtro === "rango"
+        ? ""
+        : "none";
 
   }
 
@@ -2704,11 +2940,30 @@ button {
                     : "."
                 )
 
-              : 'No hay clientes en "' +
-                  escapeHtml(
-                    getFiltro(state.filtro).label
-                  ) +
-                '".'
+              : state.filtro === "rango"
+
+                ? (
+                  state.rangoDesde || state.rangoHasta
+                    ? 'No hay clientes que venzan ' +
+                      (
+                        state.rangoDesde
+                          ? 'desde el ' + fmtDate(state.rangoDesde) + ' '
+                          : ''
+                      ) +
+                      (
+                        state.rangoHasta
+                          ? 'hasta el ' + fmtDate(state.rangoHasta)
+                          : ''
+                      ) +
+                      '.'
+                    : 'No hay clientes con fecha de vencimiento.'
+                )
+
+                : 'No hay clientes en "' +
+                    escapeHtml(
+                      getFiltro(state.filtro).label
+                    ) +
+                  '".'
           ) +
 
         '</div>';
@@ -5666,6 +5921,70 @@ button {
 
         state.filtro =
           e.target.value;
+
+
+        renderList();
+
+
+        if (
+          state.filtro === "rango" &&
+          !state.rangoDesde &&
+          !state.rangoHasta
+        ) {
+
+          els.rangeDesde.focus();
+
+        }
+
+      }
+    );
+
+
+
+  els.rangeDesde
+    .addEventListener(
+      "change",
+      function (e) {
+
+        state.rangoDesde =
+          e.target.value;
+
+
+        renderList();
+
+      }
+    );
+
+
+
+  els.rangeHasta
+    .addEventListener(
+      "change",
+      function (e) {
+
+        state.rangoHasta =
+          e.target.value;
+
+
+        renderList();
+
+      }
+    );
+
+
+
+  els.rangeClear
+    .addEventListener(
+      "click",
+      function () {
+
+        state.rangoDesde = "";
+
+        state.rangoHasta = "";
+
+        els.rangeDesde.value = "";
+
+        els.rangeHasta.value = "";
 
 
         renderList();
