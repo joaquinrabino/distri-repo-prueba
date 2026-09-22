@@ -1,13 +1,13 @@
-/* ==========================================================
-TOPBAR
-========================================================== */
-
+<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="color-scheme" content="light" />
 
-<title>Espacios &amp; Condiciones</title>
+<title>Espacios &amp; Condiciones · Distrishop</title>
+
+<link rel="icon" type="image/png" href="logo-distrishop.png">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -25,35 +25,36 @@ TOPBAR
 <style>
 
 :root {
-  --bg: #eef0ea;
+  /* Paleta clara: blanco, gris y violeta suave */
+  --bg: #f6f5fb;
   --surface: #ffffff;
-  --surface-2: #f5f6f1;
+  --surface-2: #f3f1fa;
 
-  --ink: #1b241f;
-  --ink-soft: #57625a;
-  --ink-faint: #8b958c;
+  --ink: #2b2840;
+  --ink-soft: #5d5a72;
+  --ink-faint: #8f8ca3;
 
-  --border: #d7dbcf;
-  --border-strong: #b9c0b2;
+  --border: #e6e3f0;
+  --border-strong: #d2cde3;
 
-  --accent: #b3791f;
+  --accent: #6f5bd3;
   --accent-ink: #ffffff;
-  --accent-soft: #f2e4c9;
+  --accent-soft: #eeeafc;
 
-  --vigente: #3e7a5e;
-  --vigente-bg: #e4f0e8;
+  --vigente: #2f8a63;
+  --vigente-bg: #e6f5ee;
 
-  --porvencer: #b3791f;
-  --porvencer-bg: #f4e9d3;
+  --porvencer: #b0741c;
+  --porvencer-bg: #fbf0dc;
 
-  --vencido: #ab4432;
-  --vencido-bg: #f4e0da;
+  --vencido: #c0453a;
+  --vencido-bg: #fbe7e4;
 
   --shadow:
-    0 1px 2px rgba(27,36,31,0.06),
-    0 6px 20px rgba(27,36,31,0.06);
+    0 1px 2px rgba(43,40,64,0.05),
+    0 6px 20px rgba(111,91,211,0.08);
 
-  --radius: 10px;
+  --radius: 12px;
 
   --font-display:
     'Space Grotesk',
@@ -66,74 +67,6 @@ TOPBAR
     BlinkMacSystemFont,
     'Segoe UI',
     sans-serif;
-}
-
-
-
-@media (prefers-color-scheme: dark) {
-
-  :root:not([data-theme="light"]) {
-
-    --bg: #171b18;
-    --surface: #202521;
-    --surface-2: #262b26;
-
-    --ink: #eceee9;
-    --ink-soft: #a9b0a6;
-    --ink-faint: #737d72;
-
-    --border: #343b34;
-    --border-strong: #454d44;
-
-    --accent: #d9a23f;
-    --accent-ink: #1b1508;
-    --accent-soft: #3a3220;
-
-    --vigente: #6cbb92;
-    --vigente-bg: #223129;
-
-    --porvencer: #d9a23f;
-    --porvencer-bg: #3a3220;
-
-    --vencido: #e08672;
-    --vencido-bg: #3a2521;
-
-    --shadow:
-      0 1px 2px rgba(0,0,0,0.3),
-      0 6px 24px rgba(0,0,0,0.35);
-
-  }
-
-}
-
-
-
-:root[data-theme="dark"] {
-
-  --bg: #171b18;
-  --surface: #202521;
-  --surface-2: #262b26;
-
-  --ink: #eceee9;
-  --ink-soft: #a9b0a6;
-  --ink-faint: #737d72;
-
-  --border: #343b34;
-  --border-strong: #454d44;
-
-  --accent: #d9a23f;
-  --accent-ink: #1b1508;
-  --accent-soft: #3a3220;
-
-  --vigente: #6cbb92;
-  --vigente-bg: #223129;
-
-  --porvencer: #d9a23f;
-  --porvencer-bg: #3a3220;
-
-  --vencido: #e08672;
-  --vencido-bg: #3a2521;
-
 }
 
 
@@ -220,11 +153,19 @@ button {
 
   gap: 16px;
 
-  padding: 18px 24px;
+  padding: 12px 24px;
 
   border-bottom: 1px solid var(--border);
 
+  border-top: 3px solid var(--accent);
+
   background: var(--surface);
+
+  box-shadow: var(--shadow);
+
+  position: relative;
+
+  z-index: 2;
 
 }
 
@@ -234,9 +175,51 @@ button {
 
   display: flex;
 
-  align-items: baseline;
+  align-items: center;
 
-  gap: 10px;
+  gap: 16px;
+
+  min-width: 0;
+
+}
+
+
+
+.brand-logo {
+
+  display: block;
+
+  height: 52px;
+
+  width: auto;
+
+  flex-shrink: 0;
+
+}
+
+
+
+.brand-divider {
+
+  width: 1px;
+
+  height: 34px;
+
+  background: var(--border-strong);
+
+  flex-shrink: 0;
+
+}
+
+
+
+.brand-text {
+
+  display: flex;
+
+  flex-direction: column;
+
+  min-width: 0;
 
 }
 
@@ -248,9 +231,13 @@ button {
 
   font-weight: 700;
 
-  font-size: 20px;
+  font-size: 18px;
 
   letter-spacing: -0.01em;
+
+  color: var(--ink);
+
+  line-height: 1.2;
 
 }
 
@@ -285,6 +272,8 @@ button {
   font-weight: 600;
 
   color: var(--ink-soft);
+
+  background: var(--surface-2);
 
   white-space: nowrap;
 
@@ -661,6 +650,8 @@ button {
 
 .client-row-name {
 
+  display: block;
+
   font-weight: 600;
 
   font-size: 13.8px;
@@ -676,6 +667,8 @@ button {
 
 
 .client-row-meta {
+
+  display: block;
 
   font-size: 11.8px;
 
@@ -1022,7 +1015,13 @@ button {
 
   font-weight: 600;
 
-  color: var(--ink-soft);
+  color: var(--accent);
+
+  text-transform: uppercase;
+
+  letter-spacing: 0.06em;
+
+  font-size: 12.5px;
 
   margin: 28px 0 12px;
 
@@ -1063,6 +1062,8 @@ button {
   position: relative;
 
   overflow: hidden;
+
+  box-shadow: 0 1px 2px rgba(43,40,64,0.04);
 
 }
 
@@ -1504,6 +1505,36 @@ button {
 
 @media (max-width: 780px) {
 
+  .topbar {
+
+    padding: 10px 16px;
+
+  }
+
+  .brand {
+
+    gap: 10px;
+
+  }
+
+  .brand-logo {
+
+    height: 40px;
+
+  }
+
+  .brand-sub {
+
+    display: none;
+
+  }
+
+  .brand-mark {
+
+    font-size: 15px;
+
+  }
+
   .body-layout {
 
     flex-direction: column;
@@ -1534,6 +1565,13 @@ button {
 
 @media (max-width: 620px) {
 
+  .brand-divider,
+  .brand-text {
+
+    display: none;
+
+  }
+
   .espacios-grid {
 
     grid-template-columns: 1fr;
@@ -1556,13 +1594,25 @@ button {
 
       <div class="brand">
 
-        <span class="brand-mark">
-          Espacios &amp; Condiciones
-        </span>
+        <img
+          class="brand-logo"
+          src="logo-distrishop.png"
+          alt="Distrishop · Distribución - Logística"
+        />
 
-        <span class="brand-sub">
-          acuerdos por cliente
-        </span>
+        <span class="brand-divider"></span>
+
+        <div class="brand-text">
+
+          <span class="brand-mark">
+            Espacios &amp; Condiciones
+          </span>
+
+          <span class="brand-sub">
+            acuerdos por cliente
+          </span>
+
+        </div>
 
       </div>
 
