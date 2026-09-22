@@ -22,6 +22,10 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
 
+<!-- PDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+
 <style>
 
 :root {
@@ -386,6 +390,58 @@ button {
 .search-wrap input:focus {
 
   border-color: var(--accent);
+
+}
+
+
+
+.filter-select {
+
+  width: 100%;
+
+  padding: 9px 32px 9px 12px;
+
+  border: 1px solid var(--border-strong);
+
+  border-radius: 8px;
+
+  background-color: var(--surface-2);
+
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238f8ca3' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+
+  background-repeat: no-repeat;
+
+  background-position: right 12px center;
+
+  appearance: none;
+
+  -webkit-appearance: none;
+
+  cursor: pointer;
+
+  outline: none;
+
+}
+
+
+
+.filter-select:focus {
+
+  border-color: var(--accent);
+
+}
+
+
+
+.filter-select.active {
+
+  border-color: var(--accent);
+
+  background-color: var(--accent-soft);
+
+  color: var(--accent);
+
+  font-weight: 600;
 
 }
 
@@ -1572,6 +1628,20 @@ button {
 
   }
 
+  .detail-head {
+
+    flex-direction: column;
+
+    gap: 12px;
+
+  }
+
+  .head-actions {
+
+    flex-wrap: wrap;
+
+  }
+
   .espacios-grid {
 
     grid-template-columns: 1fr;
@@ -1680,6 +1750,14 @@ button {
             />
 
           </div>
+
+
+
+          <select
+            id="filterSelect"
+            class="filter-select"
+            aria-label="Filtrar clientes por vencimiento"
+          ></select>
 
 
 
@@ -1932,9 +2010,70 @@ button {
 
     removedPhotos: {},
 
-    search: ""
+    search: "",
+
+    filtro: "todos"
 
   };
+
+
+
+  /* ========================================================
+     FILTROS POR VENCIMIENTO
+     (dias = días hasta el fin del acuerdo, null = sin fecha)
+  ======================================================== */
+
+  var FILTROS = [
+
+    {
+      key: "todos",
+      label: "Todos los clientes",
+      test: function () {
+        return true;
+      }
+    },
+
+    {
+      key: "semana",
+      label: "A punto de vencer (7 días o menos)",
+      test: function (dias) {
+        return dias !== null && dias >= 0 && dias <= 7;
+      }
+    },
+
+    {
+      key: "mes",
+      label: "Vencen en el próximo mes (30 días o menos)",
+      test: function (dias) {
+        return dias !== null && dias >= 0 && dias <= 30;
+      }
+    },
+
+    {
+      key: "vencidos",
+      label: "Vencidos",
+      test: function (dias) {
+        return dias !== null && dias < 0;
+      }
+    },
+
+    {
+      key: "vigentes",
+      label: "Vigentes (más de 30 días)",
+      test: function (dias) {
+        return dias !== null && dias > 30;
+      }
+    },
+
+    {
+      key: "sinfecha",
+      label: "Sin fecha de vencimiento",
+      test: function (dias) {
+        return dias === null;
+      }
+    }
+
+  ];
 
 
 
@@ -1961,6 +2100,9 @@ button {
 
     searchInput:
       document.getElementById("searchInput"),
+
+    filterSelect:
+      document.getElementById("filterSelect"),
 
     toast:
       document.getElementById("toast")
@@ -2182,17 +2324,11 @@ button {
 
 
 
-  function vigenciaStatus(fin) {
+  function daysUntil(fin) {
 
     if (!fin) {
 
-      return {
-
-        key: "indef",
-
-        label: "Sin vencimiento"
-
-      };
+      return null;
 
     }
 
@@ -2215,11 +2351,58 @@ button {
       );
 
 
+    if (
+      isNaN(f.getTime())
+    ) {
+
+      return null;
+
+    }
+
+
+    return Math.round(
+      (f - today) /
+      86400000
+    );
+
+  }
+
+
+
+  function vigenciaStatus(fin) {
+
     var diffDays =
-      Math.round(
-        (f - today) /
-        86400000
-      );
+      daysUntil(fin);
+
+
+    if (
+      diffDays === null
+    ) {
+
+      return {
+
+        key: "indef",
+
+        label: "Sin vencimiento"
+
+      };
+
+    }
+
+
+    if (
+      diffDays === 0
+    ) {
+
+      return {
+
+        key: "porvencer",
+
+        label: "Vence hoy"
+
+      };
+
+    }
 
 
     if (
@@ -2307,7 +2490,28 @@ button {
      SIDEBAR
   ======================================================== */
 
-  function renderList() {
+  function getFiltro(key) {
+
+    return (
+      FILTROS.find(
+        function (f) {
+
+          return f.key === key;
+
+        }
+      ) ||
+      FILTROS[0]
+    );
+
+  }
+
+
+
+  /* Clientes que pasan la búsqueda y el filtro actual,
+     ordenados por nombre (o por fecha de vencimiento
+     cuando hay un filtro de fechas activo). */
+
+  function getVisibleClients() {
 
     var q =
       state.search
@@ -2315,21 +2519,137 @@ button {
         .toLowerCase();
 
 
+    var filtro =
+      getFiltro(
+        state.filtro
+      );
+
+
     var items =
       state.clients.filter(
         function (c) {
 
-          return (
+          var matchNombre =
             !q ||
             (
               c.nombre || ""
             )
             .toLowerCase()
-            .indexOf(q) !== -1
+            .indexOf(q) !== -1;
+
+
+          return (
+            matchNombre &&
+            filtro.test(
+              daysUntil(
+                c.vigenciaFin
+              )
+            )
           );
 
         }
       );
+
+
+    var porFecha =
+      filtro.key !== "todos" &&
+      filtro.key !== "sinfecha";
+
+
+    items.sort(
+      function (
+        a,
+        b
+      ) {
+
+        if (porFecha) {
+
+          var diff =
+            daysUntil(a.vigenciaFin) -
+            daysUntil(b.vigenciaFin);
+
+
+          if (diff !== 0) {
+
+            return diff;
+
+          }
+
+        }
+
+
+        return (
+          a.nombre || ""
+        ).localeCompare(
+          b.nombre || "",
+          "es"
+        );
+
+      }
+    );
+
+
+    return items;
+
+  }
+
+
+
+  function renderFilterOptions() {
+
+    els.filterSelect.innerHTML =
+      FILTROS.map(
+        function (f) {
+
+          var count =
+            state.clients.filter(
+              function (c) {
+
+                return f.test(
+                  daysUntil(
+                    c.vigenciaFin
+                  )
+                );
+
+              }
+            ).length;
+
+
+          return (
+            '<option value="' +
+              f.key +
+              '"' +
+              (
+                f.key === state.filtro
+                  ? " selected"
+                  : ""
+              ) +
+            '>' +
+              escapeHtml(f.label) +
+              ' (' + count + ')' +
+            '</option>'
+          );
+
+        }
+      ).join("");
+
+
+    els.filterSelect.classList.toggle(
+      "active",
+      state.filtro !== "todos"
+    );
+
+  }
+
+
+
+  function renderList() {
+
+    renderFilterOptions();
+
+
+    var items =
+      getVisibleClients();
 
 
 
@@ -2362,17 +2682,34 @@ button {
       !items.length
     ) {
 
+      var hayBusqueda =
+        !!state.search.trim();
+
+
       els.clientList.innerHTML =
 
         '<div class="empty-list">' +
 
-          'Sin resultados para "' +
+          (
+            hayBusqueda
 
-          escapeHtml(
-            state.search
+              ? 'Sin resultados para "' +
+                  escapeHtml(
+                    state.search
+                  ) +
+                '"' +
+                (
+                  state.filtro !== "todos"
+                    ? " con este filtro."
+                    : "."
+                )
+
+              : 'No hay clientes en "' +
+                  escapeHtml(
+                    getFiltro(state.filtro).label
+                  ) +
+                '".'
           ) +
-
-          '".' +
 
         '</div>';
 
@@ -2380,24 +2717,6 @@ button {
       return;
 
     }
-
-
-
-    items.sort(
-      function (
-        a,
-        b
-      ) {
-
-        return (
-          a.nombre || ""
-        ).localeCompare(
-          b.nombre || "",
-          "es"
-        );
-
-      }
-    );
 
 
 
@@ -2479,6 +2798,21 @@ button {
                     activos === 1
                       ? ""
                       : "s"
+                  ) +
+
+                  (
+                    c.vigenciaFin
+
+                      ? ' · ' +
+                        (
+                          st.key === "vigente"
+                            ? "Vence " + fmtDate(c.vigenciaFin)
+                            : st.key === "vencido"
+                              ? "Venció " + fmtDate(c.vigenciaFin)
+                              : st.label
+                        )
+
+                      : ""
                   ) +
 
                 '</span>' +
@@ -2630,23 +2964,45 @@ button {
 
 
     var actionsHtml =
-      state.canEdit
 
-        ? (
-          '<div class="head-actions">' +
+      '<div class="head-actions">' +
 
-            '<button class="btn btn-ghost" id="editBtn">' +
-              'Editar' +
-            '</button>' +
+        '<button class="btn btn-ghost" id="pdfBtn" ' +
+          'title="Descargar el acuerdo de este cliente en PDF">' +
 
-            '<button class="btn btn-danger" id="deleteBtn">' +
-              'Eliminar' +
-            '</button>' +
+          '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" ' +
+            'stroke="currentColor" stroke-width="2.2" ' +
+            'stroke-linecap="round" stroke-linejoin="round">' +
 
-          '</div>'
-        )
+            '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>' +
 
-        : "";
+            '<polyline points="7 10 12 15 17 10"/>' +
+
+            '<line x1="12" y1="15" x2="12" y2="3"/>' +
+
+          '</svg>' +
+
+          '<span id="pdfBtnText">Descargar PDF</span>' +
+
+        '</button>' +
+
+        (
+          state.canEdit
+
+            ? (
+              '<button class="btn btn-ghost" id="editBtn">' +
+                'Editar' +
+              '</button>' +
+
+              '<button class="btn btn-danger" id="deleteBtn">' +
+                'Eliminar' +
+              '</button>'
+            )
+
+            : ""
+        ) +
+
+      '</div>';
 
 
 
@@ -2892,6 +3248,23 @@ button {
 
 
       updatedHtml;
+
+
+
+    document
+      .getElementById(
+        "pdfBtn"
+      )
+      .addEventListener(
+        "click",
+        function () {
+
+          downloadPdf(
+            c
+          );
+
+        }
+      );
 
 
 
@@ -4369,8 +4742,938 @@ button {
 
 
   /* ========================================================
+     DESCARGAR PDF
+  ======================================================== */
+
+  var PDF_COLORS = {
+
+    accent: [111, 91, 211],
+
+    accentSoft: [238, 234, 252],
+
+    ink: [43, 40, 64],
+
+    soft: [93, 90, 114],
+
+    faint: [143, 140, 163],
+
+    border: [230, 227, 240],
+
+    zebra: [246, 245, 251],
+
+    vigente: [47, 138, 99],
+
+    porvencer: [176, 116, 28],
+
+    vencido: [192, 69, 58],
+
+    indef: [93, 90, 114],
+
+    vigenteBg: [230, 245, 238],
+
+    porvencerBg: [251, 240, 220],
+
+    vencidoBg: [251, 231, 228],
+
+    indefBg: [243, 241, 250]
+
+  };
+
+
+
+  function pdfDate(iso) {
+
+    return iso
+      ? fmtDate(iso)
+      : "-";
+
+  }
+
+
+
+  function loadLogoDataUrl() {
+
+    return fetch(
+      "logo-distrishop.png"
+    )
+
+      .then(
+        function (r) {
+
+          if (!r.ok) {
+
+            throw new Error(
+              "logo " + r.status
+            );
+
+          }
+
+
+          return r.blob();
+
+        }
+      )
+
+      .then(
+        function (blob) {
+
+          return new Promise(
+            function (resolve) {
+
+              var fr =
+                new FileReader();
+
+
+              fr.onload =
+                function () {
+
+                  resolve(
+                    fr.result
+                  );
+
+                };
+
+
+              fr.onerror =
+                function () {
+
+                  resolve(null);
+
+                };
+
+
+              fr.readAsDataURL(
+                blob
+              );
+
+            }
+          );
+
+        }
+      )
+
+      .catch(
+        function () {
+
+          return null;
+
+        }
+      );
+
+  }
+
+
+
+  function slugify(text) {
+
+    return String(
+      text || "cliente"
+    )
+      .normalize("NFD")
+      .replace(/[̀-ͯ]/g, "")
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "") ||
+      "cliente";
+
+  }
+
+
+
+  /* Genera el PDF con el acuerdo de UN cliente */
+
+  function buildPdf(
+    c,
+    logo
+  ) {
+
+    var C = PDF_COLORS;
+
+
+    var doc =
+      new window.jspdf.jsPDF({
+
+        unit: "mm",
+
+        format: "a4",
+
+        compress: true
+
+      });
+
+
+    var pageW =
+      doc.internal.pageSize.getWidth();
+
+
+    var pageH =
+      doc.internal.pageSize.getHeight();
+
+
+    var margin = 16;
+
+
+    var contentW =
+      pageW - margin * 2;
+
+
+    var y = 12;
+
+
+    var st =
+      vigenciaStatus(
+        c.vigenciaFin
+      );
+
+
+    var nombre =
+      c.nombre ||
+      "Sin nombre";
+
+
+
+    function ensureSpace(needed) {
+
+      if (
+        y + needed >
+        pageH - 18
+      ) {
+
+        doc.addPage();
+
+        y = 18;
+
+      }
+
+    }
+
+
+
+    function sectionTitle(text) {
+
+      ensureSpace(16);
+
+
+      doc.setFont("helvetica", "bold");
+
+      doc.setFontSize(9.5);
+
+      doc.setTextColor.apply(doc, C.accent);
+
+      doc.text(
+        text.toUpperCase(),
+        margin,
+        y,
+        { charSpace: 0.3 }
+      );
+
+
+      y += 2.5;
+
+
+      doc.setDrawColor.apply(doc, C.border);
+
+      doc.setLineWidth(0.3);
+
+      doc.line(
+        margin,
+        y,
+        pageW - margin,
+        y
+      );
+
+
+      y += 6;
+
+    }
+
+
+
+    /* ---------- ENCABEZADO ---------- */
+
+    if (logo) {
+
+      try {
+
+        doc.addImage(
+          logo,
+          "PNG",
+          margin - 2,
+          y,
+          48,
+          48 * 276 / 639,
+          "logo",
+          "FAST"
+        );
+
+      } catch (e) {
+
+        console.warn(
+          "No se pudo agregar el logo al PDF",
+          e
+        );
+
+      }
+
+    }
+
+
+    doc.setFont("helvetica", "bold");
+
+    doc.setFontSize(15);
+
+    doc.setTextColor.apply(doc, C.ink);
+
+    doc.text(
+      "Acuerdo de espacios y condiciones",
+      pageW - margin,
+      y + 9,
+      { align: "right" }
+    );
+
+
+    doc.setFont("helvetica", "normal");
+
+    doc.setFontSize(9);
+
+    doc.setTextColor.apply(doc, C.soft);
+
+    doc.text(
+      "Generado el " +
+      new Date().toLocaleString("es-UY"),
+      pageW - margin,
+      y + 15,
+      { align: "right" }
+    );
+
+
+    y += 26;
+
+
+    doc.setDrawColor.apply(doc, C.accent);
+
+    doc.setLineWidth(0.8);
+
+    doc.line(
+      margin,
+      y,
+      pageW - margin,
+      y
+    );
+
+
+    y += 12;
+
+
+
+    /* ---------- CLIENTE + ESTADO ---------- */
+
+    doc.setFont("helvetica", "bold");
+
+    doc.setFontSize(9.5);
+
+
+    var pillText =
+      st.label;
+
+
+    var pillW =
+      doc.getTextWidth(pillText) + 10;
+
+
+    doc.setFontSize(20);
+
+
+    var nombreLines =
+      doc.splitTextToSize(
+        nombre,
+        contentW - pillW - 6
+      );
+
+
+    doc.setTextColor.apply(doc, C.ink);
+
+    doc.text(
+      nombreLines,
+      margin,
+      y
+    );
+
+
+    doc.setFillColor.apply(doc, C[st.key + "Bg"] || C.accentSoft);
+
+    doc.roundedRect(
+      pageW - margin - pillW,
+      y - 5.5,
+      pillW,
+      8,
+      4,
+      4,
+      "F"
+    );
+
+
+    doc.setFontSize(9.5);
+
+    doc.setTextColor.apply(doc, C[st.key] || C.ink);
+
+    doc.text(
+      pillText,
+      pageW - margin - pillW / 2,
+      y,
+      { align: "center" }
+    );
+
+
+    y += nombreLines.length * 8 + 4;
+
+
+
+    /* ---------- FECHAS ---------- */
+
+    var datos = [
+
+      ["Inicio del acuerdo", pdfDate(c.vigenciaInicio)],
+
+      ["Fin del acuerdo", pdfDate(c.vigenciaFin)],
+
+      [
+        "Última actualización",
+        c.updatedAt
+          ? new Date(c.updatedAt).toLocaleDateString("es-UY")
+          : "-"
+      ]
+
+    ];
+
+
+    var boxGap = 4;
+
+
+    var boxW =
+      (contentW - boxGap * 2) / 3;
+
+
+    datos.forEach(
+      function (d, i) {
+
+        var x =
+          margin + i * (boxW + boxGap);
+
+
+        doc.setFillColor.apply(doc, C.zebra);
+
+        doc.setDrawColor.apply(doc, C.border);
+
+        doc.setLineWidth(0.3);
+
+        doc.roundedRect(
+          x,
+          y,
+          boxW,
+          16,
+          2,
+          2,
+          "FD"
+        );
+
+
+        doc.setFont("helvetica", "normal");
+
+        doc.setFontSize(8);
+
+        doc.setTextColor.apply(doc, C.faint);
+
+        doc.text(
+          d[0],
+          x + 4,
+          y + 6
+        );
+
+
+        doc.setFont("helvetica", "bold");
+
+        doc.setFontSize(11);
+
+        doc.setTextColor.apply(doc, C.ink);
+
+        doc.text(
+          d[1],
+          x + 4,
+          y + 12.5
+        );
+
+      }
+    );
+
+
+    y += 26;
+
+
+
+    /* ---------- ESPACIOS ACORDADOS ---------- */
+
+    var activos =
+      ESPACIOS.filter(
+        function (e) {
+
+          return (
+            c.espacios &&
+            c.espacios[e.key] &&
+            c.espacios[e.key].activo
+          );
+
+        }
+      );
+
+
+    var noIncluidos =
+      ESPACIOS.filter(
+        function (e) {
+
+          return activos.indexOf(e) === -1;
+
+        }
+      );
+
+
+    sectionTitle(
+      "Espacios acordados (" + activos.length + ")"
+    );
+
+
+    if (activos.length) {
+
+      var fotoUrls = [];
+
+
+      doc.autoTable({
+
+        startY: y - 2,
+
+        margin: {
+          left: margin,
+          right: margin,
+          top: 18,
+          bottom: 18
+        },
+
+        head: [[
+          "Espacio",
+          "Detalle",
+          "Foto"
+        ]],
+
+        body: activos.map(
+          function (e) {
+
+            var d =
+              c.espacios[e.key];
+
+
+            fotoUrls.push(
+              d.fotoUrl || ""
+            );
+
+
+            return [
+              e.label,
+              d.detalle || "-",
+              d.fotoUrl ? "Ver foto" : "-"
+            ];
+
+          }
+        ),
+
+        theme: "grid",
+
+        styles: {
+          font: "helvetica",
+          fontSize: 9.5,
+          textColor: C.ink,
+          lineColor: C.border,
+          lineWidth: 0.2,
+          cellPadding: 2.6
+        },
+
+        headStyles: {
+          fillColor: C.accent,
+          textColor: [255, 255, 255],
+          fontStyle: "bold"
+        },
+
+        alternateRowStyles: {
+          fillColor: C.zebra
+        },
+
+        columnStyles: {
+          0: { cellWidth: 58, fontStyle: "bold" },
+          2: { cellWidth: 24, halign: "center" }
+        },
+
+        didParseCell: function (data) {
+
+          if (
+            data.section === "body" &&
+            data.column.index === 2 &&
+            fotoUrls[data.row.index]
+          ) {
+
+            data.cell.styles.textColor =
+              C.accent;
+
+            data.cell.styles.fontStyle =
+              "bold";
+
+          }
+
+        },
+
+        didDrawCell: function (data) {
+
+          var url =
+            fotoUrls[data.row.index];
+
+
+          if (
+            data.section === "body" &&
+            data.column.index === 2 &&
+            url
+          ) {
+
+            doc.link(
+              data.cell.x,
+              data.cell.y,
+              data.cell.width,
+              data.cell.height,
+              { url: url }
+            );
+
+          }
+
+        }
+
+      });
+
+
+      y = doc.lastAutoTable.finalY + 10;
+
+    } else {
+
+      doc.setFont("helvetica", "italic");
+
+      doc.setFontSize(9.5);
+
+      doc.setTextColor.apply(doc, C.faint);
+
+      doc.text(
+        "Este cliente no tiene espacios acordados.",
+        margin,
+        y
+      );
+
+
+      y += 10;
+
+    }
+
+
+
+    /* ---------- NO INCLUIDOS ---------- */
+
+    if (
+      activos.length &&
+      noIncluidos.length
+    ) {
+
+      sectionTitle(
+        "No incluidos en el acuerdo"
+      );
+
+
+      doc.setFont("helvetica", "normal");
+
+      doc.setFontSize(9);
+
+      doc.setTextColor.apply(doc, C.faint);
+
+
+      doc.splitTextToSize(
+        noIncluidos.map(
+          function (e) {
+
+            return e.label;
+
+          }
+        ).join(" · "),
+        contentW
+      ).forEach(
+        function (line) {
+
+          ensureSpace(5);
+
+          doc.text(
+            line,
+            margin,
+            y
+          );
+
+          y += 4.5;
+
+        }
+      );
+
+
+      y += 6;
+
+    }
+
+
+
+    /* ---------- NOTAS ---------- */
+
+    sectionTitle(
+      "Notas"
+    );
+
+
+    doc.setFontSize(10);
+
+
+    if (
+      c.notas &&
+      c.notas.trim()
+    ) {
+
+      doc.setFont("helvetica", "normal");
+
+      doc.setTextColor.apply(doc, C.ink);
+
+
+      doc.splitTextToSize(
+        c.notas.trim(),
+        contentW
+      ).forEach(
+        function (line) {
+
+          ensureSpace(6);
+
+          doc.text(
+            line,
+            margin,
+            y
+          );
+
+          y += 5;
+
+        }
+      );
+
+    } else {
+
+      doc.setFont("helvetica", "italic");
+
+      doc.setTextColor.apply(doc, C.faint);
+
+      doc.text(
+        "Sin notas.",
+        margin,
+        y
+      );
+
+    }
+
+
+
+    /* ---------- PIE DE PÁGINA ---------- */
+
+    var totalPages =
+      doc.getNumberOfPages();
+
+
+    for (
+      var i = 1;
+      i <= totalPages;
+      i++
+    ) {
+
+      doc.setPage(i);
+
+      doc.setFont("helvetica", "normal");
+
+      doc.setFontSize(8);
+
+      doc.setTextColor.apply(doc, C.faint);
+
+      doc.text(
+        doc.splitTextToSize(
+          "Distrishop · Espacios & Condiciones · " + nombre,
+          contentW - 30
+        )[0],
+        margin,
+        pageH - 9
+      );
+
+      doc.text(
+        "Página " + i + " de " + totalPages,
+        pageW - margin,
+        pageH - 9,
+        { align: "right" }
+      );
+
+    }
+
+
+    var hoy =
+      new Date();
+
+
+    var stamp =
+      hoy.getFullYear() + "-" +
+      String(hoy.getMonth() + 1).padStart(2, "0") + "-" +
+      String(hoy.getDate()).padStart(2, "0");
+
+
+    doc.save(
+      "acuerdo-" +
+      slugify(nombre) +
+      "-" + stamp +
+      ".pdf"
+    );
+
+  }
+
+
+
+  function downloadPdf(c) {
+
+    if (
+      !window.jspdf ||
+      !window.jspdf.jsPDF ||
+      typeof window.jspdf.jsPDF.API.autoTable !== "function"
+    ) {
+
+      showToast(
+        "No se pudo cargar el generador de PDF. Revisá tu conexión y recargá la página."
+      );
+
+      return;
+
+    }
+
+
+    if (!c) {
+
+      return;
+
+    }
+
+
+    var btn =
+      document.getElementById(
+        "pdfBtn"
+      );
+
+
+    var btnText =
+      document.getElementById(
+        "pdfBtnText"
+      );
+
+
+    if (btn) {
+
+      btn.disabled =
+        true;
+
+    }
+
+
+    if (btnText) {
+
+      btnText.textContent =
+        "Generando PDF…";
+
+    }
+
+
+    loadLogoDataUrl()
+
+      .then(
+        function (logo) {
+
+          buildPdf(
+            c,
+            logo
+          );
+
+
+          showToast(
+            "PDF descargado."
+          );
+
+        }
+      )
+
+      .catch(
+        function (err) {
+
+          console.error(
+            err
+          );
+
+
+          showToast(
+            "No se pudo generar el PDF."
+          );
+
+        }
+      )
+
+      .then(
+        function () {
+
+          if (btn) {
+
+            btn.disabled =
+              false;
+
+          }
+
+
+          if (btnText) {
+
+            btnText.textContent =
+              "Descargar PDF";
+
+          }
+
+        }
+      );
+
+  }
+
+
+
+  /* ========================================================
      EVENTOS
   ======================================================== */
+
+  els.filterSelect
+    .addEventListener(
+      "change",
+      function (e) {
+
+        state.filtro =
+          e.target.value;
+
+
+        renderList();
+
+      }
+    );
+
+
 
   els.searchInput
     .addEventListener(
