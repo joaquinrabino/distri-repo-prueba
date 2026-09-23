@@ -1163,6 +1163,84 @@ button {
 
 
 
+.field select.grupo-select {
+
+  width: 100%;
+
+  padding: 8px 32px 8px 10px;
+
+  border: 1px solid var(--border-strong);
+
+  border-radius: 7px;
+
+  background-color: var(--surface);
+
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238f8ca3' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+
+  background-repeat: no-repeat;
+
+  background-position: right 10px center;
+
+  appearance: none;
+
+  -webkit-appearance: none;
+
+  cursor: pointer;
+
+  outline: none;
+
+}
+
+
+
+.field select.grupo-select:focus {
+
+  border-color: var(--accent);
+
+}
+
+
+
+.field input.grupo-manual {
+
+  margin-top: 6px;
+
+  border-color: var(--accent);
+
+}
+
+
+
+.grupo-chip {
+
+  display: inline-block;
+
+  padding: 2px 10px;
+
+  border-radius: 999px;
+
+  background: var(--accent-soft);
+
+  color: var(--accent);
+
+  font-size: 13px;
+
+  font-weight: 600;
+
+}
+
+
+
+.grupo-chip.sin-grupo {
+
+  background: var(--surface-2);
+
+  color: var(--ink-faint);
+
+}
+
+
+
 .field textarea {
 
   min-height: 80px;
@@ -1873,6 +1951,14 @@ button {
 
 
           <select
+            id="grupoSelect"
+            class="filter-select"
+            aria-label="Filtrar clientes por grupo de compra"
+          ></select>
+
+
+
+          <select
             id="filterSelect"
             class="filter-select"
             aria-label="Filtrar clientes por vencimiento"
@@ -2118,6 +2204,21 @@ button {
     },
 
     {
+      key: "primariaChocolates",
+      label: "Primaria de chocolates"
+    },
+
+    {
+      key: "primariaBombones",
+      label: "Primaria de bombones"
+    },
+
+    {
+      key: "competenciaInternaFarmashop",
+      label: "Competencia interna Farmashop"
+    },
+
+    {
       key: "cabeceras",
       label: "Cabeceras"
     },
@@ -2143,6 +2244,50 @@ button {
     }
 
   ];
+
+
+
+  /* ========================================================
+     GRUPOS DE COMPRA
+     (se guarda el nombre como texto en el campo grupoCompra;
+      vacío = "Sin definir")
+  ======================================================== */
+
+  var GRUPOS_COMPRA = [
+
+    "San Roque",
+    "Iberpark",
+    "Natal oficial",
+    "Natal franquicia",
+    "Spot",
+    "Ancap 360",
+    "Disa",
+    "Grupal",
+    "Ubesur",
+    "Kinko",
+    "Frog",
+    "Cardinal",
+    "Red market",
+    "Tamisur",
+    "Tico",
+    "Frigo",
+    "Planeta",
+    "Kiosco",
+    "Autoservicio",
+    "Estación de servicio",
+    "Perfumería",
+    "Farmacia",
+    "Sin definir"
+
+  ];
+
+
+  var SIN_GRUPO =
+    "Sin definir";
+
+
+  var GRUPO_MANUAL =
+    "__manual__";
 
 
 
@@ -2175,6 +2320,8 @@ button {
     search: "",
 
     filtro: "todos",
+
+    grupo: "todos",
 
     rangoDesde: "",
 
@@ -2304,6 +2451,9 @@ button {
 
     filterSelect:
       document.getElementById("filterSelect"),
+
+    grupoSelect:
+      document.getElementById("grupoSelect"),
 
     rangeRow:
       document.getElementById("rangeRow"),
@@ -2449,6 +2599,8 @@ button {
 
       nombre: "",
 
+      grupoCompra: "",
+
       vigenciaInicio: "",
 
       vigenciaFin: "",
@@ -2458,6 +2610,107 @@ button {
       notas: ""
 
     };
+
+  }
+
+
+
+  function grupoDe(c) {
+
+    var g =
+      (
+        c && c.grupoCompra
+          ? String(c.grupoCompra)
+          : ""
+      ).trim();
+
+
+    return g || SIN_GRUPO;
+
+  }
+
+
+
+  function findGrupo(list, nombre) {
+
+    var n =
+      nombre.toLowerCase();
+
+
+    for (
+      var i = 0;
+      i < list.length;
+      i++
+    ) {
+
+      if (
+        list[i].toLowerCase() === n
+      ) {
+
+        return list[i];
+
+      }
+
+    }
+
+
+    return null;
+
+  }
+
+
+
+  /* Grupos fijos + los agregados a mano en algún cliente.
+     "Sin definir" siempre queda al final. */
+
+  function allGrupos() {
+
+    var fijos =
+      GRUPOS_COMPRA.filter(
+        function (g) {
+
+          return g !== SIN_GRUPO;
+
+        }
+      );
+
+
+    var extra = [];
+
+
+    state.clients.forEach(
+      function (c) {
+
+        var g =
+          grupoDe(c);
+
+
+        if (
+          g !== SIN_GRUPO &&
+          !findGrupo(fijos, g) &&
+          !findGrupo(extra, g)
+        ) {
+
+          extra.push(g);
+
+        }
+
+      }
+    );
+
+
+    extra.sort(
+      function (a, b) {
+
+        return a.localeCompare(b, "es");
+
+      }
+    );
+
+
+    return fijos
+      .concat(extra)
+      .concat([SIN_GRUPO]);
 
   }
 
@@ -2751,8 +3004,15 @@ button {
             .indexOf(q) !== -1;
 
 
+          var matchGrupo =
+            state.grupo === "todos" ||
+            grupoDe(c).toLowerCase() ===
+              state.grupo.toLowerCase();
+
+
           return (
             matchNombre &&
+            matchGrupo &&
             filtro.test(
               daysUntil(
                 c.vigenciaFin
@@ -2809,7 +3069,80 @@ button {
 
 
 
+  function renderGrupoOptions() {
+
+    var grupos =
+      allGrupos();
+
+
+    if (
+      state.grupo !== "todos" &&
+      !findGrupo(grupos, state.grupo)
+    ) {
+
+      state.grupo = "todos";
+
+    }
+
+
+    var counts = {};
+
+
+    state.clients.forEach(
+      function (c) {
+
+        var k =
+          grupoDe(c).toLowerCase();
+
+
+        counts[k] =
+          (counts[k] || 0) + 1;
+
+      }
+    );
+
+
+    els.grupoSelect.innerHTML =
+
+      '<option value="todos">' +
+        'Todos los grupos de compra (' + state.clients.length + ')' +
+      '</option>' +
+
+      grupos.map(
+        function (g) {
+
+          return (
+            '<option value="' +
+              escapeHtml(g) +
+              '"' +
+              (
+                g.toLowerCase() === state.grupo.toLowerCase()
+                  ? " selected"
+                  : ""
+              ) +
+            '>' +
+              escapeHtml(g) +
+              ' (' + (counts[g.toLowerCase()] || 0) + ')' +
+            '</option>'
+          );
+
+        }
+      ).join("");
+
+
+    els.grupoSelect.classList.toggle(
+      "active",
+      state.grupo !== "todos"
+    );
+
+  }
+
+
+
   function renderFilterOptions() {
+
+    renderGrupoOptions();
+
 
     els.filterSelect.innerHTML =
       FILTROS.map(
@@ -2935,10 +3268,28 @@ button {
                   ) +
                 '"' +
                 (
-                  state.filtro !== "todos"
+                  state.filtro !== "todos" ||
+                  state.grupo !== "todos"
                     ? " con este filtro."
                     : "."
                 )
+
+              : state.grupo !== "todos" &&
+                state.filtro === "todos"
+
+                ? 'No hay clientes del grupo "' +
+                    escapeHtml(
+                      state.grupo
+                    ) +
+                  '".'
+
+              : state.grupo !== "todos"
+
+                ? 'No hay clientes del grupo "' +
+                    escapeHtml(
+                      state.grupo
+                    ) +
+                  '" con este filtro de vencimiento.'
 
               : state.filtro === "rango"
 
@@ -3036,6 +3387,12 @@ button {
 
 
                 '<span class="client-row-meta">' +
+
+                  (
+                    grupoDe(c) !== SIN_GRUPO
+                      ? escapeHtml(grupoDe(c)) + ' · '
+                      : ''
+                  ) +
 
                   activos +
 
@@ -3446,6 +3803,31 @@ button {
 
         '<div class="field">' +
 
+          '<label>Grupo de compra</label>' +
+
+          '<div class="value">' +
+
+            '<span class="grupo-chip' +
+              (
+                grupoDe(c) === SIN_GRUPO
+                  ? " sin-grupo"
+                  : ""
+              ) +
+            '">' +
+
+              escapeHtml(
+                grupoDe(c)
+              ) +
+
+            '</span>' +
+
+          '</div>' +
+
+        '</div>' +
+
+
+        '<div class="field">' +
+
           '<label>Inicio del acuerdo</label>' +
 
           '<div class="value">' +
@@ -3846,6 +4228,64 @@ button {
 
 
 
+    var gruposForm =
+      allGrupos();
+
+
+    var grupoActual =
+      findGrupo(
+        gruposForm,
+        grupoDe(draft)
+      ) ||
+      grupoDe(draft);
+
+
+    if (
+      !draft._grupoManual &&
+      !findGrupo(gruposForm, grupoActual)
+    ) {
+
+      gruposForm =
+        gruposForm.concat([grupoActual]);
+
+    }
+
+
+    var grupoOptionsHtml =
+
+      gruposForm.map(
+        function (g) {
+
+          return (
+            '<option value="' +
+              escapeHtml(g) +
+              '"' +
+              (
+                !draft._grupoManual &&
+                g === grupoActual
+                  ? " selected"
+                  : ""
+              ) +
+            '>' +
+              escapeHtml(g) +
+            '</option>'
+          );
+
+        }
+      ).join("") +
+
+      '<option value="' + GRUPO_MANUAL + '"' +
+        (
+          draft._grupoManual
+            ? " selected"
+            : ""
+        ) +
+      '>' +
+        'Agregar manualmente…' +
+      '</option>';
+
+
+
     els.mainInner.innerHTML =
 
       '<div class="detail-head">' +
@@ -3876,6 +4316,51 @@ button {
 
 
       '<div class="field-row">' +
+
+
+        '<div class="field">' +
+
+          '<label>' +
+            'Grupo de compra' +
+          '</label>' +
+
+          '<select ' +
+            'id="grupoInput" ' +
+            'class="grupo-select">' +
+
+            grupoOptionsHtml +
+
+          '</select>' +
+
+          '<input ' +
+
+            'type="text" ' +
+
+            'id="grupoManualInput" ' +
+
+            'class="grupo-manual" ' +
+
+            'placeholder="Escribí el grupo de compra" ' +
+
+            'maxlength="60" ' +
+
+            'style="' +
+            (
+              draft._grupoManual
+                ? ""
+                : "display:none;"
+            ) +
+            '" ' +
+
+            'value="' +
+            escapeHtml(
+              draft._grupoManual
+                ? draft.grupoCompra || ""
+                : ""
+            ) +
+            '">' +
+
+        '</div>' +
 
 
         '<div class="field">' +
@@ -4002,6 +4487,73 @@ button {
 
         }
       );
+
+
+
+    /* GRUPO DE COMPRA */
+
+    var grupoInput =
+      document.getElementById(
+        "grupoInput"
+      );
+
+
+    var grupoManualInput =
+      document.getElementById(
+        "grupoManualInput"
+      );
+
+
+    grupoInput.addEventListener(
+      "change",
+      function () {
+
+        if (
+          grupoInput.value === GRUPO_MANUAL
+        ) {
+
+          draft._grupoManual =
+            true;
+
+
+          draft.grupoCompra =
+            grupoManualInput.value;
+
+
+          grupoManualInput.style.display =
+            "";
+
+
+          grupoManualInput.focus();
+
+        } else {
+
+          draft._grupoManual =
+            false;
+
+
+          draft.grupoCompra =
+            grupoInput.value;
+
+
+          grupoManualInput.style.display =
+            "none";
+
+        }
+
+      }
+    );
+
+
+    grupoManualInput.addEventListener(
+      "input",
+      function () {
+
+        draft.grupoCompra =
+          grupoManualInput.value;
+
+      }
+    );
 
 
 
@@ -4664,6 +5216,56 @@ button {
 
 
 
+    var grupoTexto =
+      String(
+        draft.grupoCompra || ""
+      ).trim();
+
+
+    if (
+      draft._grupoManual &&
+      !grupoTexto
+    ) {
+
+      showToast(
+        "Escribí el nombre del grupo de compra o elegí uno de la lista."
+      );
+
+
+      var gm =
+        document.getElementById(
+          "grupoManualInput"
+        );
+
+
+      if (gm) {
+
+        gm.focus();
+
+      }
+
+
+      return;
+
+    }
+
+
+    /* Si lo escribieron a mano pero ya existe en la lista
+       (ej: "san roque"), se usa el nombre de la lista */
+
+    var grupoFinal =
+      grupoTexto
+        ? (
+          findGrupo(
+            allGrupos(),
+            grupoTexto
+          ) ||
+          grupoTexto
+        )
+        : SIN_GRUPO;
+
+
+
     var saveBtn =
       document.getElementById(
         "saveBtn"
@@ -4721,6 +5323,9 @@ button {
 
           nombre:
             draft.nombre.trim(),
+
+          grupoCompra:
+            grupoFinal,
 
           vigenciaInicio:
             draft.vigenciaInicio ||
@@ -5380,7 +5985,38 @@ button {
     );
 
 
-    y += nombreLines.length * 8 + 4;
+    y += nombreLines.length * 8 - 1;
+
+
+    doc.setFont("helvetica", "normal");
+
+    doc.setFontSize(10);
+
+    doc.setTextColor.apply(doc, C.soft);
+
+    doc.text(
+      "Grupo de compra: ",
+      margin,
+      y
+    );
+
+
+    var grupoLabelW =
+      doc.getTextWidth("Grupo de compra: ");
+
+
+    doc.setFont("helvetica", "bold");
+
+    doc.setTextColor.apply(doc, C.accent);
+
+    doc.text(
+      grupoDe(c),
+      margin + grupoLabelW,
+      y
+    );
+
+
+    y += 9;
 
 
 
@@ -5941,6 +6577,22 @@ button {
 
 
 
+  els.grupoSelect
+    .addEventListener(
+      "change",
+      function (e) {
+
+        state.grupo =
+          e.target.value;
+
+
+        renderList();
+
+      }
+    );
+
+
+
   els.rangeDesde
     .addEventListener(
       "change",
@@ -6305,6 +6957,10 @@ button {
 
                 nombre:
                   data.nombre ||
+                  "",
+
+                grupoCompra:
+                  data.grupoCompra ||
                   "",
 
                 vigenciaInicio:
