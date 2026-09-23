@@ -1847,11 +1847,648 @@ button {
 
 }
 
+/* ==========================================================
+   LOGIN
+========================================================== */
+
+body.booting .app,
+body.booting .login-screen,
+body.logged-out .app {
+
+  display: none;
+
+}
+
+
+
+body:not(.logged-out) .login-screen {
+
+  display: none;
+
+}
+
+
+
+.login-screen {
+
+  min-height: 100vh;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  padding: 24px 16px;
+
+  background:
+    radial-gradient(circle at 15% 10%, var(--accent-soft) 0, transparent 45%),
+    radial-gradient(circle at 85% 90%, var(--accent-soft) 0, transparent 40%),
+    var(--bg);
+
+}
+
+
+
+.login-card {
+
+  width: 100%;
+
+  max-width: 400px;
+
+  background: var(--surface);
+
+  border: 1px solid var(--border);
+
+  border-top: 4px solid var(--accent);
+
+  border-radius: 16px;
+
+  box-shadow: var(--shadow);
+
+  padding: 28px 28px 24px;
+
+}
+
+
+
+.login-logo {
+
+  display: block;
+
+  width: 190px;
+
+  max-width: 70%;
+
+  height: auto;
+
+  margin: 0 auto 6px;
+
+}
+
+
+
+.login-title {
+
+  font-family: var(--font-display);
+
+  font-size: 19px;
+
+  font-weight: 700;
+
+  text-align: center;
+
+  margin: 0;
+
+}
+
+
+
+.login-sub {
+
+  text-align: center;
+
+  color: var(--ink-faint);
+
+  font-size: 13px;
+
+  margin: 4px 0 22px;
+
+}
+
+
+
+.login-section {
+
+  font-size: 11.5px;
+
+  font-weight: 700;
+
+  letter-spacing: 0.06em;
+
+  text-transform: uppercase;
+
+  color: var(--accent);
+
+  margin-bottom: 10px;
+
+}
+
+
+
+.login-field {
+
+  display: block;
+
+  margin-bottom: 12px;
+
+}
+
+
+
+.login-field span {
+
+  display: block;
+
+  font-size: 11.5px;
+
+  font-weight: 600;
+
+  color: var(--ink-faint);
+
+  margin-bottom: 5px;
+
+}
+
+
+
+.login-field input {
+
+  width: 100%;
+
+  padding: 10px 12px;
+
+  border: 1px solid var(--border-strong);
+
+  border-radius: 8px;
+
+  background: var(--surface-2);
+
+  outline: none;
+
+}
+
+
+
+.login-field input:focus {
+
+  border-color: var(--accent);
+
+  background: var(--surface);
+
+}
+
+
+
+.login-error {
+
+  min-height: 18px;
+
+  font-size: 12.5px;
+
+  font-weight: 600;
+
+  color: var(--vencido);
+
+  margin: -2px 0 8px;
+
+}
+
+
+
+.login-divider {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  color: var(--ink-faint);
+
+  font-size: 12px;
+
+  margin: 18px 0;
+
+}
+
+
+
+.login-divider::before,
+.login-divider::after {
+
+  content: "";
+
+  flex: 1;
+
+  height: 1px;
+
+  background: var(--border);
+
+}
+
+
+
+.login-readonly-hint {
+
+  text-align: center;
+
+  font-size: 12px;
+
+  color: var(--ink-faint);
+
+  margin: 8px 0 0;
+
+}
+
+
+
+.topbar-right {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 8px;
+
+  flex-shrink: 0;
+
+}
+
+
+
+.logout-btn {
+
+  padding: 6px 12px;
+
+  font-size: 12.5px;
+
+  border-radius: 999px;
+
+}
+
+
+
+/* ==========================================================
+   ACUERDO FIRMADO (solo administradores)
+========================================================== */
+
+.acuerdo-box {
+
+  border: 1px solid var(--accent);
+
+  border-radius: var(--radius);
+
+  background: var(--accent-soft);
+
+  padding: 14px 16px;
+
+  margin-bottom: 22px;
+
+}
+
+
+
+.acuerdo-box.removing {
+
+  border-color: var(--vencido);
+
+  background: var(--vencido-bg);
+
+}
+
+
+
+.acuerdo-head {
+
+  display: flex;
+
+  align-items: flex-start;
+
+  justify-content: space-between;
+
+  gap: 10px;
+
+  margin-bottom: 10px;
+
+}
+
+
+
+.acuerdo-title {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 7px;
+
+  font-family: var(--font-display);
+
+  font-weight: 700;
+
+  font-size: 15px;
+
+  color: var(--ink);
+
+}
+
+
+
+.acuerdo-sub {
+
+  font-size: 12px;
+
+  color: var(--ink-soft);
+
+  margin-top: 2px;
+
+}
+
+
+
+.lock-badge {
+
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 5px;
+
+  padding: 3px 9px;
+
+  border-radius: 999px;
+
+  background: var(--surface);
+
+  color: var(--accent);
+
+  border: 1px solid var(--accent);
+
+  font-size: 11px;
+
+  font-weight: 700;
+
+  white-space: nowrap;
+
+}
+
+
+
+.acuerdo-file {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  background: var(--surface);
+
+  border: 1px solid var(--border);
+
+  border-radius: 8px;
+
+  padding: 10px 12px;
+
+}
+
+
+
+.acuerdo-file-icon {
+
+  flex-shrink: 0;
+
+  width: 34px;
+
+  height: 34px;
+
+  border-radius: 8px;
+
+  background: var(--accent-soft);
+
+  color: var(--accent);
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+}
+
+
+
+.acuerdo-file-text {
+
+  min-width: 0;
+
+  flex: 1;
+
+}
+
+
+
+.acuerdo-file-name {
+
+  display: block;
+
+  font-weight: 600;
+
+  font-size: 13.5px;
+
+  white-space: nowrap;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+
+}
+
+
+
+.acuerdo-file-meta {
+
+  display: block;
+
+  font-size: 11.8px;
+
+  color: var(--ink-faint);
+
+}
+
+
+
+.acuerdo-file-meta.pending {
+
+  color: var(--porvencer);
+
+  font-weight: 600;
+
+}
+
+
+
+.acuerdo-actions {
+
+  display: flex;
+
+  flex-wrap: wrap;
+
+  gap: 7px;
+
+  margin-top: 10px;
+
+}
+
+
+
+.acuerdo-actions .btn {
+
+  padding: 7px 11px;
+
+  font-size: 12.5px;
+
+  text-decoration: none;
+
+}
+
+
+
+.acuerdo-empty {
+
+  font-size: 13px;
+
+  color: var(--ink-soft);
+
+}
+
+
+
+.acuerdo-hint {
+
+  font-size: 11.8px;
+
+  color: var(--ink-faint);
+
+  margin-top: 6px;
+
+}
+
+
+
+@media (max-width: 620px) {
+
+  .logout-btn {
+
+    padding: 6px 10px;
+
+  }
+
+  .role-pill {
+
+    padding: 6px 10px;
+
+  }
+
+}
+
 </style>
 </head>
 
 
-<body>
+<body class="booting">
+
+<!-- ==========================================================
+     LOGIN
+========================================================== -->
+
+<div
+  id="loginScreen"
+  class="login-screen"
+>
+
+  <div class="login-card">
+
+    <img
+      class="login-logo"
+      src="logo-distrishop.png"
+      alt="Distrishop · Distribución - Logística"
+    />
+
+    <h1 class="login-title">
+      Espacios &amp; Condiciones
+    </h1>
+
+    <p class="login-sub">
+      Elegí cómo querés ingresar
+    </p>
+
+
+    <form
+      id="loginForm"
+      autocomplete="on"
+      novalidate
+    >
+
+      <div class="login-section">
+        Administrador
+      </div>
+
+      <label class="login-field">
+
+        <span>Usuario</span>
+
+        <input
+          id="loginUser"
+          type="text"
+          autocomplete="username"
+          autocapitalize="none"
+          spellcheck="false"
+        />
+
+      </label>
+
+      <label class="login-field">
+
+        <span>Contraseña</span>
+
+        <input
+          id="loginPass"
+          type="password"
+          autocomplete="current-password"
+        />
+
+      </label>
+
+      <div
+        id="loginError"
+        class="login-error"
+        role="alert"
+      ></div>
+
+      <button
+        type="submit"
+        class="btn btn-primary btn-block"
+      >
+        Ingresar como administrador
+      </button>
+
+    </form>
+
+
+    <div class="login-divider">
+      o
+    </div>
+
+
+    <button
+      id="readOnlyBtn"
+      type="button"
+      class="btn btn-ghost btn-block"
+    >
+      Entrar en solo lectura
+    </button>
+
+    <p class="login-readonly-hint">
+      Sin clave · podés ver los clientes y descargar sus PDF
+    </p>
+
+  </div>
+
+</div>
+
+
 
 <div class="app">
 
@@ -1884,16 +2521,30 @@ button {
       </div>
 
 
-      <div
-        id="rolePill"
-        class="role-pill"
-      >
+      <div class="topbar-right">
 
-        <span class="role-dot"></span>
+        <div
+          id="rolePill"
+          class="role-pill"
+        >
 
-        <span id="roleText">
-          Verificando acceso…
-        </span>
+          <span class="role-dot"></span>
+
+          <span id="roleText">
+            Verificando acceso…
+          </span>
+
+        </div>
+
+
+        <button
+          id="logoutBtn"
+          type="button"
+          class="btn btn-ghost logout-btn"
+          title="Cerrar sesión y volver a la pantalla de ingreso"
+        >
+          Salir
+        </button>
 
       </div>
 
@@ -2317,6 +2968,11 @@ button {
 
     removedPhotos: {},
 
+    /* Acuerdo firmado (solo administradores) */
+    pendingAcuerdo: null,
+
+    removeAcuerdo: false,
+
     search: "",
 
     filtro: "todos",
@@ -2455,6 +3111,24 @@ button {
     grupoSelect:
       document.getElementById("grupoSelect"),
 
+    loginForm:
+      document.getElementById("loginForm"),
+
+    loginUser:
+      document.getElementById("loginUser"),
+
+    loginPass:
+      document.getElementById("loginPass"),
+
+    loginError:
+      document.getElementById("loginError"),
+
+    readOnlyBtn:
+      document.getElementById("readOnlyBtn"),
+
+    logoutBtn:
+      document.getElementById("logoutBtn"),
+
     rangeRow:
       document.getElementById("rangeRow"),
 
@@ -2589,6 +3263,10 @@ button {
 
     state.removedPhotos = {};
 
+    state.pendingAcuerdo = null;
+
+    state.removeAcuerdo = false;
+
   }
 
 
@@ -2600,6 +3278,8 @@ button {
       nombre: "",
 
       grupoCompra: "",
+
+      acuerdoFirmado: null,
 
       vigenciaInicio: "",
 
@@ -2955,6 +3635,317 @@ button {
   /* ========================================================
      SIDEBAR
   ======================================================== */
+
+  /* ========================================================
+     ACUERDO FIRMADO (solo administradores)
+  ======================================================== */
+
+  var ACUERDO_MAX_MB = 20;
+
+
+  var ICON_DOC =
+    '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" ' +
+      'stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+      '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>' +
+      '<polyline points="14 2 14 8 20 8"/>' +
+      '<path d="M9 15l2 2 4-4"/>' +
+    '</svg>';
+
+
+  var ICON_LOCK =
+    '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" ' +
+      'stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">' +
+      '<rect x="4" y="11" width="16" height="10" rx="2"/>' +
+      '<path d="M8 11V7a4 4 0 0 1 8 0v4"/>' +
+    '</svg>';
+
+
+
+  function fmtSize(bytes) {
+
+    if (!bytes) {
+
+      return "";
+
+    }
+
+
+    if (bytes < 1024 * 1024) {
+
+      return Math.max(1, Math.round(bytes / 1024)) + " KB";
+
+    }
+
+
+    return (bytes / 1024 / 1024).toFixed(1).replace(".", ",") + " MB";
+
+  }
+
+
+
+  function acuerdoHeadHtml(sub) {
+
+    return (
+      '<div class="acuerdo-head">' +
+
+        '<div>' +
+
+          '<div class="acuerdo-title">' +
+            ICON_DOC +
+            'Acuerdo firmado' +
+          '</div>' +
+
+          '<div class="acuerdo-sub">' +
+            sub +
+          '</div>' +
+
+        '</div>' +
+
+        '<span class="lock-badge">' +
+          ICON_LOCK +
+          'Solo administradores' +
+        '</span>' +
+
+      '</div>'
+    );
+
+  }
+
+
+
+  function acuerdoFileHtml(nombre, meta, metaClass) {
+
+    return (
+      '<div class="acuerdo-file">' +
+
+        '<span class="acuerdo-file-icon">' +
+          ICON_DOC +
+        '</span>' +
+
+        '<span class="acuerdo-file-text">' +
+
+          '<span class="acuerdo-file-name">' +
+            escapeHtml(nombre) +
+          '</span>' +
+
+          '<span class="acuerdo-file-meta' +
+            (metaClass ? " " + metaClass : "") +
+          '">' +
+            escapeHtml(meta) +
+          '</span>' +
+
+        '</span>' +
+
+      '</div>'
+    );
+
+  }
+
+
+
+  function acuerdoMeta(a) {
+
+    return [
+      a.subidoEn
+        ? "Subido el " + new Date(a.subidoEn).toLocaleDateString("es-UY")
+        : "",
+      fmtSize(a.tamano)
+    ]
+      .filter(Boolean)
+      .join(" · ");
+
+  }
+
+
+
+  /* Sección arriba del formulario de edición / alta */
+
+  function acuerdoFormHtml(draft) {
+
+    if (!state.canEdit) {
+
+      return "";
+
+    }
+
+
+    var actual =
+      draft.acuerdoFirmado;
+
+
+    var pending =
+      state.pendingAcuerdo;
+
+
+    var picker = function (label, primary) {
+
+      return (
+        '<label class="btn ' +
+          (primary ? "btn-primary" : "btn-ghost") +
+          ' photo-picker">' +
+
+          label +
+
+          '<input type="file" ' +
+            'accept="application/pdf,image/*" ' +
+            'data-acuerdo-file="1">' +
+
+        '</label>'
+      );
+
+    };
+
+
+    var body;
+
+
+    if (pending) {
+
+      body =
+        acuerdoFileHtml(
+          pending.file.name,
+          fmtSize(pending.file.size) + " · Se sube al guardar",
+          "pending"
+        ) +
+
+        '<div class="acuerdo-actions">' +
+
+          picker("Elegir otro archivo", false) +
+
+          '<button type="button" class="btn btn-danger" data-acuerdo-remove="1">' +
+            'Descartar' +
+          '</button>' +
+
+        '</div>';
+
+    } else if (
+      actual &&
+      state.removeAcuerdo
+    ) {
+
+      body =
+        acuerdoFileHtml(
+          actual.nombre,
+          "Se va a eliminar al guardar",
+          "pending"
+        ) +
+
+        '<div class="acuerdo-actions">' +
+
+          '<button type="button" class="btn btn-ghost" data-acuerdo-undo="1">' +
+            'Deshacer' +
+          '</button>' +
+
+        '</div>';
+
+    } else if (actual) {
+
+      body =
+        acuerdoFileHtml(
+          actual.nombre,
+          acuerdoMeta(actual)
+        ) +
+
+        '<div class="acuerdo-actions">' +
+
+          '<a class="btn btn-ghost" target="_blank" rel="noopener" href="' +
+            escapeHtml(actual.url) +
+          '">Ver acuerdo</a>' +
+
+          picker("Reemplazar", false) +
+
+          '<button type="button" class="btn btn-danger" data-acuerdo-remove="1">' +
+            'Quitar' +
+          '</button>' +
+
+        '</div>';
+
+    } else {
+
+      body =
+        '<div class="acuerdo-actions" style="margin-top:0;">' +
+
+          picker("Cargar acuerdo firmado", true) +
+
+        '</div>' +
+
+        '<div class="acuerdo-hint">' +
+          'PDF o imagen (foto/escaneo), hasta ' + ACUERDO_MAX_MB + ' MB.' +
+        '</div>';
+
+    }
+
+
+    return (
+      '<div class="acuerdo-box' +
+        (actual && state.removeAcuerdo && !pending ? " removing" : "") +
+      '">' +
+
+        acuerdoHeadHtml(
+          "Los usuarios de solo lectura no pueden verlo."
+        ) +
+
+        body +
+
+      '</div>'
+    );
+
+  }
+
+
+
+  /* Sección en la ficha del cliente (solo administradores) */
+
+  function acuerdoViewHtml(c) {
+
+    if (!state.canEdit) {
+
+      return "";
+
+    }
+
+
+    var a =
+      c.acuerdoFirmado;
+
+
+    return (
+      '<div class="acuerdo-box">' +
+
+        acuerdoHeadHtml(
+          "Los usuarios de solo lectura no pueden verlo."
+        ) +
+
+        (
+          a
+            ? (
+              acuerdoFileHtml(
+                a.nombre,
+                acuerdoMeta(a)
+              ) +
+
+              '<div class="acuerdo-actions">' +
+
+                '<a class="btn btn-primary" target="_blank" rel="noopener" href="' +
+                  escapeHtml(a.url) +
+                '">Ver acuerdo firmado</a>' +
+
+              '</div>'
+            )
+            : (
+              '<div class="acuerdo-empty">' +
+                'Todavía no se cargó el acuerdo firmado. ' +
+                'Usá <strong>Editar</strong> para subirlo.' +
+              '</div>'
+            )
+        ) +
+
+      '</div>'
+    );
+
+  }
+
+
 
   function getFiltro(key) {
 
@@ -3799,6 +4790,11 @@ button {
       '</div>' +
 
 
+      acuerdoViewHtml(
+        c
+      ) +
+
+
       '<div class="field-row">' +
 
         '<div class="field">' +
@@ -4315,6 +5311,11 @@ button {
       '</div>' +
 
 
+      acuerdoFormHtml(
+        draft
+      ) +
+
+
       '<div class="field-row">' +
 
 
@@ -4553,6 +5554,158 @@ button {
           grupoManualInput.value;
 
       }
+    );
+
+
+
+    /* ACUERDO FIRMADO */
+
+    Array.prototype.forEach.call(
+
+      els.mainInner.querySelectorAll(
+        "[data-acuerdo-file]"
+      ),
+
+      function (input) {
+
+        input.addEventListener(
+          "change",
+          function () {
+
+            var file =
+              input.files &&
+              input.files[0];
+
+
+            if (!file) {
+
+              return;
+
+            }
+
+
+            var esPdf =
+              file.type === "application/pdf" ||
+              /\.pdf$/i.test(file.name);
+
+
+            var esImagen =
+              !!file.type &&
+              file.type.indexOf("image/") === 0;
+
+
+            if (
+              !esPdf &&
+              !esImagen
+            ) {
+
+              showToast(
+                "El acuerdo tiene que ser un PDF o una imagen."
+              );
+
+              return;
+
+            }
+
+
+            if (
+              file.size >
+              ACUERDO_MAX_MB * 1024 * 1024
+            ) {
+
+              showToast(
+                "El acuerdo no puede superar " + ACUERDO_MAX_MB + " MB."
+              );
+
+              return;
+
+            }
+
+
+            state.pendingAcuerdo = {
+              file: file
+            };
+
+
+            state.removeAcuerdo =
+              false;
+
+
+            renderForm(
+              draft,
+              isNew
+            );
+
+          }
+        );
+
+      }
+
+    );
+
+
+    Array.prototype.forEach.call(
+
+      els.mainInner.querySelectorAll(
+        "[data-acuerdo-remove]"
+      ),
+
+      function (btn) {
+
+        btn.addEventListener(
+          "click",
+          function () {
+
+            if (state.pendingAcuerdo) {
+
+              /* descarta el archivo elegido y vuelve al que había */
+              state.pendingAcuerdo = null;
+
+            } else if (draft.acuerdoFirmado) {
+
+              state.removeAcuerdo = true;
+
+            }
+
+
+            renderForm(
+              draft,
+              isNew
+            );
+
+          }
+        );
+
+      }
+
+    );
+
+
+    Array.prototype.forEach.call(
+
+      els.mainInner.querySelectorAll(
+        "[data-acuerdo-undo]"
+      ),
+
+      function (btn) {
+
+        btn.addEventListener(
+          "click",
+          function () {
+
+            state.removeAcuerdo = false;
+
+
+            renderForm(
+              draft,
+              isNew
+            );
+
+          }
+        );
+
+      }
+
     );
 
 
@@ -5085,6 +6238,170 @@ button {
 
 
   /* ========================================================
+     SUBIR ACUERDO FIRMADO A FIREBASE STORAGE
+     Devuelve los datos del archivo subido, o null si no hay
+     nada nuevo para subir.
+  ======================================================== */
+
+  function uploadAcuerdo(
+    clientId
+  ) {
+
+    var pending =
+      state.pendingAcuerdo;
+
+
+    if (
+      !state.canEdit ||
+      !pending ||
+      !pending.file
+    ) {
+
+      return Promise.resolve(null);
+
+    }
+
+
+    if (
+      !state.storage
+    ) {
+
+      return Promise.reject(
+        { code: "storage/unavailable" }
+      );
+
+    }
+
+
+    var file =
+      pending.file;
+
+
+    var ext =
+      (
+        file.name.match(/\.[a-z0-9]{1,5}$/i) ||
+        [""]
+      )[0].toLowerCase();
+
+
+    var base =
+      slugify(
+        file.name.replace(/\.[^.]*$/, "")
+      );
+
+
+    var path =
+
+      "clientes/" +
+
+      clientId +
+
+      "/acuerdo-firmado/" +
+
+      Date.now() +
+
+      "-" +
+
+      base +
+
+      ext;
+
+
+    var ref =
+      state.storage
+        .ref()
+        .child(path);
+
+
+    return ref
+      .put(
+        file,
+        {
+          contentType:
+            file.type ||
+            "application/pdf"
+        }
+      )
+
+      .then(
+        function (snap) {
+
+          return snap.ref
+            .getDownloadURL();
+
+        }
+      )
+
+      .then(
+        function (url) {
+
+          return {
+
+            url: url,
+
+            path: path,
+
+            nombre: file.name,
+
+            tipo: file.type || "",
+
+            tamano: file.size || 0,
+
+            subidoEn: Date.now()
+
+          };
+
+        }
+      );
+
+  }
+
+
+
+  function deleteStorageFile(path) {
+
+    if (
+      !state.storage ||
+      !path
+    ) {
+
+      return Promise.resolve();
+
+    }
+
+
+    return state.storage
+      .ref()
+      .child(path)
+      .delete()
+
+      .catch(
+        function (err) {
+
+          if (
+            err &&
+            err.code === "storage/object-not-found"
+          ) {
+
+            return;
+
+          }
+
+
+          /* No frena el guardado: solo queda el archivo viejo en Storage */
+          console.warn(
+            "No se pudo borrar " + path,
+            err
+          );
+
+        }
+      );
+
+  }
+
+
+
+  /* ========================================================
      BORRAR FOTOS QUITADAS
   ======================================================== */
 
@@ -5311,6 +6628,14 @@ button {
 
 
 
+    var acuerdoAnterior =
+      draft.acuerdoFirmado || null;
+
+
+    var acuerdoNuevo =
+      null;
+
+
     uploadPendingPhotos(
       clientId,
       draft
@@ -5318,6 +6643,20 @@ button {
 
     .then(
       function () {
+
+        return uploadAcuerdo(
+          clientId
+        );
+
+      }
+    )
+
+    .then(
+      function (subido) {
+
+        acuerdoNuevo =
+          subido || null;
+
 
         var payload = {
 
@@ -5348,6 +6687,24 @@ button {
         };
 
 
+        /* El acuerdo firmado solo se toca si cambió */
+
+        if (acuerdoNuevo) {
+
+          payload.acuerdoFirmado =
+            acuerdoNuevo;
+
+        } else if (
+          state.removeAcuerdo ||
+          isNew
+        ) {
+
+          payload.acuerdoFirmado =
+            null;
+
+        }
+
+
         if (
           isNew
         ) {
@@ -5372,6 +6729,33 @@ button {
         return deleteRemovedPhotos(
           clientId
         );
+
+      }
+    )
+
+    .then(
+      function () {
+
+        /* Borra el archivo viejo si se reemplazó o se quitó */
+
+        if (
+          acuerdoAnterior &&
+          acuerdoAnterior.path &&
+          (
+            acuerdoNuevo ||
+            state.removeAcuerdo
+          ) &&
+          (
+            !acuerdoNuevo ||
+            acuerdoNuevo.path !== acuerdoAnterior.path
+          )
+        ) {
+
+          return deleteStorageFile(
+            acuerdoAnterior.path
+          );
+
+        }
 
       }
     )
@@ -5434,20 +6818,26 @@ button {
         }
 
 
+        var errCode =
+          String(
+            (err && err.code) ||
+            ""
+          );
+
+
         var storageMsg =
 
-          err &&
+          errCode === "storage/unauthorized"
 
-          String(
-            err.code ||
-            ""
-          ).indexOf(
-            "storage/"
-          ) === 0
+            ? " Firebase Storage no dio permiso para subir el archivo (revisá las reglas de Storage)."
 
-            ? " Revisá que Firebase Storage esté habilitado."
+            : errCode.indexOf(
+              "storage/"
+            ) === 0
 
-            : "";
+              ? " Revisá que Firebase Storage esté habilitado."
+
+              : "";
 
 
         showToast(
@@ -5544,7 +6934,33 @@ button {
 
 
 
-    deletePhotos
+    var clienteBorrado =
+      state.clients.find(
+        function (c) {
+
+          return c.id === id;
+
+        }
+      );
+
+
+    var deleteAcuerdo =
+
+      clienteBorrado &&
+      clienteBorrado.acuerdoFirmado
+
+        ? deleteStorageFile(
+          clienteBorrado.acuerdoFirmado.path
+        )
+
+        : Promise.resolve();
+
+
+
+    Promise.all([
+      deletePhotos,
+      deleteAcuerdo
+    ])
 
       .then(
         function () {
@@ -6725,6 +8141,10 @@ button {
      CLAVE EDICIÓN
   ======================================================== */
 
+  var ADMIN_USER =
+    "admin";
+
+
   var EDIT_PASSCODE =
     "hernan1891";
 
@@ -6754,27 +8174,127 @@ button {
     els.roleText.textContent =
 
       canEdit
-        ? "Podés editar"
+        ? "Administrador"
         : "Solo lectura";
-
-
-    els.rolePill.style.cursor =
-      "pointer";
 
   }
 
 
 
-  function tryUnlockEdit() {
+  /* ========================================================
+     SESIÓN (pantalla de ingreso)
+     sessionStorage "sesion" = "admin" | "lectura"
+     (se mantiene mientras la pestaña esté abierta)
+  ======================================================== */
 
-    var pass =
-      prompt(
-        "Ingresá la clave para poder cargar/editar clientes:"
-      );
+  function safeSession(action, key, value) {
 
+    try {
+
+      if (action === "get") {
+
+        return sessionStorage.getItem(key);
+
+      }
+
+
+      if (action === "set") {
+
+        sessionStorage.setItem(key, value);
+
+      } else {
+
+        sessionStorage.removeItem(key);
+
+      }
+
+    } catch (e) {
+
+      /* navegación privada o almacenamiento bloqueado */
+
+    }
+
+
+    return null;
+
+  }
+
+
+
+  function enterApp(rol) {
+
+    var esAdmin =
+      rol === "admin";
+
+
+    safeSession("set", "sesion", rol);
+
+
+    if (esAdmin) {
+
+      safeSession("set", "puedeEditar", "1");
+
+    } else {
+
+      safeSession("remove", "puedeEditar");
+
+    }
+
+
+    setRole(
+      esAdmin
+    );
+
+
+    document.body.classList.remove(
+      "booting",
+      "logged-out"
+    );
+
+
+    render();
+
+  }
+
+
+
+  function showLogin() {
+
+    document.body.classList.remove(
+      "booting"
+    );
+
+
+    document.body.classList.add(
+      "logged-out"
+    );
+
+
+    els.loginError.textContent = "";
+
+    els.loginPass.value = "";
+
+
+    setTimeout(
+      function () {
+
+        els.loginUser.focus();
+
+      },
+      0
+    );
+
+  }
+
+
+
+  function logout() {
 
     if (
-      pass === null
+      (state.editing || state.creating) &&
+      !confirm(
+        "Tenés cambios sin guardar. ¿Querés salir igual?"
+      )
     ) {
 
       return;
@@ -6782,33 +8302,76 @@ button {
     }
 
 
+    resetPendingPhotos();
+
+
+    state.editing = false;
+
+    state.creating = false;
+
+    state.draft = null;
+
+
+    safeSession("remove", "sesion");
+
+    safeSession("remove", "puedeEditar");
+
+
+    setRole(
+      false
+    );
+
+
+    render();
+
+
+    els.loginUser.value = "";
+
+
+    showLogin();
+
+  }
+
+
+
+  function tryAdminLogin() {
+
+    var user =
+      els.loginUser.value
+        .trim()
+        .toLowerCase();
+
+
+    var pass =
+      els.loginPass.value;
+
 
     if (
+      user === ADMIN_USER &&
       pass === EDIT_PASSCODE
     ) {
 
-      sessionStorage.setItem(
-        "puedeEditar",
-        "1"
-      );
-
-
-      setRole(
-        true
+      enterApp(
+        "admin"
       );
 
 
       showToast(
-        "Modo edición activado."
+        "Ingresaste como administrador."
       );
 
-    } else {
-
-      showToast(
-        "Clave incorrecta."
-      );
+      return;
 
     }
+
+
+    els.loginError.textContent =
+      "Usuario o contraseña incorrectos.";
+
+
+    els.loginPass.value = "";
+
+    els.loginPass.focus();
 
   }
 
@@ -6820,35 +8383,84 @@ button {
 
   async function init() {
 
-    els.rolePill
+    els.loginForm
       .addEventListener(
-        "click",
-        function () {
+        "submit",
+        function (e) {
 
-          if (
-            !state.canEdit
-          ) {
+          e.preventDefault();
 
-            tryUnlockEdit();
-
-          }
+          tryAdminLogin();
 
         }
       );
 
 
 
-    var yaDesbloqueado =
+    els.loginUser
+      .addEventListener(
+        "input",
+        function () {
 
-      sessionStorage.getItem(
-        "puedeEditar"
-      ) === "1";
+          els.loginError.textContent = "";
+
+        }
+      );
 
 
 
-    setRole(
-      yaDesbloqueado
-    );
+    els.readOnlyBtn
+      .addEventListener(
+        "click",
+        function () {
+
+          enterApp(
+            "lectura"
+          );
+
+        }
+      );
+
+
+
+    els.logoutBtn
+      .addEventListener(
+        "click",
+        logout
+      );
+
+
+
+    /* Si ya había ingresado en esta pestaña, entra directo */
+
+    var sesion =
+      safeSession("get", "sesion") ||
+      (
+        safeSession("get", "puedeEditar") === "1"
+          ? "admin"
+          : null
+      );
+
+
+    if (
+      sesion === "admin" ||
+      sesion === "lectura"
+    ) {
+
+      enterApp(
+        sesion
+      );
+
+    } else {
+
+      setRole(
+        false
+      );
+
+
+      showLogin();
+
+    }
 
 
 
@@ -6962,6 +8574,19 @@ button {
                 grupoCompra:
                   data.grupoCompra ||
                   "",
+
+                acuerdoFirmado:
+                  data.acuerdoFirmado &&
+                  data.acuerdoFirmado.url
+                    ? {
+                      url: data.acuerdoFirmado.url,
+                      path: data.acuerdoFirmado.path || "",
+                      nombre: data.acuerdoFirmado.nombre || "Acuerdo firmado",
+                      tipo: data.acuerdoFirmado.tipo || "",
+                      tamano: data.acuerdoFirmado.tamano || 0,
+                      subidoEn: data.acuerdoFirmado.subidoEn || null
+                    }
+                    : null,
 
                 vigenciaInicio:
                   data.vigenciaInicio ||

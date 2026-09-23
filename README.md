@@ -26,11 +26,16 @@ compartido para todo el equipo de ventas.
    ```js
    var EDIT_PASSCODE = "CAMBIAR_ESTA_CLAVE";
    ```
-   por una clave que le vas a dar solo a quien pueda cargar/editar clientes
-   (vos, por ejemplo). Los vendedores entran sin clave y ven todo en
-   modo solo-lectura; con la clave, cualquiera que la tenga puede editar
-   — es un filtro simple, no seguridad fuerte. Si más adelante necesitás
-   login real por usuario, se puede agregar Firebase Authentication.
+   por la contraseña del administrador (el usuario está en `ADMIN_USER`,
+   por defecto `admin`). Al abrir la web aparece una pantalla de ingreso:
+   - **Administrador** (usuario + contraseña): puede cargar, editar y
+     eliminar clientes, y es el único que ve y sube el **acuerdo firmado**.
+   - **Solo lectura** (un botón, sin clave): ve los clientes y descarga
+     sus PDF, como siempre.
+
+   Es un filtro simple, no seguridad fuerte: la clave está en el código y
+   los datos se leen con las reglas públicas de Firestore. Si más adelante
+   necesitás login real por usuario, se puede agregar Firebase Authentication.
 
 6. **Reglas de seguridad de Firestore** (para que funcione desde la web):
    En Firestore → pestaña **Reglas**, pegá esto y publicá:
