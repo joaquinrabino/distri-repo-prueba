@@ -1281,6 +1281,32 @@ button {
    ESPACIOS
 ========================================================== */
 
+.section-label.section-label-muted {
+
+  color: var(--ink-faint);
+
+  border-top-style: dashed;
+
+}
+
+
+
+.espacios-empty {
+
+  padding: 14px;
+
+  border: 1px dashed var(--border-strong);
+
+  border-radius: var(--radius);
+
+  text-align: center;
+
+  font-size: 13px;
+
+  color: var(--ink-faint);
+
+}
+
 .espacios-grid {
 
   display: grid;
@@ -4609,8 +4635,7 @@ body:not(.logged-out) .login-screen {
 
 
 
-    var espaciosHtml =
-      ESPACIOS.map(
+    var espacioCardHtml =
         function (e) {
 
           var d =
@@ -4731,8 +4756,70 @@ body:not(.logged-out) .login-screen {
 
           );
 
+        };
+
+
+
+    /* Incluidos arriba y no incluidos abajo, cada grupo
+       en el orden original de ESPACIOS */
+
+    var espacioActivo = function (e) {
+
+      return !!(
+        c.espacios &&
+        c.espacios[e.key] &&
+        c.espacios[e.key].activo
+      );
+
+    };
+
+
+    var espaciosIncluidos =
+      ESPACIOS.filter(
+        espacioActivo
+      );
+
+
+    var espaciosNoIncluidos =
+      ESPACIOS.filter(
+        function (e) {
+
+          return !espacioActivo(e);
+
         }
-      ).join("");
+      );
+
+
+    var espaciosHtml =
+
+      espaciosIncluidos.length
+
+        ? (
+          '<div class="espacios-grid">' +
+            espaciosIncluidos.map(espacioCardHtml).join("") +
+          '</div>'
+        )
+
+        : '<div class="espacios-empty">' +
+            'Este cliente no tiene espacios acordados.' +
+          '</div>';
+
+
+    var noIncluidosHtml =
+
+      espaciosNoIncluidos.length
+
+        ? (
+          '<div class="section-label section-label-muted">' +
+            'No incluidos (' + espaciosNoIncluidos.length + ')' +
+          '</div>' +
+
+          '<div class="espacios-grid">' +
+            espaciosNoIncluidos.map(espacioCardHtml).join("") +
+          '</div>'
+        )
+
+        : "";
 
 
 
@@ -4855,15 +4942,14 @@ body:not(.logged-out) .login-screen {
 
 
       '<div class="section-label">' +
-        'Espacios acordados' +
+        'Espacios acordados (' + espaciosIncluidos.length + ')' +
       '</div>' +
 
 
-      '<div class="espacios-grid">' +
+      espaciosHtml +
 
-        espaciosHtml +
+      noIncluidosHtml +
 
-      '</div>' +
 
 
       '<div class="section-label">' +
