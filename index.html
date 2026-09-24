@@ -3081,6 +3081,600 @@ button.dash-tile:focus-visible {
 
 
 /* ==========================================================
+   AVISO DE VENCIMIENTOS (al entrar)
+========================================================== */
+
+.aviso-bar {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+
+  flex-wrap: wrap;
+
+  padding: 10px 24px;
+
+  background: var(--porvencer-bg);
+
+  border-bottom: 1px solid #efd9ad;
+
+  color: var(--ink);
+
+  font-size: 13.5px;
+
+}
+
+
+
+.aviso-bar.critico {
+
+  background: var(--vencido-bg);
+
+  border-bottom-color: #f2c9c2;
+
+}
+
+
+
+.aviso-icon {
+
+  flex-shrink: 0;
+
+  width: 26px;
+
+  height: 26px;
+
+  border-radius: 50%;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  background: var(--surface);
+
+  color: var(--porvencer);
+
+}
+
+
+
+.aviso-bar.critico .aviso-icon {
+
+  color: var(--vencido);
+
+}
+
+
+
+.aviso-text {
+
+  flex: 1;
+
+  min-width: 200px;
+
+}
+
+
+
+.aviso-text strong {
+
+  font-weight: 700;
+
+}
+
+
+
+.aviso-actions {
+
+  display: flex;
+
+  gap: 6px;
+
+  flex-wrap: wrap;
+
+}
+
+
+
+.aviso-actions .btn {
+
+  padding: 6px 11px;
+
+  font-size: 12.5px;
+
+  background: var(--surface);
+
+}
+
+
+
+.aviso-close {
+
+  appearance: none;
+
+  border: none;
+
+  background: transparent;
+
+  color: var(--ink-soft);
+
+  font-size: 20px;
+
+  line-height: 1;
+
+  cursor: pointer;
+
+  padding: 2px 6px;
+
+  border-radius: 6px;
+
+}
+
+
+
+.aviso-close:hover {
+
+  background: rgba(0,0,0,0.06);
+
+}
+
+
+
+/* ==========================================================
+   HISTORIAL DE CAMBIOS
+========================================================== */
+
+.historial {
+
+  display: flex;
+
+  flex-direction: column;
+
+}
+
+
+
+.hist-item {
+
+  position: relative;
+
+  padding: 0 0 14px 22px;
+
+}
+
+
+
+.hist-item::before {
+
+  content: "";
+
+  position: absolute;
+
+  left: 5px;
+
+  top: 6px;
+
+  width: 9px;
+
+  height: 9px;
+
+  border-radius: 50%;
+
+  background: var(--accent);
+
+  box-shadow: 0 0 0 3px var(--accent-soft);
+
+}
+
+
+
+.hist-item::after {
+
+  content: "";
+
+  position: absolute;
+
+  left: 9px;
+
+  top: 18px;
+
+  bottom: 0;
+
+  width: 1px;
+
+  background: var(--border);
+
+}
+
+
+
+.hist-item:last-child::after {
+
+  display: none;
+
+}
+
+
+
+.hist-head {
+
+  font-size: 12px;
+
+  color: var(--ink-faint);
+
+}
+
+
+
+.hist-head strong {
+
+  color: var(--ink-soft);
+
+  font-weight: 600;
+
+}
+
+
+
+.hist-list {
+
+  margin: 3px 0 0;
+
+  padding: 0 0 0 16px;
+
+  font-size: 13px;
+
+  color: var(--ink);
+
+}
+
+
+
+.hist-list li {
+
+  margin: 1px 0;
+
+}
+
+
+
+.hist-empty {
+
+  font-size: 13px;
+
+  color: var(--ink-faint);
+
+}
+
+
+
+.hist-more {
+
+  appearance: none;
+
+  border: none;
+
+  background: transparent;
+
+  color: var(--accent);
+
+  font: inherit;
+
+  font-size: 12.5px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  padding: 0;
+
+  align-self: flex-start;
+
+}
+
+
+
+.hist-more:hover {
+
+  text-decoration: underline;
+
+}
+
+
+
+/* ==========================================================
+   RENOVAR ACUERDO (modal)
+========================================================== */
+
+.modal-backdrop {
+
+  position: fixed;
+
+  inset: 0;
+
+  z-index: 80;
+
+  background: rgba(43,40,64,0.35);
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  padding: 16px;
+
+}
+
+
+
+.modal-card {
+
+  width: 100%;
+
+  max-width: 420px;
+
+  background: var(--surface);
+
+  border-radius: 14px;
+
+  border-top: 4px solid var(--accent);
+
+  box-shadow: 0 20px 60px rgba(43,40,64,0.25);
+
+  padding: 20px 22px;
+
+}
+
+
+
+.modal-title {
+
+  font-family: var(--font-display);
+
+  font-size: 18px;
+
+  font-weight: 700;
+
+  margin: 0 0 4px;
+
+}
+
+
+
+.modal-sub {
+
+  font-size: 13px;
+
+  color: var(--ink-faint);
+
+  margin: 0 0 16px;
+
+}
+
+
+
+.renew-options {
+
+  display: grid;
+
+  grid-template-columns: repeat(3, 1fr);
+
+  gap: 8px;
+
+  margin-bottom: 10px;
+
+}
+
+
+
+.renew-opt {
+
+  appearance: none;
+
+  border: 1px solid var(--border-strong);
+
+  background: var(--surface);
+
+  border-radius: 8px;
+
+  padding: 10px 6px;
+
+  font: inherit;
+
+  font-size: 13px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  color: var(--ink);
+
+}
+
+
+
+.renew-opt:hover {
+
+  background: var(--surface-2);
+
+}
+
+
+
+.renew-opt.selected {
+
+  border-color: var(--accent);
+
+  background: var(--accent-soft);
+
+  color: var(--accent);
+
+}
+
+
+
+.renew-custom {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 8px;
+
+  font-size: 12.5px;
+
+  color: var(--ink-soft);
+
+  margin-bottom: 14px;
+
+}
+
+
+
+.renew-custom input {
+
+  flex: 1;
+
+  padding: 7px 9px;
+
+  border: 1px solid var(--border-strong);
+
+  border-radius: 7px;
+
+  outline: none;
+
+}
+
+
+
+.renew-custom input:focus {
+
+  border-color: var(--accent);
+
+}
+
+
+
+.renew-preview {
+
+  background: var(--surface-2);
+
+  border: 1px solid var(--border);
+
+  border-radius: 8px;
+
+  padding: 10px 12px;
+
+  font-size: 13px;
+
+  margin-bottom: 16px;
+
+}
+
+
+
+.renew-preview strong {
+
+  font-weight: 700;
+
+}
+
+
+
+.renew-preview small {
+
+  display: block;
+
+  color: var(--ink-faint);
+
+  font-size: 11.8px;
+
+  margin-top: 2px;
+
+}
+
+
+
+.modal-actions {
+
+  display: flex;
+
+  justify-content: flex-end;
+
+  gap: 8px;
+
+}
+
+
+
+.renew-banner {
+
+  display: flex;
+
+  gap: 10px;
+
+  align-items: flex-start;
+
+  padding: 11px 14px;
+
+  border-radius: var(--radius);
+
+  background: var(--vigente-bg);
+
+  border: 1px solid var(--vigente);
+
+  font-size: 13px;
+
+  margin-bottom: 18px;
+
+}
+
+
+
+.renew-banner strong {
+
+  font-weight: 700;
+
+}
+
+
+
+.btn-renew {
+
+  background: var(--vigente);
+
+  color: #fff;
+
+}
+
+
+
+.btn-renew:hover {
+
+  filter: brightness(1.06);
+
+}
+
+
+
+@media (max-width: 620px) {
+
+  .aviso-bar {
+
+    padding: 10px 16px;
+
+  }
+
+}
+
+
+
+/* ==========================================================
    LOGIN
 ========================================================== */
 
@@ -3684,6 +4278,20 @@ body:not(.logged-out) .login-screen {
 
       </label>
 
+      <label class="login-field">
+
+        <span>Tu nombre (opcional, queda en el historial de cambios)</span>
+
+        <input
+          id="loginNombre"
+          type="text"
+          autocomplete="name"
+          maxlength="40"
+          placeholder="Ej: Hernán"
+        />
+
+      </label>
+
       <div
         id="loginError"
         class="login-error"
@@ -3788,6 +4396,15 @@ body:not(.logged-out) .login-screen {
       </div>
 
     </div>
+
+
+
+    <div
+      id="avisoBar"
+      class="aviso-bar"
+      role="status"
+      style="display:none;"
+    ></div>
 
 
 
@@ -3932,6 +4549,42 @@ body:not(.logged-out) .login-screen {
             </svg>
 
             Nuevo cliente
+
+          </button>
+
+
+
+          <button
+            id="excelBtn"
+            type="button"
+            class="btn btn-ghost btn-block"
+            title="Descarga en Excel los clientes que se ven en la lista (respeta los filtros)"
+          >
+
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+
+              <rect x="3" y="3" width="18" height="18" rx="2" />
+
+              <line x1="3" y1="9" x2="21" y2="9" />
+
+              <line x1="3" y1="15" x2="21" y2="15" />
+
+              <line x1="9" y1="9" x2="9" y2="21" />
+
+            </svg>
+
+            <span id="excelBtnText">
+              Descargar Excel
+            </span>
 
           </button>
 
@@ -4406,6 +5059,18 @@ body:not(.logged-out) .login-screen {
 
     loginError:
       document.getElementById("loginError"),
+
+    loginNombre:
+      document.getElementById("loginNombre"),
+
+    avisoBar:
+      document.getElementById("avisoBar"),
+
+    excelBtn:
+      document.getElementById("excelBtn"),
+
+    excelBtnText:
+      document.getElementById("excelBtnText"),
 
     readOnlyBtn:
       document.getElementById("readOnlyBtn"),
@@ -5231,6 +5896,125 @@ body:not(.logged-out) .login-screen {
 
 
 
+  /* Historial en la ficha del cliente */
+
+  var HIST_VISIBLES = 5;
+
+
+
+  function historialHtml(c) {
+
+    var entradas =
+      (c.historial || [])
+        .map(
+          function (h) {
+
+            return {
+              fecha: h.fecha,
+              usuario: h.usuario,
+              cambios: (h.cambios || []).filter(
+                function (t) {
+
+                  /* los de solo lectura no ven lo del acuerdo firmado */
+                  return (
+                    state.canEdit ||
+                    String(t).indexOf(HIST_ACUERDO_PREFIJO) !== 0
+                  );
+
+                }
+              )
+            };
+
+          }
+        )
+        .filter(
+          function (h) {
+
+            return h.cambios.length;
+
+          }
+        );
+
+
+    if (!entradas.length) {
+
+      return (
+        '<div class="hist-empty">' +
+          'Todavía no hay cambios registrados. ' +
+          'A partir de ahora cada vez que se guarde este cliente va a quedar anotado acá.' +
+        '</div>'
+      );
+
+    }
+
+
+    var todas =
+      state.histAllId === c.id;
+
+
+    var visibles =
+      todas
+        ? entradas
+        : entradas.slice(0, HIST_VISIBLES);
+
+
+    return (
+      '<div class="historial">' +
+
+        visibles.map(
+          function (h) {
+
+            var d =
+              new Date(h.fecha);
+
+
+            return (
+              '<div class="hist-item">' +
+
+                '<div class="hist-head">' +
+                  escapeHtml(
+                    d.toLocaleDateString("es-UY", { day: "2-digit", month: "short", year: "numeric" }) +
+                    " · " +
+                    d.toLocaleTimeString("es-UY", { hour: "2-digit", minute: "2-digit" })
+                  ) +
+                  ' · <strong>' + escapeHtml(h.usuario || "Administrador") + '</strong>' +
+                '</div>' +
+
+                '<ul class="hist-list">' +
+                  h.cambios.map(
+                    function (t) {
+
+                      return '<li>' + escapeHtml(t) + '</li>';
+
+                    }
+                  ).join("") +
+                '</ul>' +
+
+              '</div>'
+            );
+
+          }
+        ).join("") +
+
+        (
+          entradas.length > HIST_VISIBLES
+            ? '<button type="button" class="hist-more" data-hist-toggle="' + escapeHtml(c.id) + '">' +
+                (
+                  todas
+                    ? "Ver solo los últimos " + HIST_VISIBLES
+                    : "Ver todo el historial (" + entradas.length + ")"
+                ) +
+              '</button>'
+            : ""
+        ) +
+
+      '</div>'
+    );
+
+  }
+
+
+
   function getFiltro(key) {
 
     return (
@@ -5494,6 +6278,13 @@ body:not(.logged-out) .login-screen {
 
     var items =
       getVisibleClients();
+
+
+    els.excelBtnText.textContent =
+      state.clients.length &&
+      items.length !== state.clients.length
+        ? "Descargar Excel (" + items.length + ")"
+        : "Descargar Excel";
 
 
 
@@ -5763,6 +6554,9 @@ body:not(.logged-out) .login-screen {
   function render() {
 
     renderList();
+
+
+    renderAviso();
 
 
     hideDashTip();
@@ -6867,6 +7661,173 @@ body:not(.logged-out) .login-screen {
 
 
 
+  /* ========================================================
+     AVISO DE VENCIMIENTOS (al entrar)
+     Se muestra arriba mientras haya acuerdos que vencen en
+     7 días o menos, o vencidos. Al cerrarlo no vuelve a
+     aparecer hasta la próxima vez que se ingresa.
+  ======================================================== */
+
+  var ICON_ALERTA =
+    '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" ' +
+      'stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">' +
+      '<path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/>' +
+      '<line x1="12" y1="9" x2="12" y2="13"/>' +
+      '<line x1="12" y1="17" x2="12.01" y2="17"/>' +
+    '</svg>';
+
+
+
+  function renderAviso() {
+
+    var bar =
+      els.avisoBar;
+
+
+    if (
+      !state.loaded ||
+      safeSession("get", "avisoCerrado") === "1"
+    ) {
+
+      bar.style.display = "none";
+
+      return;
+
+    }
+
+
+    var semana = 0;
+
+    var vencidos = 0;
+
+
+    state.clients.forEach(
+      function (c) {
+
+        var dias =
+          daysUntil(c.vigenciaFin);
+
+
+        if (dias === null) {
+
+          return;
+
+        }
+
+
+        if (dias < 0) {
+
+          vencidos++;
+
+        } else if (dias <= 7) {
+
+          semana++;
+
+        }
+
+      }
+    );
+
+
+    if (!semana && !vencidos) {
+
+      bar.style.display = "none";
+
+      return;
+
+    }
+
+
+    var partes = [];
+
+
+    if (semana) {
+
+      partes.push(
+        "<strong>" +
+          plural(semana, "acuerdo vence", "acuerdos vencen") +
+          " en los próximos 7 días" +
+        "</strong>"
+      );
+
+    }
+
+
+    if (vencidos) {
+
+      partes.push(
+        "<strong>" +
+          plural(vencidos, "acuerdo ya venció", "acuerdos ya vencieron") +
+        "</strong>"
+      );
+
+    }
+
+
+    bar.className =
+      "aviso-bar" + (vencidos ? " critico" : "");
+
+
+    bar.innerHTML =
+
+      '<span class="aviso-icon">' + ICON_ALERTA + '</span>' +
+
+      '<span class="aviso-text">' +
+        partes.join(" y ") +
+        ". Revisalos para no perder ninguna renovación." +
+      '</span>' +
+
+      '<span class="aviso-actions">' +
+
+        (
+          semana
+            ? '<button type="button" class="btn btn-ghost" data-aviso="semana">Ver los que vencen</button>'
+            : ""
+        ) +
+
+        (
+          vencidos
+            ? '<button type="button" class="btn btn-ghost" data-aviso="vencidos">Ver vencidos</button>'
+            : ""
+        ) +
+
+      '</span>' +
+
+      '<button type="button" class="aviso-close" data-aviso="cerrar" ' +
+        'title="Cerrar aviso" aria-label="Cerrar aviso">&times;</button>';
+
+
+    bar.style.display = "";
+
+  }
+
+
+
+  function manejarAviso(accion) {
+
+    if (accion === "cerrar") {
+
+      safeSession("set", "avisoCerrado", "1");
+
+      renderAviso();
+
+      return;
+
+    }
+
+
+    state.filtro =
+      accion;
+
+
+    aplicarFiltroDesdePanel(
+      "Lista filtrada: " + getFiltro(state.filtro).label
+    );
+
+  }
+
+
+
   /* ---------- TOOLTIP DEL PANEL ---------- */
 
   function showDashTip(el, x, y) {
@@ -7160,6 +8121,46 @@ body:not(.logged-out) .login-screen {
 
           irAlPanel();
 
+          return;
+
+        }
+
+
+        if ((el = e.target.closest("[data-hist-toggle]"))) {
+
+          var hid =
+            el.getAttribute("data-hist-toggle");
+
+
+          state.histAllId =
+            state.histAllId === hid ? null : hid;
+
+
+          render();
+
+        }
+
+      }
+    );
+
+
+    /* Aviso de vencimientos */
+
+    els.avisoBar.addEventListener(
+      "click",
+      function (e) {
+
+        var el =
+          e.target.closest &&
+          e.target.closest("[data-aviso]");
+
+
+        if (el) {
+
+          manejarAviso(
+            el.getAttribute("data-aviso")
+          );
+
         }
 
       }
@@ -7261,6 +8262,11 @@ body:not(.logged-out) .login-screen {
           state.canEdit
 
             ? (
+              '<button class="btn btn-renew" id="renewBtn" ' +
+                'title="Renovar el acuerdo con fechas nuevas manteniendo los espacios">' +
+                'Renovar' +
+              '</button>' +
+
               '<button class="btn btn-ghost" id="editBtn">' +
                 'Editar' +
               '</button>' +
@@ -7612,7 +8618,17 @@ body:not(.logged-out) .login-screen {
       '</div>' +
 
 
-      updatedHtml;
+      updatedHtml +
+
+
+      '<div class="section-label">' +
+        'Historial de cambios' +
+      '</div>' +
+
+
+      historialHtml(
+        c
+      );
 
 
 
@@ -7636,6 +8652,23 @@ body:not(.logged-out) .login-screen {
     if (
       state.canEdit
     ) {
+
+      document
+        .getElementById(
+          "renewBtn"
+        )
+        .addEventListener(
+          "click",
+          function () {
+
+            openRenovarModal(
+              c
+            );
+
+          }
+        );
+
+
 
       document
         .getElementById(
@@ -8041,6 +9074,11 @@ body:not(.logged-out) .login-screen {
         '</div>' +
 
       '</div>' +
+
+
+      renewBannerHtml(
+        draft
+      ) +
 
 
       acuerdoFormHtml(
@@ -9225,6 +10263,252 @@ body:not(.logged-out) .login-screen {
 
 
   /* ========================================================
+     HISTORIAL DE CAMBIOS
+     Se guarda dentro del mismo documento del cliente
+     (campo "historial", lo más nuevo primero).
+  ======================================================== */
+
+  var HISTORIAL_MAX = 60;
+
+
+  var HIST_ACUERDO_PREFIJO = "Acuerdo firmado";
+
+
+
+  function corto(texto, max) {
+
+    var t =
+      String(texto || "").replace(/\s+/g, " ").trim();
+
+
+    return t.length > max
+      ? t.slice(0, max - 1) + "…"
+      : t;
+
+  }
+
+
+
+  function fechaHist(iso) {
+
+    return iso
+      ? fmtDate(iso)
+      : "sin fecha";
+
+  }
+
+
+
+  /* Devuelve la lista de cambios en palabras entre el cliente
+     guardado (original, null si es nuevo) y lo que se va a guardar */
+
+  function describirCambios(original, nuevo, extra) {
+
+    var cambios = [];
+
+
+    var activo = function (c, key) {
+
+      return !!(
+        c &&
+        c.espacios &&
+        c.espacios[key] &&
+        c.espacios[key].activo
+      );
+
+    };
+
+
+    var detalle = function (c, key) {
+
+      return (
+        c &&
+        c.espacios &&
+        c.espacios[key] &&
+        c.espacios[key].detalle
+      ) || "";
+
+    };
+
+
+    if (!original) {
+
+      var n =
+        ESPACIOS.filter(
+          function (e) {
+
+            return activo(nuevo, e.key);
+
+          }
+        ).length;
+
+
+      cambios.push(
+        "Cliente creado con " +
+        plural(n, "espacio acordado", "espacios acordados")
+      );
+
+    } else {
+
+      if (extra.renovacion) {
+
+        cambios.push(
+          "Acuerdo renovado: nuevo período " +
+          fechaHist(nuevo.vigenciaInicio) + " → " + fechaHist(nuevo.vigenciaFin)
+        );
+
+      }
+
+
+      if ((original.nombre || "") !== nuevo.nombre) {
+
+        cambios.push(
+          'Nombre: "' + corto(original.nombre, 40) + '" → "' + corto(nuevo.nombre, 40) + '"'
+        );
+
+      }
+
+
+      if (grupoDe(original) !== grupoDe(nuevo)) {
+
+        cambios.push(
+          "Grupo de compra: " + grupoDe(original) + " → " + grupoDe(nuevo)
+        );
+
+      }
+
+
+      if ((original.vigenciaInicio || "") !== nuevo.vigenciaInicio) {
+
+        cambios.push(
+          "Inicio del acuerdo: " +
+          fechaHist(original.vigenciaInicio) + " → " + fechaHist(nuevo.vigenciaInicio)
+        );
+
+      }
+
+
+      if ((original.vigenciaFin || "") !== nuevo.vigenciaFin) {
+
+        cambios.push(
+          "Fin del acuerdo: " +
+          fechaHist(original.vigenciaFin) + " → " + fechaHist(nuevo.vigenciaFin)
+        );
+
+      }
+
+
+      ESPACIOS.forEach(
+        function (e) {
+
+          var antes = activo(original, e.key);
+
+          var ahora = activo(nuevo, e.key);
+
+
+          if (!antes && ahora) {
+
+            var det =
+              corto(detalle(nuevo, e.key), 50);
+
+
+            cambios.push(
+              "Se agregó " + e.label +
+              (det ? " (" + det + ")" : "")
+            );
+
+          } else if (antes && !ahora) {
+
+            cambios.push(
+              "Se quitó " + e.label
+            );
+
+          } else if (
+            antes &&
+            ahora &&
+            detalle(original, e.key).trim() !== detalle(nuevo, e.key).trim()
+          ) {
+
+            cambios.push(
+              e.label + ': detalle "' +
+              (corto(detalle(original, e.key), 40) || "vacío") + '" → "' +
+              (corto(detalle(nuevo, e.key), 40) || "vacío") + '"'
+            );
+
+          }
+
+        }
+      );
+
+
+      if ((original.notas || "").trim() !== (nuevo.notas || "").trim()) {
+
+        cambios.push(
+          "Notas actualizadas"
+        );
+
+      }
+
+    }
+
+
+    /* Fotos de los espacios */
+
+    ESPACIOS.forEach(
+      function (e) {
+
+        if (extra.fotosNuevas[e.key]) {
+
+          cambios.push(
+            "Foto de " + e.label +
+            (
+              original && original.espacios && original.espacios[e.key] && original.espacios[e.key].fotoUrl
+                ? " actualizada"
+                : " cargada"
+            )
+          );
+
+        } else if (extra.fotosQuitadas[e.key]) {
+
+          cambios.push(
+            "Foto de " + e.label + " quitada"
+          );
+
+        }
+
+      }
+    );
+
+
+    /* Acuerdo firmado (en el historial solo lo ven los administradores) */
+
+    if (extra.acuerdoNuevo) {
+
+      cambios.push(
+        HIST_ACUERDO_PREFIJO +
+        (extra.acuerdoAnterior ? " reemplazado: " : " cargado: ") +
+        corto(extra.acuerdoNuevo.nombre, 50)
+      );
+
+    } else if (
+      extra.acuerdoQuitado &&
+      extra.acuerdoAnterior
+    ) {
+
+      cambios.push(
+        HIST_ACUERDO_PREFIJO + " quitado"
+      );
+
+    }
+
+
+    return cambios;
+
+  }
+
+
+
+  /* ========================================================
      GUARDAR CLIENTE
   ======================================================== */
 
@@ -9437,6 +10721,74 @@ body:not(.logged-out) .login-screen {
         }
 
 
+        /* Historial: qué cambió, quién y cuándo */
+
+        var original =
+          isNew
+            ? null
+            : state.clients.find(
+              function (c) {
+
+                return c.id === state.selectedId;
+
+              }
+            ) || null;
+
+
+        var fotosNuevas = {};
+
+
+        Object.keys(state.pendingPhotos).forEach(
+          function (k) {
+
+            if (
+              state.pendingPhotos[k] &&
+              state.pendingPhotos[k].file
+            ) {
+
+              fotosNuevas[k] = true;
+
+            }
+
+          }
+        );
+
+
+        var cambios =
+          describirCambios(
+            original,
+            payload,
+            {
+              renovacion: !!draft._renovacion,
+              fotosNuevas: fotosNuevas,
+              fotosQuitadas: state.removedPhotos,
+              acuerdoNuevo: acuerdoNuevo,
+              acuerdoAnterior: acuerdoAnterior,
+              acuerdoQuitado: state.removeAcuerdo
+            }
+          );
+
+
+        if (cambios.length) {
+
+          payload.historial =
+            [{
+              fecha: Date.now(),
+              usuario: usuarioActual(),
+              cambios: cambios
+            }]
+              .concat(
+                (original && original.historial) || []
+              )
+              .slice(0, HISTORIAL_MAX);
+
+        } else if (isNew) {
+
+          payload.historial = [];
+
+        }
+
+
         if (
           isNew
         ) {
@@ -9519,7 +10871,9 @@ body:not(.logged-out) .login-screen {
 
 
         showToast(
-          "Guardado."
+          draft._renovacion
+            ? "Acuerdo renovado."
+            : "Guardado."
         );
 
 
@@ -10695,8 +12049,909 @@ body:not(.logged-out) .login-screen {
 
 
   /* ========================================================
+     RENOVAR ACUERDO
+     Abre un selector de plazo y después el formulario de
+     edición con las fechas nuevas ya cargadas, para revisar
+     y guardar. Se mantienen espacios, grupo y notas.
+  ======================================================== */
+
+  function isoToDate(iso) {
+
+    var p =
+      String(iso || "").split("-").map(Number);
+
+
+    return new Date(p[0], p[1] - 1, p[2]);
+
+  }
+
+
+
+  function addDaysIso(iso, n) {
+
+    var d =
+      isoToDate(iso);
+
+
+    d.setDate(d.getDate() + n);
+
+
+    return isoDia(d);
+
+  }
+
+
+
+  function addMonthsIso(iso, n) {
+
+    var d =
+      isoToDate(iso);
+
+
+    var ultimoDia =
+      new Date(d.getFullYear(), d.getMonth() + n + 1, 0).getDate();
+
+
+    return isoDia(
+      new Date(
+        d.getFullYear(),
+        d.getMonth() + n,
+        Math.min(d.getDate(), ultimoDia)
+      )
+    );
+
+  }
+
+
+
+  var PLAZOS_RENOVACION = [
+
+    { meses: 6, label: "6 meses" },
+
+    { meses: 12, label: "1 año" },
+
+    { meses: 24, label: "2 años" }
+
+  ];
+
+
+
+  function openRenovarModal(c) {
+
+    var hoyIso =
+      isoDia(new Date());
+
+
+    var dias =
+      daysUntil(c.vigenciaFin);
+
+
+    /* Si sigue vigente, el nuevo período arranca al día siguiente
+       del fin actual; si ya venció o no tiene fecha, arranca hoy */
+    var inicio =
+      c.vigenciaFin && dias !== null && dias >= 0
+        ? addDaysIso(c.vigenciaFin, 1)
+        : hoyIso;
+
+
+    var sel = {
+      meses: 12,
+      finManual: ""
+    };
+
+
+    var backdrop =
+      document.createElement("div");
+
+
+    backdrop.className =
+      "modal-backdrop";
+
+
+    backdrop.innerHTML =
+
+      '<div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="renewTitle">' +
+
+        '<h2 class="modal-title" id="renewTitle">Renovar acuerdo</h2>' +
+
+        '<p class="modal-sub">' +
+          escapeHtml(c.nombre || "Sin nombre") +
+          (
+            c.vigenciaFin
+              ? " · el acuerdo actual " +
+                (dias < 0 ? "venció el " : "vence el ") +
+                fmtDate(c.vigenciaFin)
+              : " · sin fecha de fin cargada"
+          ) +
+        '</p>' +
+
+        '<div class="renew-options">' +
+
+          PLAZOS_RENOVACION.map(
+            function (p) {
+
+              return (
+                '<button type="button" class="renew-opt" data-meses="' + p.meses + '">' +
+                  p.label +
+                '</button>'
+              );
+
+            }
+          ).join("") +
+
+        '</div>' +
+
+        '<label class="renew-custom">' +
+          'u otra fecha de fin:' +
+          '<input type="date" id="renewFinManual" min="' + addDaysIso(inicio, 1) + '">' +
+        '</label>' +
+
+        '<div class="renew-preview" id="renewPreview"></div>' +
+
+        '<div class="modal-actions">' +
+
+          '<button type="button" class="btn btn-ghost" data-renew="cancelar">Cancelar</button>' +
+
+          '<button type="button" class="btn btn-primary" data-renew="ok">Continuar</button>' +
+
+        '</div>' +
+
+      '</div>';
+
+
+    document.body.appendChild(backdrop);
+
+
+    var preview =
+      backdrop.querySelector("#renewPreview");
+
+
+    var finManualInput =
+      backdrop.querySelector("#renewFinManual");
+
+
+    var okBtn =
+      backdrop.querySelector('[data-renew="ok"]');
+
+
+    function finElegido() {
+
+      if (sel.finManual) {
+
+        return sel.finManual;
+
+      }
+
+
+      return addDaysIso(
+        addMonthsIso(inicio, sel.meses),
+        -1
+      );
+
+    }
+
+
+    function actualizar() {
+
+      Array.prototype.forEach.call(
+        backdrop.querySelectorAll(".renew-opt"),
+        function (b) {
+
+          b.classList.toggle(
+            "selected",
+            !sel.finManual &&
+            Number(b.getAttribute("data-meses")) === sel.meses
+          );
+
+        }
+      );
+
+
+      var fin =
+        finElegido();
+
+
+      var valido =
+        fin > inicio;
+
+
+      okBtn.disabled = !valido;
+
+
+      preview.innerHTML =
+        valido
+          ? (
+            'Nuevo período: <strong>' + fmtDate(inicio) + '</strong> → <strong>' + fmtDate(fin) + '</strong>' +
+            '<small>Se mantienen los espacios, el grupo y las notas. En el siguiente paso podés ajustar lo que quieras antes de guardar.</small>'
+          )
+          : 'La fecha de fin tiene que ser posterior al ' + fmtDate(inicio) + '.';
+
+    }
+
+
+    function cerrar() {
+
+      document.removeEventListener("keydown", onKey);
+
+      backdrop.remove();
+
+    }
+
+
+    function onKey(e) {
+
+      if (e.key === "Escape") {
+
+        cerrar();
+
+      }
+
+    }
+
+
+    document.addEventListener("keydown", onKey);
+
+
+    finManualInput.addEventListener(
+      "change",
+      function () {
+
+        sel.finManual =
+          finManualInput.value;
+
+
+        actualizar();
+
+      }
+    );
+
+
+    backdrop.addEventListener(
+      "click",
+      function (e) {
+
+        if (e.target === backdrop) {
+
+          cerrar();
+
+          return;
+
+        }
+
+
+        var opt =
+          e.target.closest(".renew-opt");
+
+
+        if (opt) {
+
+          sel.meses =
+            Number(opt.getAttribute("data-meses"));
+
+
+          sel.finManual = "";
+
+          finManualInput.value = "";
+
+
+          actualizar();
+
+          return;
+
+        }
+
+
+        var accion =
+          e.target.closest("[data-renew]");
+
+
+        if (!accion) {
+
+          return;
+
+        }
+
+
+        if (accion.getAttribute("data-renew") === "cancelar") {
+
+          cerrar();
+
+          return;
+
+        }
+
+
+        var fin =
+          finElegido();
+
+
+        if (!(fin > inicio)) {
+
+          return;
+
+        }
+
+
+        cerrar();
+
+
+        /* Abre el formulario de edición con las fechas nuevas */
+
+        resetPendingPhotos();
+
+
+        state.editing = true;
+
+
+        state.draft =
+          JSON.parse(
+            JSON.stringify(c)
+          );
+
+
+        ESPACIOS.forEach(
+          function (e) {
+
+            ensureEspacioShape(
+              state.draft,
+              e.key
+            );
+
+          }
+        );
+
+
+        state.draft._renovacion = {
+          inicioAnterior: c.vigenciaInicio || "",
+          finAnterior: c.vigenciaFin || ""
+        };
+
+
+        state.draft.vigenciaInicio = inicio;
+
+        state.draft.vigenciaFin = fin;
+
+
+        render();
+
+
+        els.mainInner.parentNode.scrollTop = 0;
+
+      }
+    );
+
+
+    actualizar();
+
+
+    okBtn.focus();
+
+  }
+
+
+
+  function renewBannerHtml(draft) {
+
+    var r =
+      draft._renovacion;
+
+
+    if (!r) {
+
+      return "";
+
+    }
+
+
+    return (
+      '<div class="renew-banner">' +
+
+        '<span>' +
+
+          '<strong>Renovando el acuerdo.</strong> ' +
+
+          'Nuevo período ' + fmtDate(draft.vigenciaInicio) + ' → ' + fmtDate(draft.vigenciaFin) +
+
+          (
+            r.finAnterior
+              ? ' (antes: ' + fmtDate(r.inicioAnterior) + ' → ' + fmtDate(r.finAnterior) + ')'
+              : ''
+          ) +
+
+          '. Revisá los espacios y tocá <strong>Guardar</strong>. ' +
+
+          'Si hay un nuevo acuerdo firmado, cargalo arriba.' +
+
+        '</span>' +
+
+      '</div>'
+    );
+
+  }
+
+
+
+  /* ========================================================
+     EXPORTAR A EXCEL
+     La librería (SheetJS) se carga recién cuando se usa,
+     para no hacer más pesada la página.
+  ======================================================== */
+
+  var XLSX_URL =
+    "https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js";
+
+
+
+  function loadScript(url) {
+
+    return new Promise(
+      function (resolve, reject) {
+
+        var s =
+          document.createElement("script");
+
+
+        s.src = url;
+
+        s.async = true;
+
+        s.onload = resolve;
+
+        s.onerror = function () {
+
+          s.remove();
+
+          reject(new Error("No se pudo cargar " + url));
+
+        };
+
+
+        document.head.appendChild(s);
+
+      }
+    );
+
+  }
+
+
+
+  /* Fecha AAAA-MM-DD → número de fecha de Excel */
+
+  function excelFecha(iso) {
+
+    if (!iso) {
+
+      return "";
+
+    }
+
+
+    var p =
+      iso.split("-").map(Number);
+
+
+    if (p.length !== 3 || p.some(isNaN)) {
+
+      return iso;
+
+    }
+
+
+    return (
+      Date.UTC(p[0], p[1] - 1, p[2]) -
+      Date.UTC(1899, 11, 30)
+    ) / 86400000;
+
+  }
+
+
+
+  /* Timestamp → número de fecha y hora de Excel (hora local) */
+
+  function excelFechaHora(ms) {
+
+    if (!ms) {
+
+      return "";
+
+    }
+
+
+    var d =
+      new Date(ms);
+
+
+    return (
+      Date.UTC(d.getFullYear(), d.getMonth(), d.getDate(), d.getHours(), d.getMinutes()) -
+      Date.UTC(1899, 11, 30)
+    ) / 86400000;
+
+  }
+
+
+
+  function armarHoja(filas, anchos, formatos) {
+
+    var ws =
+      XLSX.utils.aoa_to_sheet(filas);
+
+
+    ws["!cols"] =
+      anchos.map(
+        function (w) {
+
+          return { wch: w };
+
+        }
+      );
+
+
+    var rango =
+      XLSX.utils.decode_range(ws["!ref"]);
+
+
+    ws["!autofilter"] = {
+      ref: XLSX.utils.encode_range({
+        s: { r: 0, c: 0 },
+        e: { r: 0, c: rango.e.c }
+      })
+    };
+
+
+    /* formato de fecha en las columnas indicadas */
+
+    Object.keys(formatos).forEach(
+      function (col) {
+
+        for (var r = 1; r <= rango.e.r; r++) {
+
+          var cell =
+            ws[XLSX.utils.encode_cell({ r: r, c: Number(col) })];
+
+
+          if (cell && cell.t === "n") {
+
+            cell.z = formatos[col];
+
+          }
+
+        }
+
+      }
+    );
+
+
+    return ws;
+
+  }
+
+
+
+  function construirExcel(clients) {
+
+    var admin =
+      state.canEdit;
+
+
+    /* ---- Hoja 1: Clientes ---- */
+
+    var head1 = [
+      "Cliente",
+      "Grupo de compra",
+      "Inicio del acuerdo",
+      "Fin del acuerdo",
+      "Estado",
+      "Días para vencer",
+      "Cantidad de espacios",
+      "Espacios acordados",
+      "Notas",
+      "Última actualización"
+    ];
+
+
+    if (admin) {
+
+      head1.push("Acuerdo firmado");
+
+    }
+
+
+    var filas1 =
+      [head1].concat(
+        clients.map(
+          function (c) {
+
+            var activos =
+              ESPACIOS.filter(
+                function (e) {
+
+                  return (
+                    c.espacios &&
+                    c.espacios[e.key] &&
+                    c.espacios[e.key].activo
+                  );
+
+                }
+              );
+
+
+            var dias =
+              daysUntil(c.vigenciaFin);
+
+
+            var fila = [
+              c.nombre || "Sin nombre",
+              grupoDe(c),
+              excelFecha(c.vigenciaInicio),
+              excelFecha(c.vigenciaFin),
+              vigenciaStatus(c.vigenciaFin).label,
+              dias === null ? "" : dias,
+              activos.length,
+              activos.map(
+                function (e) {
+
+                  var det =
+                    c.espacios[e.key].detalle;
+
+
+                  return e.label + (det ? " (" + det + ")" : "");
+
+                }
+              ).join("; "),
+              c.notas || "",
+              excelFechaHora(c.updatedAt)
+            ];
+
+
+            if (admin) {
+
+              fila.push(
+                c.acuerdoFirmado
+                  ? c.acuerdoFirmado.url
+                  : "No cargado"
+              );
+
+            }
+
+
+            return fila;
+
+          }
+        )
+      );
+
+
+    var ws1 =
+      armarHoja(
+        filas1,
+        [28, 20, 14, 14, 18, 10, 11, 60, 40, 18].concat(admin ? [40] : []),
+        {
+          2: "dd/mm/yyyy",
+          3: "dd/mm/yyyy",
+          9: "dd/mm/yyyy hh:mm"
+        }
+      );
+
+
+    /* ---- Hoja 2: Espacios (una columna por espacio) ---- */
+
+    var head2 =
+      ["Cliente", "Grupo de compra"].concat(
+        ESPACIOS.map(
+          function (e) {
+
+            return e.label;
+
+          }
+        )
+      );
+
+
+    var filas2 =
+      [head2].concat(
+        clients.map(
+          function (c) {
+
+            return [
+              c.nombre || "Sin nombre",
+              grupoDe(c)
+            ].concat(
+              ESPACIOS.map(
+                function (e) {
+
+                  var d =
+                    c.espacios && c.espacios[e.key];
+
+
+                  return d && d.activo
+                    ? (d.detalle ? d.detalle : "Sí")
+                    : "";
+
+                }
+              )
+            );
+
+          }
+        )
+      );
+
+
+    var ws2 =
+      armarHoja(
+        filas2,
+        [28, 20].concat(
+          ESPACIOS.map(
+            function () {
+
+              return 16;
+
+            }
+          )
+        ),
+        {}
+      );
+
+
+    /* ---- Hoja 3: Info del archivo ---- */
+
+    var filtros = [];
+
+
+    if (state.search.trim()) {
+
+      filtros.push('Búsqueda "' + state.search.trim() + '"');
+
+    }
+
+
+    if (state.grupo !== "todos") {
+
+      filtros.push("Grupo: " + state.grupo);
+
+    }
+
+
+    if (state.filtro !== "todos") {
+
+      filtros.push(
+        state.filtro === "rango"
+          ? "Vencen entre " + fechaHist(state.rangoDesde) + " y " + fechaHist(state.rangoHasta)
+          : getFiltro(state.filtro).label
+      );
+
+    }
+
+
+    var ws3 =
+      XLSX.utils.aoa_to_sheet([
+        ["Distrishop · Espacios & Condiciones"],
+        [],
+        ["Generado el", new Date().toLocaleString("es-UY")],
+        ["Clientes incluidos", clients.length + " de " + state.clients.length],
+        ["Filtros aplicados", filtros.length ? filtros.join(" · ") : "Ninguno (todos los clientes)"]
+      ]);
+
+
+    ws3["!cols"] = [{ wch: 22 }, { wch: 60 }];
+
+
+    var wb =
+      XLSX.utils.book_new();
+
+
+    XLSX.utils.book_append_sheet(wb, ws1, "Clientes");
+
+    XLSX.utils.book_append_sheet(wb, ws2, "Espacios");
+
+    XLSX.utils.book_append_sheet(wb, ws3, "Info");
+
+
+    return wb;
+
+  }
+
+
+
+  function exportExcel() {
+
+    var clients =
+      getVisibleClients();
+
+
+    if (!clients.length) {
+
+      showToast(
+        "No hay clientes en la lista para descargar."
+      );
+
+      return;
+
+    }
+
+
+    els.excelBtn.disabled = true;
+
+
+    var textoAnterior =
+      els.excelBtnText.textContent;
+
+
+    els.excelBtnText.textContent =
+      "Generando Excel…";
+
+
+    (
+      window.XLSX
+        ? Promise.resolve()
+        : loadScript(XLSX_URL)
+    )
+
+      .then(
+        function () {
+
+          var wb =
+            construirExcel(clients);
+
+
+          XLSX.writeFile(
+            wb,
+            "clientes-distrishop" +
+            (
+              state.filtro !== "todos" || state.grupo !== "todos" || state.search.trim()
+                ? "-filtrado"
+                : ""
+            ) +
+            "-" + isoDia(new Date()) +
+            ".xlsx"
+          );
+
+
+          showToast(
+            "Excel descargado (" + plural(clients.length, "cliente", "clientes") + ")."
+          );
+
+        }
+      )
+
+      .catch(
+        function (err) {
+
+          console.error(err);
+
+
+          showToast(
+            "No se pudo generar el Excel. Revisá tu conexión e intentá de nuevo."
+          );
+
+        }
+      )
+
+      .then(
+        function () {
+
+          els.excelBtn.disabled = false;
+
+          els.excelBtnText.textContent = textoAnterior;
+
+        }
+      );
+
+  }
+
+
+
+  /* ========================================================
      EVENTOS
   ======================================================== */
+
+  els.excelBtn
+    .addEventListener(
+      "click",
+      exportExcel
+    );
+
+
+
 
   els.filterSelect
     .addEventListener(
@@ -10953,6 +13208,19 @@ body:not(.logged-out) .login-screen {
 
 
 
+  /* Nombre que queda en el historial de cambios */
+
+  function usuarioActual() {
+
+    return (
+      safeSession("get", "usuario") ||
+      "Administrador"
+    );
+
+  }
+
+
+
   function enterApp(rol) {
 
     var esAdmin =
@@ -11048,6 +13316,10 @@ body:not(.logged-out) .login-screen {
 
     safeSession("remove", "puedeEditar");
 
+    safeSession("remove", "usuario");
+
+    safeSession("remove", "avisoCerrado");
+
 
     setRole(
       false
@@ -11082,6 +13354,13 @@ body:not(.logged-out) .login-screen {
       user === ADMIN_USER &&
       pass === EDIT_PASSCODE
     ) {
+
+      safeSession(
+        "set",
+        "usuario",
+        els.loginNombre.value.trim().slice(0, 40)
+      );
+
 
       enterApp(
         "admin"
@@ -11314,6 +13593,21 @@ body:not(.logged-out) .login-screen {
                 grupoCompra:
                   data.grupoCompra ||
                   "",
+
+                historial:
+                  Array.isArray(data.historial)
+                    ? data.historial.filter(
+                      function (h) {
+
+                        return (
+                          h &&
+                          h.fecha &&
+                          Array.isArray(h.cambios)
+                        );
+
+                      }
+                    )
+                    : [],
 
                 acuerdoFirmado:
                   data.acuerdoFirmado &&
