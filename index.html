@@ -6324,14 +6324,22 @@ body:not(.logged-out) .login-screen {
           (
             c.acuerdoEnviado
               ? (
-                'Último acuerdo enviado para firmar: ' +
-                escapeHtml(
-                  new Date(c.acuerdoEnviado.fecha).toLocaleDateString("es-UY")
-                ) +
                 (
-                  c.acuerdoEnviado.email
-                    ? " a " + escapeHtml(c.acuerdoEnviado.email)
-                    : ""
+                  c.acuerdoEnviado.emailEnviado
+                    ? '✓ Último acuerdo enviado por email: ' +
+                      escapeHtml(
+                        new Date(c.acuerdoEnviado.emailEnviado.fecha).toLocaleDateString("es-UY") +
+                        " a " + c.acuerdoEnviado.emailEnviado.email
+                      )
+                    : 'Último acuerdo generado para firmar: ' +
+                      escapeHtml(
+                        new Date(c.acuerdoEnviado.fecha).toLocaleDateString("es-UY")
+                      ) +
+                      (
+                        c.acuerdoEnviado.email
+                          ? " (para " + escapeHtml(c.acuerdoEnviado.email) + ")"
+                          : ""
+                      )
                 ) +
                 ' · <a href="' + escapeHtml(c.acuerdoEnviado.url) + '" target="_blank" rel="noopener">Ver PDF</a>'
               )
@@ -14488,7 +14496,7 @@ body:not(.logged-out) .login-screen {
             .then(
               function () {
 
-                mostrarEnvio(doc, d, url);
+                mostrarEnvio(doc, d, url, ed.clientId);
 
               }
             );
@@ -14635,7 +14643,177 @@ body:not(.logged-out) .login-screen {
 
 
 
-  function mostrarEnvio(doc, d, url) {
+  /* Envío real por email (función de Vercel + Resend: api/enviar-acuerdo.js) */
+
+  var ENVIO_API =
+    "/api/enviar-acuerdo";
+
+
+
+  function enviarAcuerdoAutomatico(btn, d, url, email, clientId) {
+
+    var label =
+      btn.querySelector("[data-send-label]");
+
+
+    var htmlAntes =
+      label.innerHTML;
+
+
+    btn.disabled = true;
+
+    label.innerHTML = "Enviando…<small>Un momento</small>";
+
+
+    fetch(ENVIO_API, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        to: email,
+        cliente: d.clienteNombre.trim(),
+        razonSocial: d.razonSocial.trim(),
+        desde: d.desde,
+        hasta: d.hasta,
+        pdfUrl: url,
+        archivo: nombreArchivoAcuerdo(d),
+        remitente: usuarioActual() !== "Administrador" ? usuarioActual() : ""
+      })
+    })
+
+      .then(
+        function (r) {
+
+          return r.json()
+            .catch(
+              function () {
+
+                return {};
+
+              }
+            )
+            .then(
+              function (data) {
+
+                if (r.status === 404) {
+
+                  throw new Error(
+                    "El envío automático todavía no está publicado. Subí los cambios a GitHub para que Vercel lo active."
+                  );
+
+                }
+
+
+                if (!r.ok || !data.ok) {
+
+                  var msg =
+                    (data && data.error) || ("Error " + r.status);
+
+
+                  if (/own email|verify a domain|testing emails/i.test(msg)) {
+
+                    msg =
+                      "Resend solo deja enviar a tu propio email hasta que verifiques el dominio de Distrishop.";
+
+                  }
+
+
+                  throw new Error(msg);
+
+                }
+
+
+                return data;
+
+              }
+            );
+
+        }
+      )
+
+      .then(
+        function (data) {
+
+          label.innerHTML =
+            "✓ Enviado<small>Le llegó a " + escapeHtml(email) + "</small>";
+
+
+          showToast(
+            "Acuerdo enviado a " + email + "."
+          );
+
+
+          /* registra el envío en el cliente y en el historial */
+          var c =
+            state.clients.find(
+              function (x) {
+
+                return x.id === clientId;
+
+              }
+            );
+
+
+          if (c && c.acuerdoEnviado) {
+
+            var enviado =
+              Object.assign({}, c.acuerdoEnviado, {
+                emailEnviado: { fecha: Date.now(), email: email, id: data.id || null }
+              });
+
+
+            state.db
+              .doc("clientes/" + clientId)
+              .update({
+                acuerdoEnviado: enviado,
+                historial: [{
+                  fecha: Date.now(),
+                  usuario: usuarioActual(),
+                  cambios: ["Acuerdo comercial enviado por email a " + email]
+                }]
+                  .concat(c.historial || [])
+                  .slice(0, HISTORIAL_MAX)
+              })
+              .catch(
+                function (err) {
+
+                  console.warn("No se pudo registrar el envío", err);
+
+                }
+              );
+
+          }
+
+        }
+      )
+
+      .catch(
+        function (err) {
+
+          console.error(err);
+
+
+          btn.disabled = false;
+
+          label.innerHTML = htmlAntes;
+
+
+          showToast(
+            "No se pudo enviar: " +
+            (
+              err && err.message && err.message !== "Failed to fetch"
+                ? err.message
+                : "revisá tu conexión."
+            )
+          );
+
+        }
+      );
+
+  }
+
+
+
+  function mostrarEnvio(doc, d, url, clientId) {
 
     var cliente =
       d.clienteNombre.trim();
@@ -14725,11 +14903,21 @@ body:not(.logged-out) .login-screen {
 
         '<div class="send-options">' +
 
-          '<a class="btn btn-primary send-opt" data-send="email" href="' + escapeHtml(mailto) + '">' +
-            '<span>Enviar por email' +
+          (
+            email
+              ? '<button type="button" class="btn btn-primary send-opt" data-send="auto">' +
+                  '<span data-send-label>Enviar ahora desde Distrishop' +
+                    '<small>Le llega a ' + escapeHtml(email) + ' con el PDF adjunto</small>' +
+                  '</span>' +
+                '</button>'
+              : ""
+          ) +
+
+          '<a class="btn ' + (email ? "btn-ghost" : "btn-primary") + ' send-opt" data-send="email" href="' + escapeHtml(mailto) + '">' +
+            '<span>Abrir en mi correo' +
               '<small>' +
                 (email
-                  ? escapeHtml(email) + " · se abre tu correo con todo listo"
+                  ? escapeHtml(email) + " · se abre tu programa de correo con todo listo"
                   : "Sin email cargado: vas a tener que escribir el destinatario") +
               '</small>' +
             '</span>' +
@@ -14833,6 +15021,10 @@ body:not(.logged-out) .login-screen {
         if (accion === "close") {
 
           cerrar();
+
+        } else if (accion === "auto") {
+
+          enviarAcuerdoAutomatico(b, d, url, email, clientId);
 
         } else if (accion === "share") {
 

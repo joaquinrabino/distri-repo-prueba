@@ -75,3 +75,23 @@ compartido para todo el equipo de ventas.
 
 Cada vez que cambies algo en `index.html` y lo subas a GitHub (commit),
 Vercel vuelve a publicar la app sola, automáticamente.
+
+## 4. Envío automático de acuerdos por email (Resend)
+
+El botón "Enviar ahora desde Distrishop" usa la función `api/enviar-acuerdo.js`,
+que Vercel publica sola junto con la página.
+
+1. En https://resend.com → **API Keys** creá una key (o usá la del onboarding).
+2. En Vercel → tu proyecto → **Settings → Environment Variables** agregá:
+   - `RESEND_API_KEY` = la key de Resend (**nunca** la pongas en el código).
+   - `RESEND_FROM` = el remitente, ej. `Distrishop <acuerdos@tudominio.com.uy>`.
+     Mientras no verifiques un dominio usá `Distrishop <onboarding@resend.dev>`
+     (así solo se puede enviar al email de tu cuenta de Resend, para probar).
+   - `RESEND_REPLY_TO` (opcional) = el email donde querés recibir los acuerdos
+     firmados cuando el cliente responde.
+3. En Vercel → **Deployments** → los tres puntitos del último → **Redeploy**
+   (las variables nuevas se aplican recién en el próximo deploy).
+4. Para enviarle a clientes: en Resend → **Domains → Add Domain**, poné el
+   dominio de la empresa y cargá los registros DNS que te muestra en donde
+   esté administrado el dominio. Cuando figure "Verified", cambiá
+   `RESEND_FROM` a una dirección de ese dominio y hacé Redeploy.
