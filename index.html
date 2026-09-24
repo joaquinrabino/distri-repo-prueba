@@ -3081,6 +3081,430 @@ button.dash-tile:focus-visible {
 
 
 /* ==========================================================
+   CREAR ACUERDO COMERCIAL (editor + envío)
+========================================================== */
+
+.ac-editor .ac-sec {
+
+  background: var(--surface);
+
+  border: 1px solid var(--border);
+
+  border-radius: var(--radius);
+
+  padding: 14px 16px 16px;
+
+  margin-bottom: 12px;
+
+}
+
+
+
+.ac-sec-title {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 9px;
+
+  font-family: var(--font-display);
+
+  font-size: 14.5px;
+
+  font-weight: 700;
+
+  margin: 0 0 12px;
+
+}
+
+
+
+.ac-num {
+
+  width: 24px;
+
+  height: 24px;
+
+  border-radius: 50%;
+
+  background: var(--accent-soft);
+
+  color: var(--accent);
+
+  font-size: 12.5px;
+
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  flex-shrink: 0;
+
+}
+
+
+
+.ac-grid {
+
+  display: grid;
+
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+
+  gap: 12px;
+
+}
+
+
+
+.ac-field label {
+
+  display: block;
+
+  font-size: 11.5px;
+
+  font-weight: 600;
+
+  color: var(--ink-faint);
+
+  margin-bottom: 5px;
+
+}
+
+
+
+.ac-field input,
+.ac-field textarea,
+.ac-rows input {
+
+  width: 100%;
+
+  padding: 8px 10px;
+
+  border: 1px solid var(--border-strong);
+
+  border-radius: 7px;
+
+  background: var(--surface);
+
+  outline: none;
+
+}
+
+
+
+.ac-field textarea {
+
+  min-height: 70px;
+
+  resize: vertical;
+
+  line-height: 1.45;
+
+}
+
+
+
+.ac-field input:focus,
+.ac-field textarea:focus,
+.ac-rows input:focus {
+
+  border-color: var(--accent);
+
+}
+
+
+
+.ac-field + .ac-field {
+
+  margin-top: 10px;
+
+}
+
+
+
+.ac-hint {
+
+  font-size: 11.5px;
+
+  color: var(--ink-faint);
+
+  margin-top: 4px;
+
+}
+
+
+
+.ac-rows {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 6px;
+
+}
+
+
+
+.ac-row {
+
+  display: grid;
+
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.4fr) 30px;
+
+  gap: 6px;
+
+  align-items: center;
+
+}
+
+
+
+.ac-rows-head {
+
+  display: grid;
+
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.4fr) 30px;
+
+  gap: 6px;
+
+  font-size: 11.5px;
+
+  font-weight: 600;
+
+  color: var(--ink-faint);
+
+}
+
+
+
+.ac-del {
+
+  appearance: none;
+
+  border: 1px solid transparent;
+
+  background: transparent;
+
+  color: var(--ink-faint);
+
+  font-size: 18px;
+
+  line-height: 1;
+
+  width: 30px;
+
+  height: 30px;
+
+  border-radius: 7px;
+
+  cursor: pointer;
+
+}
+
+
+
+.ac-del:hover {
+
+  color: var(--vencido);
+
+  background: var(--vencido-bg);
+
+}
+
+
+
+.ac-add {
+
+  appearance: none;
+
+  border: 1px dashed var(--border-strong);
+
+  background: transparent;
+
+  color: var(--accent);
+
+  font: inherit;
+
+  font-size: 12.5px;
+
+  font-weight: 600;
+
+  border-radius: 7px;
+
+  padding: 7px 10px;
+
+  cursor: pointer;
+
+  margin-top: 4px;
+
+  align-self: flex-start;
+
+}
+
+
+
+.ac-add:hover {
+
+  background: var(--accent-soft);
+
+}
+
+
+
+.ac-actions {
+
+  position: sticky;
+
+  bottom: 0;
+
+  z-index: 3;
+
+  display: flex;
+
+  flex-wrap: wrap;
+
+  gap: 8px;
+
+  justify-content: flex-end;
+
+  padding: 12px 0;
+
+  background: linear-gradient(to top, var(--bg) 70%, transparent);
+
+}
+
+
+
+.ac-last {
+
+  font-size: 12.5px;
+
+  color: var(--ink-soft);
+
+  margin-top: 10px;
+
+  padding-top: 10px;
+
+  border-top: 1px dashed var(--accent);
+
+}
+
+
+
+.ac-last a {
+
+  color: var(--accent);
+
+  font-weight: 600;
+
+}
+
+
+
+.pdf-modal .modal-card {
+
+  max-width: 900px;
+
+  height: min(88vh, 1000px);
+
+  display: flex;
+
+  flex-direction: column;
+
+  padding: 14px;
+
+}
+
+
+
+.pdf-modal iframe {
+
+  flex: 1;
+
+  width: 100%;
+
+  border: 1px solid var(--border);
+
+  border-radius: 8px;
+
+  margin: 10px 0;
+
+  background: #f2f2f2;
+
+}
+
+
+
+.send-options {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 8px;
+
+  margin-bottom: 14px;
+
+}
+
+
+
+.send-opt {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  width: 100%;
+
+  text-align: left;
+
+  justify-content: flex-start;
+
+  text-decoration: none;
+
+}
+
+
+
+.send-opt small {
+
+  display: block;
+
+  font-weight: 400;
+
+  font-size: 11.5px;
+
+  color: var(--ink-faint);
+
+}
+
+
+
+.send-opt.btn-primary small {
+
+  color: rgba(255,255,255,0.8);
+
+}
+
+
+
+.send-opt[aria-disabled="true"] {
+
+  opacity: 0.5;
+
+  pointer-events: none;
+
+}
+
+
+
+/* ==========================================================
    AVISO DE VENCIMIENTOS (al entrar)
 ========================================================== */
 
@@ -4885,6 +5309,9 @@ body:not(.logged-out) .login-screen {
 
     removedPhotos: {},
 
+    /* Editor de acuerdo comercial: { clientId, datos } */
+    acuerdoEditor: null,
+
     /* Panel general */
     loaded: false,
 
@@ -5215,6 +5642,9 @@ body:not(.logged-out) .login-screen {
     state.pendingAcuerdo = null;
 
     state.removeAcuerdo = false;
+
+    /* cualquier cambio de pantalla cierra el editor de acuerdo */
+    state.acuerdoEditor = null;
 
   }
 
@@ -5888,6 +6318,35 @@ body:not(.logged-out) .login-screen {
               '</div>'
             )
         ) +
+
+        '<div class="ac-last">' +
+
+          (
+            c.acuerdoEnviado
+              ? (
+                'Último acuerdo enviado para firmar: ' +
+                escapeHtml(
+                  new Date(c.acuerdoEnviado.fecha).toLocaleDateString("es-UY")
+                ) +
+                (
+                  c.acuerdoEnviado.email
+                    ? " a " + escapeHtml(c.acuerdoEnviado.email)
+                    : ""
+                ) +
+                ' · <a href="' + escapeHtml(c.acuerdoEnviado.url) + '" target="_blank" rel="noopener">Ver PDF</a>'
+              )
+              : "Todavía no se envió ningún acuerdo para firmar."
+          ) +
+
+          '<div class="acuerdo-actions">' +
+
+            '<button type="button" class="btn btn-primary" data-ac-open="' + escapeHtml(c.id) + '">' +
+              'Crear acuerdo para firmar' +
+            '</button>' +
+
+          '</div>' +
+
+        '</div>' +
 
       '</div>'
     );
@@ -6565,6 +7024,17 @@ body:not(.logged-out) .login-screen {
     els.mainInner.classList.remove(
       "wide"
     );
+
+
+    if (
+      state.acuerdoEditor
+    ) {
+
+      renderAcuerdoEditor();
+
+      return;
+
+    }
 
 
     if (
@@ -7965,6 +8435,17 @@ body:not(.logged-out) .login-screen {
     );
 
 
+    /* campos del editor de acuerdo */
+    els.mainInner.addEventListener(
+      "input",
+      function (e) {
+
+        acOnInput(e.target);
+
+      }
+    );
+
+
     els.mainInner.addEventListener(
       "focusin",
       function (e) {
@@ -8002,6 +8483,65 @@ body:not(.logged-out) .login-screen {
 
 
         var el;
+
+
+        /* ---- Acuerdo comercial para firmar ---- */
+
+        if ((el = e.target.closest("[data-ac-open]"))) {
+
+          openAcuerdoEditor(
+            el.getAttribute("data-ac-open")
+          );
+
+          return;
+
+        }
+
+
+        if ((el = e.target.closest("[data-ac-add]"))) {
+
+          state.acuerdoEditor.datos[el.getAttribute("data-ac-add")].push({
+            item: "",
+            detalle: ""
+          });
+
+
+          renderAcuerdoEditor(true);
+
+          return;
+
+        }
+
+
+        if ((el = e.target.closest("[data-ac-del]"))) {
+
+          var partesDel =
+            el.getAttribute("data-ac-del").split(":");
+
+
+          state.acuerdoEditor.datos[partesDel[0]].splice(
+            Number(partesDel[1]),
+            1
+          );
+
+
+          renderAcuerdoEditor(true);
+
+          return;
+
+        }
+
+
+        if ((el = e.target.closest("[data-ac-action]"))) {
+
+          acAccion(
+            el.getAttribute("data-ac-action"),
+            el.classList.contains("back-link") ? null : el
+          );
+
+          return;
+
+        }
 
 
         if ((el = e.target.closest("[data-dash-filtro]"))) {
@@ -12472,6 +13012,1882 @@ body:not(.logged-out) .login-screen {
 
 
   /* ========================================================
+     ACUERDO COMERCIAL PARA FIRMAR
+     Editor con los 9 puntos → PDF con el formato del acuerdo
+     de Distrishop / Midecor → se guarda en Storage y se abre
+     el email / WhatsApp listo para enviar al cliente.
+  ======================================================== */
+
+  var AC_RAZON_SOCIAL =
+    "Distribuidora Midecor S.A.";
+
+
+  /* Espacios que van en "3 Exhibición Primaria" (en este orden)
+     con el nombre que se usa en el acuerdo */
+  var AC_PRIMARIA = [
+    ["mostrador", "Mostrador"],
+    ["exhibidorBeldent", "Exhibidores Beldent"],
+    ["exhibidorHalls", "Exhibidores Halls"],
+    ["primariaChocolates", "Chocolates"],
+    ["primariaBombones", "Bombones"],
+    ["primariaAlfajores", "Alfajores"],
+    ["primariaGalletas", "Galletas en Góndola primaria"],
+    ["primariaJugos", "Jugos"],
+    ["primariaDry", "Dry"]
+  ];
+
+
+  /* Nombres en el acuerdo para "4 Exhibición Secundaria"
+     (el resto de los espacios usa su nombre normal) */
+  var AC_SECUNDARIA_NOMBRES = {
+    cabeceras: "Cabecera de góndola",
+    exhibidorAlfajores: "Exhibidor para alfajores",
+    exhibidorGalletas: "Exhibidor de galletas",
+    exhibidorChocolate: "Exhibidor de chocolate",
+    exhibidorJugos: "Exhibidor de jugos"
+  };
+
+
+  var AC_TEXTOS = {
+
+    pago:
+      "El pago anual por Exhibiciones Primaria y Secundarias (puntos 3 y 4) se hará efectivo, " +
+      "siempre y cuando las exhibiciones y porcentajes estén ejecutados según lo acordado.",
+
+    devoluciones:
+      "Se aceptará devolución de mercadería solo por vencimiento o defectos de fábrica.\n" +
+      "La mercadería vencida se levantará para devolución hasta 45 días posterior a su vencimiento; " +
+      "luego de dicho plazo no se realizará la devolución de la misma.",
+
+    medicion:
+      "Mensualmente se medirá en el local el cumplimiento de las condiciones acordadas en este convenio.\n" +
+      "El resultado de dicha medición será informado en tiempo y forma para oportunas correcciones.",
+
+    planAcciones:
+      "Incorporar nuevos productos y/o presentaciones sin costo para el Distribuidor de Mondelez International.\n" +
+      "Colocación de materiales POP para promociones, lanzamientos y ofertas planificadas Mondelez.",
+
+    merchandising:
+      "Servicio de merchandising con frecuencia de visitas a determinar según la necesidad del local."
+
+  };
+
+
+
+  function lineas(texto) {
+
+    return String(texto || "")
+      .split("\n")
+      .map(
+        function (l) {
+
+          return l.trim();
+
+        }
+      )
+      .filter(Boolean);
+
+  }
+
+
+
+  /* 1/1/2026, como en el acuerdo en papel */
+
+  function fechaAcuerdo(iso) {
+
+    if (!iso) {
+
+      return "-";
+
+    }
+
+
+    var p =
+      iso.split("-").map(Number);
+
+
+    return p[2] + "/" + p[1] + "/" + p[0];
+
+  }
+
+
+
+  /* "35000" → "$ 35.000"; si ya viene con formato se deja igual */
+
+  function formatoMonto(m) {
+
+    var t =
+      String(m || "").trim();
+
+
+    if (/^\d+([.,]\d+)?$/.test(t)) {
+
+      return "$ " + Number(t.replace(",", ".")).toLocaleString("es-UY");
+
+    }
+
+
+    return t;
+
+  }
+
+
+
+  function armarDatosAcuerdo(c) {
+
+    var prev =
+      c.acuerdoComercial || {};
+
+
+    var esp =
+      c.espacios || {};
+
+
+    var usados = {};
+
+
+    var primaria =
+      AC_PRIMARIA
+        .filter(
+          function (p) {
+
+            return esp[p[0]] && esp[p[0]].activo;
+
+          }
+        )
+        .map(
+          function (p) {
+
+            usados[p[0]] = true;
+
+
+            return {
+              item: p[1],
+              detalle: esp[p[0]].detalle || ""
+            };
+
+          }
+        );
+
+
+    var secundaria =
+      ESPACIOS
+        .filter(
+          function (e) {
+
+            return !usados[e.key] && esp[e.key] && esp[e.key].activo;
+
+          }
+        )
+        .map(
+          function (e) {
+
+            return {
+              item: AC_SECUNDARIA_NOMBRES[e.key] || e.label,
+              detalle: esp[e.key].detalle || ""
+            };
+
+          }
+        );
+
+
+    var val = function (k, def) {
+
+      return prev[k] != null && prev[k] !== ""
+        ? prev[k]
+        : def;
+
+    };
+
+
+    return {
+
+      clienteNombre: c.nombre || "",
+
+      razonSocial: val("razonSocial", AC_RAZON_SOCIAL),
+
+      email: c.email || prev.email || "",
+
+      telefono: c.telefono || prev.telefono || "",
+
+      desde: c.vigenciaInicio || "",
+
+      hasta: c.vigenciaFin || "",
+
+      monto: val("monto", ""),
+
+      detallePago: val("detallePago", ""),
+
+      condiciones: val("condiciones", ""),
+
+      primaria: primaria.length ? primaria : [{ item: "", detalle: "" }],
+
+      secundaria: secundaria.length ? secundaria : [{ item: "", detalle: "" }],
+
+      pago: val("pago", AC_TEXTOS.pago),
+
+      devoluciones: val("devoluciones", AC_TEXTOS.devoluciones),
+
+      medicion: val("medicion", AC_TEXTOS.medicion),
+
+      planAcciones: val("planAcciones", AC_TEXTOS.planAcciones),
+
+      merchandising: val("merchandising", AC_TEXTOS.merchandising)
+
+    };
+
+  }
+
+
+
+  function openAcuerdoEditor(id) {
+
+    var c =
+      state.clients.find(
+        function (x) {
+
+          return x.id === id;
+
+        }
+      );
+
+
+    if (!c || !state.canEdit) {
+
+      return;
+
+    }
+
+
+    resetPendingPhotos();
+
+
+    state.editing = false;
+
+    state.creating = false;
+
+    state.draft = null;
+
+    state.selectedId = id;
+
+
+    state.acuerdoEditor = {
+      clientId: id,
+      datos: armarDatosAcuerdo(c)
+    };
+
+
+    render();
+
+
+    els.mainInner.parentNode.scrollTop = 0;
+
+  }
+
+
+
+  /* ---------- EDITOR ---------- */
+
+  function acCampo(label, name, value, opts) {
+
+    opts = opts || {};
+
+
+    return (
+      '<div class="ac-field">' +
+
+        '<label>' + escapeHtml(label) + '</label>' +
+
+        (
+          opts.area
+            ? '<textarea data-ac="' + name + '" rows="' + (opts.rows || 3) + '"' +
+                (opts.placeholder ? ' placeholder="' + escapeHtml(opts.placeholder) + '"' : "") +
+              '>' + escapeHtml(value) + '</textarea>'
+            : '<input type="' + (opts.type || "text") + '" data-ac="' + name + '"' +
+                ' value="' + escapeHtml(value) + '"' +
+                (opts.placeholder ? ' placeholder="' + escapeHtml(opts.placeholder) + '"' : "") +
+              '>'
+        ) +
+
+        (opts.hint ? '<div class="ac-hint">' + opts.hint + '</div>' : "") +
+
+      '</div>'
+    );
+
+  }
+
+
+
+  function acFilas(kind, filas, headItem, headDetalle, phItem, phDetalle) {
+
+    return (
+      '<div class="ac-rows">' +
+
+        '<div class="ac-rows-head">' +
+          '<span>' + escapeHtml(headItem) + '</span>' +
+          '<span>' + escapeHtml(headDetalle) + '</span>' +
+          '<span></span>' +
+        '</div>' +
+
+        filas.map(
+          function (f, i) {
+
+            return (
+              '<div class="ac-row">' +
+
+                '<input type="text" data-ac-kind="' + kind + '" data-ac-idx="' + i + '" data-ac-col="item"' +
+                  ' value="' + escapeHtml(f.item) + '" placeholder="' + escapeHtml(phItem) + '">' +
+
+                '<input type="text" data-ac-kind="' + kind + '" data-ac-idx="' + i + '" data-ac-col="detalle"' +
+                  ' value="' + escapeHtml(f.detalle) + '" placeholder="' + escapeHtml(phDetalle) + '">' +
+
+                '<button type="button" class="ac-del" data-ac-del="' + kind + ':' + i + '"' +
+                  ' title="Quitar fila" aria-label="Quitar fila">&times;</button>' +
+
+              '</div>'
+            );
+
+          }
+        ).join("") +
+
+        '<button type="button" class="ac-add" data-ac-add="' + kind + '">+ Agregar fila</button>' +
+
+      '</div>'
+    );
+
+  }
+
+
+
+  function acSeccion(n, titulo, contenido) {
+
+    return (
+      '<div class="ac-sec">' +
+
+        '<h2 class="ac-sec-title">' +
+          (n ? '<span class="ac-num">' + n + '</span>' : "") +
+          escapeHtml(titulo) +
+        '</h2>' +
+
+        contenido +
+
+      '</div>'
+    );
+
+  }
+
+
+
+  function renderAcuerdoEditor(force) {
+
+    var ed =
+      state.acuerdoEditor;
+
+
+    var c =
+      state.clients.find(
+        function (x) {
+
+          return x.id === ed.clientId;
+
+        }
+      );
+
+
+    if (!c) {
+
+      state.acuerdoEditor = null;
+
+      render();
+
+      return;
+
+    }
+
+
+    /* Si ya está en pantalla no se redibuja (así no se pierde lo
+       que se está escribiendo cuando llegan cambios de Firebase) */
+    var actual =
+      els.mainInner.querySelector(".ac-editor");
+
+
+    if (
+      !force &&
+      actual &&
+      actual.getAttribute("data-client") === ed.clientId
+    ) {
+
+      return;
+
+    }
+
+
+    var d =
+      ed.datos;
+
+
+    els.mainInner.innerHTML =
+
+      '<div class="ac-editor" data-client="' + escapeHtml(ed.clientId) + '">' +
+
+        '<button type="button" class="back-link" data-ac-action="cancelar">' +
+          '&larr; Volver a ' + escapeHtml(c.nombre || "el cliente") +
+        '</button>' +
+
+        '<div class="detail-head">' +
+
+          '<div>' +
+
+            '<h1 class="detail-title">Crear acuerdo para firmar</h1>' +
+
+            '<p class="dash-sub">' +
+              'Se completó con los datos y espacios del cliente. Revisá y ajustá lo que haga falta: ' +
+              'el PDF sale con el formato del acuerdo comercial y el logo de Distrishop.' +
+            '</p>' +
+
+          '</div>' +
+
+        '</div>' +
+
+
+        acSeccion(
+          "",
+          "Datos del acuerdo",
+          '<div class="ac-grid">' +
+            acCampo("Cliente (como figura en el acuerdo)", "clienteNombre", d.clienteNombre) +
+            acCampo("Distribuidor", "razonSocial", d.razonSocial) +
+          '</div>' +
+          '<div class="ac-grid" style="margin-top:10px;">' +
+            acCampo("Email del cliente", "email", d.email, {
+              type: "email",
+              placeholder: "cliente@ejemplo.com",
+              hint: "A quién se le envía el acuerdo. Queda guardado en el cliente."
+            }) +
+            acCampo("WhatsApp del cliente (opcional)", "telefono", d.telefono, {
+              type: "tel",
+              placeholder: "099 123 456"
+            }) +
+          '</div>'
+        ) +
+
+
+        acSeccion(
+          "1",
+          "Vigencia",
+          '<div class="ac-grid">' +
+            acCampo("Desde", "desde", d.desde, { type: "date" }) +
+            acCampo("Hasta", "hasta", d.hasta, { type: "date" }) +
+          '</div>'
+        ) +
+
+
+        acSeccion(
+          "2",
+          "Condiciones de comercialización",
+          acCampo("Monto en nota de crédito o mercadería (IVA inc.)", "monto", d.monto, {
+            placeholder: "Ej: 35000",
+            hint: "Arma el punto: \"Durante el período de vigencia del presente acuerdo se hará entrega en nota de crédito o mercadería de $ 35.000 IVA inc.\""
+          }) +
+          acCampo("Se pagará según detalle (una línea por pago)", "detallePago", d.detallePago, {
+            area: true,
+            rows: 2,
+            placeholder: "Ej: $ 35.000 IVA inc. en Agosto 2026"
+          }) +
+          acCampo("Otras condiciones (una por línea)", "condiciones", d.condiciones, {
+            area: true,
+            rows: 2,
+            placeholder: "Ej: Descuento en factura del 10% en Beldent."
+          })
+        ) +
+
+
+        acSeccion(
+          "3",
+          "Exhibición Primaria",
+          acFilas(
+            "primaria",
+            d.primaria,
+            "Exhibición Primaria = Góndola / Mostrador",
+            "Exhibición en bloque",
+            "Ej: Mostrador",
+            "Ej: 30% (los 2 tramos a continuación de Arcor)"
+          )
+        ) +
+
+
+        acSeccion(
+          "4",
+          "Exhibición Secundaria",
+          acFilas(
+            "secundaria",
+            d.secundaria,
+            "Exhibición",
+            "Detalle (opcional)",
+            "Ej: 1 Cabecera de góndola",
+            ""
+          )
+        ) +
+
+
+        acSeccion("5", "Pago", acCampo("Texto", "pago", d.pago, { area: true, rows: 3 })) +
+
+        acSeccion("6", "Devoluciones", acCampo("Texto (un párrafo por línea)", "devoluciones", d.devoluciones, { area: true, rows: 3 })) +
+
+        acSeccion("7", "Medición y ejecución de exhibiciones acordadas", acCampo("Texto (un párrafo por línea)", "medicion", d.medicion, { area: true, rows: 3 })) +
+
+        acSeccion("8", "Plan de Acciones", acCampo("Acciones (una por línea)", "planAcciones", d.planAcciones, { area: true, rows: 3 })) +
+
+        acSeccion("9", "Merchandising", acCampo("Texto", "merchandising", d.merchandising, { area: true, rows: 2 })) +
+
+
+        '<div class="ac-actions">' +
+
+          '<button type="button" class="btn btn-ghost" data-ac-action="cancelar">Cancelar</button>' +
+
+          '<button type="button" class="btn btn-ghost" data-ac-action="preview">Vista previa</button>' +
+
+          '<button type="button" class="btn btn-ghost" data-ac-action="download">Descargar PDF</button>' +
+
+          '<button type="button" class="btn btn-primary" data-ac-action="send" id="acSendBtn">' +
+            'Guardar y enviar al cliente' +
+          '</button>' +
+
+        '</div>' +
+
+      '</div>';
+
+  }
+
+
+
+  function acOnInput(t) {
+
+    var ed =
+      state.acuerdoEditor;
+
+
+    if (!ed) {
+
+      return false;
+
+    }
+
+
+    var campo =
+      t.getAttribute("data-ac");
+
+
+    if (campo) {
+
+      ed.datos[campo] = t.value;
+
+      return true;
+
+    }
+
+
+    var kind =
+      t.getAttribute("data-ac-kind");
+
+
+    if (kind) {
+
+      var fila =
+        ed.datos[kind][Number(t.getAttribute("data-ac-idx"))];
+
+
+      if (fila) {
+
+        fila[t.getAttribute("data-ac-col")] = t.value;
+
+      }
+
+
+      return true;
+
+    }
+
+
+    return false;
+
+  }
+
+
+
+  function validarAcuerdo(d) {
+
+    if (!d.clienteNombre.trim()) {
+
+      return "Completá el nombre del cliente.";
+
+    }
+
+
+    if (!d.desde || !d.hasta) {
+
+      return "Completá la vigencia (desde y hasta).";
+
+    }
+
+
+    if (d.hasta < d.desde) {
+
+      return "La fecha \"hasta\" tiene que ser posterior a \"desde\".";
+
+    }
+
+
+    if (
+      d.email.trim() &&
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.email.trim())
+    ) {
+
+      return "El email del cliente no parece válido.";
+
+    }
+
+
+    return "";
+
+  }
+
+
+
+  /* ---------- PDF (mismo formato que el acuerdo en papel) ---------- */
+
+  /* compacto = letra y espacios más chicos, para que entre en
+     una sola hoja como el acuerdo en papel */
+
+  function buildAcuerdoPdf(d, logo, compacto) {
+
+    var doc =
+      new window.jspdf.jsPDF({
+        unit: "mm",
+        format: "a4",
+        compress: true
+      });
+
+
+    var S =
+      compacto
+        ? { body: 8.2, sec: 9.5, lh: 3.7, antes: 0.5, despues: 4.8, entre: 1.5, firma: 16, cab: 20, banda: 11, col: 78, fin: 14 }
+        : { body: 9.5, sec: 10.5, lh: 4.6, antes: 2, despues: 6.5, entre: 3, firma: 26, cab: 24, banda: 14, col: 92, fin: 20 };
+
+
+    var W = doc.internal.pageSize.getWidth();
+
+    var H = doc.internal.pageSize.getHeight();
+
+    var M = 18;
+
+    var CW = W - M * 2;
+
+    var INK = [25, 25, 25];
+
+    var LH = S.lh;
+
+    var y = 12;
+
+
+    doc.setTextColor.apply(doc, INK);
+
+
+    function ensure(h) {
+
+      if (y + h > H - S.fin) {
+
+        doc.addPage();
+
+        y = 20;
+
+        doc.setTextColor.apply(doc, INK);
+
+      }
+
+    }
+
+
+    function normal(size) {
+
+      doc.setFont("helvetica", "normal");
+
+      doc.setFontSize(size || S.body);
+
+    }
+
+
+    function seccion(n, titulo) {
+
+      ensure(16);
+
+
+      y += S.antes;
+
+
+      doc.setFont("helvetica", "bold");
+
+      doc.setFontSize(S.sec);
+
+      doc.text(n + "   " + titulo, M, y);
+
+
+      y += S.despues;
+
+
+      normal();
+
+    }
+
+
+    function parrafo(texto, x) {
+
+      x = x || M + 6;
+
+
+      doc.splitTextToSize(texto, W - M - x).forEach(
+        function (l) {
+
+          ensure(LH);
+
+          doc.text(l, x, y);
+
+          y += LH;
+
+        }
+      );
+
+    }
+
+
+    function vineta(texto, x) {
+
+      x = x || M + 1;
+
+
+      var ls =
+        doc.splitTextToSize(texto, W - M - x - 4);
+
+
+      ensure(ls.length * LH);
+
+
+      doc.text("•", x, y);
+
+
+      ls.forEach(
+        function (l) {
+
+          doc.text(l, x + 4, y);
+
+          y += LH;
+
+        }
+      );
+
+    }
+
+
+    function subrayado(texto, x) {
+
+      doc.text(texto, x, y);
+
+
+      doc.setLineWidth(0.25);
+
+      doc.setDrawColor.apply(doc, INK);
+
+      doc.line(x, y + 0.9, x + doc.getTextWidth(texto), y + 0.9);
+
+    }
+
+
+    /* ---- Encabezado ---- */
+
+    if (logo) {
+
+      try {
+
+        doc.addImage(logo, "PNG", M - 3, y - 2, 44, 44 * 276 / 639, "logo", "FAST");
+
+      } catch (e) {
+
+        console.warn("No se pudo agregar el logo", e);
+
+      }
+
+    }
+
+
+    doc.setFont("helvetica", "bolditalic");
+
+    doc.setFontSize(15);
+
+    doc.text("ACUERDO  COMERCIAL", W / 2, y + 10, { align: "center" });
+
+
+    y += S.cab;
+
+
+    /* franja gris con el nombre, como en el original */
+
+    doc.setFillColor(236, 236, 236);
+
+    doc.rect(M, y, CW, 7.5, "F");
+
+    doc.setFillColor(212, 212, 212);
+
+    doc.rect(M + CW * 0.18, y, CW * 0.64, 7.5, "F");
+
+
+    var corto =
+      d.razonSocial.replace(/^Distribuidora\s+/i, "");
+
+
+    doc.setFont("helvetica", "bold");
+
+    doc.setFontSize(11);
+
+    doc.text(
+      doc.splitTextToSize(d.clienteNombre.trim() + "  -  " + corto, CW - 10)[0],
+      W / 2,
+      y + 5.2,
+      { align: "center" }
+    );
+
+
+    y += S.banda;
+
+
+    /* ---- 1 Vigencia ---- */
+
+    seccion("1", "Vigencia");
+
+
+    doc.text(fechaAcuerdo(d.desde), M + 8, y);
+
+    doc.text("al", M + 40, y);
+
+    doc.text(fechaAcuerdo(d.hasta), M + 60, y);
+
+
+    y += LH + 2.4;
+
+
+    /* ---- 2 Condiciones de comercialización ---- */
+
+    seccion("2", "Condiciones de comercialización");
+
+
+    var hayAlgo = false;
+
+
+    if (String(d.monto).trim()) {
+
+      vineta(
+        "Durante el período de vigencia del presente acuerdo se hará entrega en nota de crédito o mercadería de " +
+        formatoMonto(d.monto) + " IVA inc."
+      );
+
+      hayAlgo = true;
+
+    }
+
+
+    if (lineas(d.detallePago).length) {
+
+      vineta("Se pagará según detalle:");
+
+
+      lineas(d.detallePago).forEach(
+        function (l) {
+
+          ensure(LH);
+
+          doc.text(l, M + 50, y);
+
+          y += LH;
+
+        }
+      );
+
+
+      y += 1.5;
+
+      hayAlgo = true;
+
+    }
+
+
+    lineas(d.condiciones).forEach(
+      function (l) {
+
+        vineta(l);
+
+        hayAlgo = true;
+
+      }
+    );
+
+
+    if (!hayAlgo) {
+
+      parrafo("-");
+
+    }
+
+
+    y += S.entre;
+
+
+    /* ---- 3 Exhibición Primaria (dos columnas) ---- */
+
+    seccion("3", "Exhibición Primaria");
+
+
+    var colDer =
+      M + S.col;
+
+
+    ensure(12);
+
+    subrayado("Exhibición Primaria = Góndola / Mostrador", M + 4);
+
+    subrayado("Exhibición en bloque", colDer);
+
+
+    y += LH + 2.4;
+
+
+    var primaria =
+      d.primaria.filter(
+        function (f) {
+
+          return f.item.trim() || f.detalle.trim();
+
+        }
+      );
+
+
+    if (!primaria.length) {
+
+      parrafo("-");
+
+    }
+
+
+    primaria.forEach(
+      function (f) {
+
+        var izq =
+          doc.splitTextToSize(f.item.trim(), colDer - M - 10);
+
+
+        var der =
+          doc.splitTextToSize(f.detalle.trim(), W - M - colDer);
+
+
+        var n =
+          Math.max(izq.length, der.length, 1);
+
+
+        ensure(n * LH);
+
+
+        doc.text("•", M + 1, y);
+
+        doc.text(izq, M + 5, y);
+
+        doc.text(der, colDer, y);
+
+
+        y += n * LH + 0.6;
+
+      }
+    );
+
+
+    y += S.entre;
+
+
+    /* ---- 4 Exhibición Secundaria ---- */
+
+    seccion("4", "Exhibición Secundaria");
+
+
+    var secundaria =
+      d.secundaria.filter(
+        function (f) {
+
+          return f.item.trim() || f.detalle.trim();
+
+        }
+      );
+
+
+    if (!secundaria.length) {
+
+      parrafo("-");
+
+    }
+
+
+    secundaria.forEach(
+      function (f) {
+
+        vineta(
+          f.item.trim() +
+          (f.detalle.trim() ? ": " + f.detalle.trim() : "")
+        );
+
+      }
+    );
+
+
+    y += S.entre;
+
+
+    /* ---- 5 a 9 ---- */
+
+    var textos = [
+      ["5", "Pago", d.pago, false],
+      ["6", "Devoluciones", d.devoluciones, false],
+      ["7", "Medición y ejecución de exhibiciones acordadas", d.medicion, false],
+      ["8", "Plan de Acciones", d.planAcciones, true],
+      ["9", "Merchandising", d.merchandising, false]
+    ];
+
+
+    textos.forEach(
+      function (t) {
+
+        seccion(t[0], t[1]);
+
+
+        var ls =
+          lineas(t[2]);
+
+
+        if (!ls.length) {
+
+          parrafo("-");
+
+        }
+
+
+        ls.forEach(
+          function (l) {
+
+            if (t[3]) {
+
+              vineta(l);
+
+            } else {
+
+              parrafo(l);
+
+            }
+
+          }
+        );
+
+
+        y += S.entre;
+
+      }
+    );
+
+
+    /* ---- Firmas ---- */
+
+    ensure(S.firma + 12);
+
+
+    /* firmas cerca del final de la hoja, como en el original */
+    y = Math.max(
+      y + S.firma,
+      H - 42
+    );
+
+
+    doc.setDrawColor(90, 90, 90);
+
+    doc.setLineWidth(0.3);
+
+
+    var anchoFirma = 66;
+
+
+    doc.line(M, y, M + anchoFirma, y);
+
+    doc.line(W - M - anchoFirma, y, W - M, y);
+
+
+    y += 5;
+
+
+    normal(9);
+
+    doc.text(
+      doc.splitTextToSize("por " + d.clienteNombre.trim(), anchoFirma)[0],
+      M,
+      y
+    );
+
+
+    doc.text("por ", W - M - anchoFirma, y);
+
+
+    var porW =
+      doc.getTextWidth("por ");
+
+
+    doc.setFont("helvetica", "bold");
+
+    doc.text(
+      doc.splitTextToSize(d.razonSocial.trim(), anchoFirma - porW)[0],
+      W - M - anchoFirma + porW,
+      y
+    );
+
+
+    /* ---- Pie de página ---- */
+
+    var total =
+      doc.getNumberOfPages();
+
+
+    for (var i = 1; i <= total; i++) {
+
+      doc.setPage(i);
+
+      normal(7.5);
+
+      doc.setTextColor(140, 140, 140);
+
+      doc.text("Distrishop · Distribución - Logística", M, H - 9);
+
+      doc.text("Página " + i + " de " + total, W - M, H - 9, { align: "right" });
+
+    }
+
+
+    return doc;
+
+  }
+
+
+
+  function nombreArchivoAcuerdo(d) {
+
+    return (
+      "acuerdo-comercial-" +
+      slugify(d.clienteNombre) +
+      "-" + (d.desde || isoDia(new Date())) +
+      ".pdf"
+    );
+
+  }
+
+
+
+  function generarAcuerdoPdf() {
+
+    if (
+      !window.jspdf ||
+      !window.jspdf.jsPDF
+    ) {
+
+      return Promise.reject(
+        new Error("No se pudo cargar el generador de PDF.")
+      );
+
+    }
+
+
+    var d =
+      state.acuerdoEditor.datos;
+
+
+    return loadLogoDataUrl().then(
+      function (logo) {
+
+        var doc =
+          buildAcuerdoPdf(d, logo, false);
+
+
+        /* si no entra en una hoja, prueba la versión compacta */
+        if (doc.getNumberOfPages() > 1) {
+
+          var compacto =
+            buildAcuerdoPdf(d, logo, true);
+
+
+          if (compacto.getNumberOfPages() < doc.getNumberOfPages()) {
+
+            return compacto;
+
+          }
+
+        }
+
+
+        return doc;
+
+      }
+    );
+
+  }
+
+
+
+  /* Guarda en el cliente lo que se armó (para reusarlo la próxima vez) */
+
+  function datosParaGuardar(d) {
+
+    return {
+      razonSocial: d.razonSocial,
+      monto: d.monto,
+      detallePago: d.detallePago,
+      condiciones: d.condiciones,
+      pago: d.pago,
+      devoluciones: d.devoluciones,
+      medicion: d.medicion,
+      planAcciones: d.planAcciones,
+      merchandising: d.merchandising,
+      email: d.email.trim(),
+      telefono: d.telefono.trim()
+    };
+
+  }
+
+
+
+  function acAccion(accion, btn) {
+
+    var ed =
+      state.acuerdoEditor;
+
+
+    if (!ed) {
+
+      return;
+
+    }
+
+
+    if (accion === "cancelar") {
+
+      state.acuerdoEditor = null;
+
+      render();
+
+      return;
+
+    }
+
+
+    var error =
+      validarAcuerdo(ed.datos);
+
+
+    if (error) {
+
+      showToast(error);
+
+      return;
+
+    }
+
+
+    var textoBtn =
+      btn ? btn.textContent : "";
+
+
+    if (btn) {
+
+      btn.disabled = true;
+
+      btn.textContent = "Generando…";
+
+    }
+
+
+    var restaurar = function () {
+
+      if (btn) {
+
+        btn.disabled = false;
+
+        btn.textContent = textoBtn;
+
+      }
+
+    };
+
+
+    generarAcuerdoPdf()
+
+      .then(
+        function (doc) {
+
+          if (accion === "preview") {
+
+            mostrarVistaPrevia(doc, ed.datos);
+
+            return;
+
+          }
+
+
+          if (accion === "download") {
+
+            doc.save(nombreArchivoAcuerdo(ed.datos));
+
+
+            /* guarda email y textos para la próxima (sin frenar la descarga) */
+            state.db
+              .doc("clientes/" + ed.clientId)
+              .update({
+                email: ed.datos.email.trim(),
+                telefono: ed.datos.telefono.trim(),
+                acuerdoComercial: datosParaGuardar(ed.datos)
+              })
+              .catch(
+                function (err) {
+
+                  console.warn("No se pudieron guardar los datos del acuerdo", err);
+
+                }
+              );
+
+
+            showToast("PDF del acuerdo descargado.");
+
+            return;
+
+          }
+
+
+          if (accion === "send") {
+
+            return guardarYEnviarAcuerdo(doc, ed);
+
+          }
+
+        }
+      )
+
+      .catch(
+        function (err) {
+
+          console.error(err);
+
+
+          showToast(
+            err && String(err.code || "").indexOf("storage/") === 0
+              ? "No se pudo subir el PDF a Firebase Storage."
+              : "No se pudo generar el acuerdo."
+          );
+
+        }
+      )
+
+      .then(restaurar);
+
+  }
+
+
+
+  function guardarYEnviarAcuerdo(doc, ed) {
+
+    var d =
+      ed.datos;
+
+
+    var c =
+      state.clients.find(
+        function (x) {
+
+          return x.id === ed.clientId;
+
+        }
+      );
+
+
+    if (!state.storage || !c) {
+
+      return Promise.reject({ code: "storage/unavailable" });
+
+    }
+
+
+    var blob =
+      doc.output("blob");
+
+
+    var path =
+      "clientes/" + ed.clientId + "/acuerdo-generado/" +
+      Date.now() + "-" + nombreArchivoAcuerdo(d);
+
+
+    var ref =
+      state.storage.ref().child(path);
+
+
+    return ref
+      .put(blob, { contentType: "application/pdf" })
+
+      .then(
+        function (snap) {
+
+          return snap.ref.getDownloadURL();
+
+        }
+      )
+
+      .then(
+        function (url) {
+
+          var email =
+            d.email.trim();
+
+
+          var enviado = {
+            url: url,
+            path: path,
+            fecha: Date.now(),
+            email: email,
+            desde: d.desde,
+            hasta: d.hasta
+          };
+
+
+          var entrada = {
+            fecha: Date.now(),
+            usuario: usuarioActual(),
+            cambios: [
+              "Acuerdo comercial generado para firmar (vigencia " +
+              fechaHist(d.desde) + " → " + fechaHist(d.hasta) + ")" +
+              (email ? " · para " + email : "")
+            ]
+          };
+
+
+          return state.db
+            .doc("clientes/" + ed.clientId)
+            .update({
+              email: email,
+              telefono: d.telefono.trim(),
+              acuerdoComercial: datosParaGuardar(d),
+              acuerdoEnviado: enviado,
+              historial: [entrada]
+                .concat(c.historial || [])
+                .slice(0, HISTORIAL_MAX)
+            })
+
+            .then(
+              function () {
+
+                mostrarEnvio(doc, d, url);
+
+              }
+            );
+
+        }
+      );
+
+  }
+
+
+
+  /* ---------- VISTA PREVIA ---------- */
+
+  function mostrarVistaPrevia(doc, d) {
+
+    if (window.innerWidth <= 780) {
+
+      /* los celulares no muestran PDF dentro de la página */
+      doc.save(nombreArchivoAcuerdo(d));
+
+      showToast("En el celular el PDF se descarga para verlo.");
+
+      return;
+
+    }
+
+
+    var url =
+      URL.createObjectURL(doc.output("blob"));
+
+
+    var bd =
+      document.createElement("div");
+
+
+    bd.className =
+      "modal-backdrop pdf-modal";
+
+
+    bd.innerHTML =
+      '<div class="modal-card" role="dialog" aria-modal="true" aria-label="Vista previa del acuerdo">' +
+        '<div class="modal-actions" style="justify-content:space-between;align-items:center;">' +
+          '<strong>Vista previa del acuerdo</strong>' +
+          '<span style="display:flex;gap:8px;">' +
+            '<button type="button" class="btn btn-ghost" data-pv="download">Descargar</button>' +
+            '<button type="button" class="btn btn-primary" data-pv="close">Cerrar</button>' +
+          '</span>' +
+        '</div>' +
+        '<iframe title="Vista previa del acuerdo" src="' + url + '#view=FitH"></iframe>' +
+      '</div>';
+
+
+    document.body.appendChild(bd);
+
+
+    function cerrar() {
+
+      document.removeEventListener("keydown", onKey);
+
+      bd.remove();
+
+      URL.revokeObjectURL(url);
+
+    }
+
+
+    function onKey(e) {
+
+      if (e.key === "Escape") {
+
+        cerrar();
+
+      }
+
+    }
+
+
+    document.addEventListener("keydown", onKey);
+
+
+    bd.addEventListener(
+      "click",
+      function (e) {
+
+        var b =
+          e.target.closest("[data-pv]");
+
+
+        if (e.target === bd || (b && b.getAttribute("data-pv") === "close")) {
+
+          cerrar();
+
+          return;
+
+        }
+
+
+        if (b && b.getAttribute("data-pv") === "download") {
+
+          doc.save(nombreArchivoAcuerdo(d));
+
+        }
+
+      }
+    );
+
+  }
+
+
+
+  /* ---------- ENVIAR (email / WhatsApp / compartir) ---------- */
+
+  function whatsappNumero(tel) {
+
+    var dg =
+      String(tel || "").replace(/\D/g, "");
+
+
+    if (!dg) {
+
+      return "";
+
+    }
+
+
+    /* celulares de Uruguay: 099 123 456 → 59899123456 */
+    if (dg.length === 9 && dg.charAt(0) === "0") {
+
+      return "598" + dg.slice(1);
+
+    }
+
+
+    if (dg.length === 8 && dg.charAt(0) === "9") {
+
+      return "598" + dg;
+
+    }
+
+
+    return dg;
+
+  }
+
+
+
+  function mostrarEnvio(doc, d, url) {
+
+    var cliente =
+      d.clienteNombre.trim();
+
+
+    var vigencia =
+      fechaAcuerdo(d.desde) + " al " + fechaAcuerdo(d.hasta);
+
+
+    var asunto =
+      "Acuerdo comercial " + cliente + " - " +
+      d.razonSocial.replace(/^Distribuidora\s+/i, "") +
+      " (vigencia " + vigencia + ")";
+
+
+    var cuerpo =
+      "Hola,\n\n" +
+      "Te enviamos el Acuerdo Comercial entre " + cliente + " y " + d.razonSocial +
+      " (Distrishop), con vigencia del " + vigencia + ".\n\n" +
+      "Podés descargarlo desde este enlace:\n" + url + "\n\n" +
+      "Por favor imprimilo, firmalo y envianos una foto o escaneo del acuerdo firmado respondiendo este mensaje.\n\n" +
+      "¡Muchas gracias!\n" +
+      (usuarioActual() !== "Administrador" ? usuarioActual() + "\n" : "") +
+      "Distrishop · Distribución - Logística";
+
+
+    var email =
+      d.email.trim();
+
+
+    var mailto =
+      "mailto:" + encodeURIComponent(email) +
+      "?subject=" + encodeURIComponent(asunto) +
+      "&body=" + encodeURIComponent(cuerpo);
+
+
+    var wa =
+      "https://wa.me/" + whatsappNumero(d.telefono) +
+      "?text=" + encodeURIComponent(cuerpo);
+
+
+    var archivo = null;
+
+
+    try {
+
+      archivo =
+        new File(
+          [doc.output("blob")],
+          nombreArchivoAcuerdo(d),
+          { type: "application/pdf" }
+        );
+
+    } catch (e) {
+
+      archivo = null;
+
+    }
+
+
+    var puedeCompartir =
+      !!(
+        archivo &&
+        navigator.canShare &&
+        navigator.canShare({ files: [archivo] })
+      );
+
+
+    var bd =
+      document.createElement("div");
+
+
+    bd.className =
+      "modal-backdrop";
+
+
+    bd.innerHTML =
+
+      '<div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="sendTitle">' +
+
+        '<h2 class="modal-title" id="sendTitle">Acuerdo listo para enviar</h2>' +
+
+        '<p class="modal-sub">' +
+          'El PDF quedó guardado y registrado en el historial de ' + escapeHtml(cliente) + '. ' +
+          'Elegí cómo mandárselo:' +
+        '</p>' +
+
+        '<div class="send-options">' +
+
+          '<a class="btn btn-primary send-opt" data-send="email" href="' + escapeHtml(mailto) + '">' +
+            '<span>Enviar por email' +
+              '<small>' +
+                (email
+                  ? escapeHtml(email) + " · se abre tu correo con todo listo"
+                  : "Sin email cargado: vas a tener que escribir el destinatario") +
+              '</small>' +
+            '</span>' +
+          '</a>' +
+
+          '<a class="btn btn-ghost send-opt" data-send="wa" target="_blank" rel="noopener" href="' + escapeHtml(wa) + '">' +
+            '<span>Enviar por WhatsApp' +
+              '<small>' +
+                (d.telefono.trim()
+                  ? escapeHtml(d.telefono.trim())
+                  : "Elegís el contacto en WhatsApp") +
+              '</small>' +
+            '</span>' +
+          '</a>' +
+
+          (
+            puedeCompartir
+              ? '<button type="button" class="btn btn-ghost send-opt" data-send="share">' +
+                  '<span>Compartir el PDF<small>Adjunta el archivo (email, WhatsApp, etc.)</small></span>' +
+                '</button>'
+              : ""
+          ) +
+
+          '<button type="button" class="btn btn-ghost send-opt" data-send="copy">' +
+            '<span>Copiar enlace del PDF<small>Para pegarlo donde quieras</small></span>' +
+          '</button>' +
+
+          '<button type="button" class="btn btn-ghost send-opt" data-send="download">' +
+            '<span>Descargar PDF<small>Para adjuntarlo a mano</small></span>' +
+          '</button>' +
+
+        '</div>' +
+
+        '<div class="modal-actions">' +
+          '<button type="button" class="btn btn-ghost" data-send="close">Listo</button>' +
+        '</div>' +
+
+      '</div>';
+
+
+    document.body.appendChild(bd);
+
+
+    function cerrar() {
+
+      document.removeEventListener("keydown", onKey);
+
+      bd.remove();
+
+
+      /* vuelve a la ficha del cliente */
+      state.acuerdoEditor = null;
+
+      render();
+
+    }
+
+
+    function onKey(e) {
+
+      if (e.key === "Escape") {
+
+        cerrar();
+
+      }
+
+    }
+
+
+    document.addEventListener("keydown", onKey);
+
+
+    bd.addEventListener(
+      "click",
+      function (e) {
+
+        if (e.target === bd) {
+
+          cerrar();
+
+          return;
+
+        }
+
+
+        var b =
+          e.target.closest("[data-send]");
+
+
+        if (!b) {
+
+          return;
+
+        }
+
+
+        var accion =
+          b.getAttribute("data-send");
+
+
+        if (accion === "close") {
+
+          cerrar();
+
+        } else if (accion === "share") {
+
+          navigator
+            .share({
+              files: [archivo],
+              title: asunto,
+              text: cuerpo.replace(url, "").replace(/\n{3,}/g, "\n\n")
+            })
+            .catch(
+              function () {
+
+                /* el usuario canceló */
+
+              }
+            );
+
+        } else if (accion === "copy") {
+
+          (
+            navigator.clipboard
+              ? navigator.clipboard.writeText(url)
+              : Promise.reject()
+          )
+            .then(
+              function () {
+
+                showToast("Enlace copiado.");
+
+              }
+            )
+            .catch(
+              function () {
+
+                window.prompt("Copiá el enlace:", url);
+
+              }
+            );
+
+        } else if (accion === "download") {
+
+          doc.save(nombreArchivoAcuerdo(d));
+
+        }
+
+        /* email y WhatsApp son enlaces: se abren solos */
+
+      }
+    );
+
+  }
+
+
+
+  /* ========================================================
      EXPORTAR A EXCEL
      La librería (SheetJS) se carga recién cuando se usa,
      para no hacer más pesada la página.
@@ -13593,6 +16009,28 @@ body:not(.logged-out) .login-screen {
                 grupoCompra:
                   data.grupoCompra ||
                   "",
+
+                email:
+                  data.email ||
+                  "",
+
+                telefono:
+                  data.telefono ||
+                  "",
+
+                /* último acuerdo comercial armado (para reusar) */
+                acuerdoComercial:
+                  data.acuerdoComercial &&
+                  typeof data.acuerdoComercial === "object"
+                    ? data.acuerdoComercial
+                    : null,
+
+                /* último PDF de acuerdo enviado al cliente */
+                acuerdoEnviado:
+                  data.acuerdoEnviado &&
+                  data.acuerdoEnviado.url
+                    ? data.acuerdoEnviado
+                    : null,
 
                 historial:
                   Array.isArray(data.historial)
