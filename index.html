@@ -3494,6 +3494,24 @@ button.dash-tile:focus-visible {
 
 
 
+.send-error {
+
+  font-size: 12.5px;
+
+  font-weight: 600;
+
+  color: var(--vencido);
+
+  background: var(--vencido-bg);
+
+  border-radius: 8px;
+
+  padding: 8px 10px;
+
+}
+
+
+
 .send-opt[aria-disabled="true"] {
 
   opacity: 0.5;
@@ -14711,8 +14729,17 @@ body:not(.logged-out) .login-screen {
 
                   if (/own email|verify a domain|testing emails/i.test(msg)) {
 
+                    var propio =
+                      msg.match(/\(([^()\s]+@[^()\s]+)\)/);
+
+
                     msg =
-                      "Resend solo deja enviar a tu propio email hasta que verifiques el dominio de Distrishop.";
+                      "Resend solo deja enviar a tu propio email hasta que verifiques el dominio de Distrishop" +
+                      (
+                        propio
+                          ? ". Mientras tanto, para probar, poné " + propio[1] + "."
+                          : "."
+                      );
 
                   }
 
@@ -14797,14 +14824,37 @@ body:not(.logged-out) .login-screen {
           label.innerHTML = htmlAntes;
 
 
-          showToast(
+          var mensaje =
             "No se pudo enviar: " +
             (
               err && err.message && err.message !== "Failed to fetch"
                 ? err.message
                 : "revisá tu conexión."
-            )
-          );
+            );
+
+
+          /* el error queda visible dentro de la ventana (no solo 2 segundos) */
+          var aviso =
+            btn.parentNode.querySelector(".send-error");
+
+
+          if (!aviso) {
+
+            aviso = document.createElement("div");
+
+            aviso.className = "send-error";
+
+            aviso.setAttribute("role", "alert");
+
+            btn.insertAdjacentElement("afterend", aviso);
+
+          }
+
+
+          aviso.textContent = mensaje;
+
+
+          showToast(mensaje);
 
         }
       );
