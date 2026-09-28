@@ -30,8 +30,11 @@ compartido para todo el equipo de ventas.
    por defecto `admin`). Al abrir la web aparece una pantalla de ingreso:
    - **Administrador** (usuario + contraseña): puede cargar, editar y
      eliminar clientes, y es el único que ve y sube el **acuerdo firmado**.
-   - **Solo lectura** (un botón, sin clave): ve los clientes y descarga
-     sus PDF, como siempre.
+   - **Vendedores** (solo lectura): entran con el usuario y contraseña que
+     les crea el administrador desde el botón **Usuarios** (arriba a la
+     derecha). Ven los clientes y descargan sus PDF, pero no editan ni ven
+     los acuerdos firmados. Los usuarios se guardan en el documento
+     `clientes/_usuarios` (la contraseña nunca se guarda, solo un hash).
 
    Es un filtro simple, no seguridad fuerte: la clave está en el código y
    los datos se leen con las reglas públicas de Firestore. Si más adelante

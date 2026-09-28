@@ -1511,6 +1511,215 @@ button {
 
 
 
+/* Espacios personalizados */
+
+.espacio-card.custom {
+
+  border-style: dashed;
+
+}
+
+
+
+.espacio-card.custom.on {
+
+  border-color: var(--accent);
+
+  background: var(--accent-soft);
+
+}
+
+
+
+.espacio-card.custom.on::before {
+
+  background: var(--accent);
+
+}
+
+
+
+.custom-titulo {
+
+  flex: 1;
+
+  min-width: 0;
+
+  padding: 6px 8px;
+
+  border: 1px solid var(--border-strong);
+
+  border-radius: 6px;
+
+  background: var(--surface);
+
+  font-weight: 600;
+
+  font-size: 13.5px;
+
+  outline: none;
+
+}
+
+
+
+.custom-titulo:focus,
+.custom-fechas input:focus {
+
+  border-color: var(--accent);
+
+}
+
+
+
+.custom-remove {
+
+  appearance: none;
+
+  flex-shrink: 0;
+
+  width: 28px;
+
+  height: 28px;
+
+  border: 1px solid transparent;
+
+  border-radius: 7px;
+
+  background: transparent;
+
+  color: var(--ink-faint);
+
+  font-size: 18px;
+
+  line-height: 1;
+
+  cursor: pointer;
+
+}
+
+
+
+.custom-remove:hover {
+
+  color: var(--vencido);
+
+  background: var(--vencido-bg);
+
+}
+
+
+
+.custom-fechas {
+
+  display: grid;
+
+  grid-template-columns: 1fr 1fr;
+
+  gap: 8px;
+
+  margin-top: 8px;
+
+}
+
+
+
+.custom-fechas label {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 3px;
+
+  font-size: 11px;
+
+  font-weight: 600;
+
+  color: var(--ink-faint);
+
+}
+
+
+
+.custom-fechas input {
+
+  width: 100%;
+
+  min-width: 0;
+
+  padding: 6px 7px;
+
+  border: 1px solid var(--border-strong);
+
+  border-radius: 6px;
+
+  background: var(--surface);
+
+  outline: none;
+
+  font-size: 12.5px;
+
+}
+
+
+
+.custom-hint {
+
+  font-size: 11.5px;
+
+  color: var(--ink-faint);
+
+  margin-top: 4px;
+
+}
+
+
+
+.custom-add {
+
+  margin-top: 10px;
+
+}
+
+
+
+.custom-badge {
+
+  font-size: 10.5px;
+
+  font-weight: 700;
+
+  color: var(--accent);
+
+  background: var(--surface);
+
+  border: 1px solid var(--accent);
+
+  border-radius: 999px;
+
+  padding: 1px 8px;
+
+  white-space: nowrap;
+
+}
+
+
+
+.custom-fecha-view {
+
+  margin-top: 6px;
+
+  font-size: 12.5px;
+
+  font-weight: 600;
+
+  color: var(--ink-soft);
+
+}
+
+
+
 .espacio-badge-off {
 
   font-size: 11.5px;
@@ -3523,6 +3732,206 @@ button.dash-tile:focus-visible {
 
 
 /* ==========================================================
+   USUARIOS DE VENDEDORES
+========================================================== */
+
+.usuarios-view .ac-sec {
+
+  background: var(--surface);
+
+  border: 1px solid var(--border);
+
+  border-radius: var(--radius);
+
+  padding: 14px 16px 16px;
+
+  margin-bottom: 12px;
+
+}
+
+
+
+.user-form .btn-primary {
+
+  margin-top: 4px;
+
+}
+
+
+
+.user-pass {
+
+  display: flex;
+
+  gap: 6px;
+
+}
+
+
+
+.user-pass input {
+
+  flex: 1;
+
+  min-width: 0;
+
+  font-family: ui-monospace, Consolas, monospace;
+
+}
+
+
+
+.user-pass .btn {
+
+  padding: 8px 11px;
+
+  flex-shrink: 0;
+
+}
+
+
+
+.user-created {
+
+  background: var(--vigente-bg);
+
+  border: 1px solid var(--vigente);
+
+  border-radius: var(--radius);
+
+  padding: 12px 14px;
+
+  margin-bottom: 12px;
+
+  font-size: 13px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 6px;
+
+  align-items: flex-start;
+
+}
+
+
+
+.user-cred {
+
+  display: flex;
+
+  flex-wrap: wrap;
+
+  gap: 6px 18px;
+
+}
+
+
+
+.user-cred code {
+
+  font-family: ui-monospace, Consolas, monospace;
+
+  font-size: 14px;
+
+  font-weight: 700;
+
+  background: var(--surface);
+
+  border: 1px solid var(--border);
+
+  border-radius: 6px;
+
+  padding: 2px 8px;
+
+}
+
+
+
+.user-list {
+
+  display: flex;
+
+  flex-direction: column;
+
+}
+
+
+
+.user-row {
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 10px;
+
+  flex-wrap: wrap;
+
+  padding: 10px 2px;
+
+  border-top: 1px solid var(--border);
+
+}
+
+
+
+.user-row:first-child {
+
+  border-top: none;
+
+}
+
+
+
+.user-info {
+
+  display: flex;
+
+  flex-direction: column;
+
+  min-width: 0;
+
+}
+
+
+
+.user-info small {
+
+  font-size: 12px;
+
+  color: var(--ink-faint);
+
+}
+
+
+
+.user-actions {
+
+  display: flex;
+
+  gap: 6px;
+
+  flex-wrap: wrap;
+
+}
+
+
+
+.user-actions .btn {
+
+  padding: 7px 11px;
+
+  font-size: 12.5px;
+
+}
+
+
+
+/* ==========================================================
    AVISO DE VENCIMIENTOS (al entrar)
 ========================================================== */
 
@@ -4691,7 +5100,7 @@ body:not(.logged-out) .login-screen {
     >
 
       <div class="login-section">
-        Administrador
+        Ingresá con tu usuario
       </div>
 
       <label class="login-field">
@@ -4722,7 +5131,7 @@ body:not(.logged-out) .login-screen {
 
       <label class="login-field">
 
-        <span>Tu nombre (opcional, queda en el historial de cambios)</span>
+        <span>Tu nombre (opcional, solo administrador: queda en el historial)</span>
 
         <input
           id="loginNombre"
@@ -4741,30 +5150,18 @@ body:not(.logged-out) .login-screen {
       ></div>
 
       <button
+        id="loginSubmit"
         type="submit"
         class="btn btn-primary btn-block"
       >
-        Ingresar como administrador
+        Ingresar
       </button>
 
     </form>
 
 
-    <div class="login-divider">
-      o
-    </div>
-
-
-    <button
-      id="readOnlyBtn"
-      type="button"
-      class="btn btn-ghost btn-block"
-    >
-      Entrar en solo lectura
-    </button>
-
     <p class="login-readonly-hint">
-      Sin clave · podés ver los clientes y descargar sus PDF
+      ¿Sos vendedor y no tenés usuario? Pedíselo al administrador.
     </p>
 
   </div>
@@ -4824,6 +5221,17 @@ body:not(.logged-out) .login-screen {
           </span>
 
         </div>
+
+
+        <button
+          id="usersBtn"
+          type="button"
+          class="btn btn-ghost logout-btn"
+          title="Crear y administrar los usuarios de los vendedores"
+          style="display:none;"
+        >
+          Usuarios
+        </button>
 
 
         <button
@@ -5517,8 +5925,11 @@ body:not(.logged-out) .login-screen {
     excelBtnText:
       document.getElementById("excelBtnText"),
 
-    readOnlyBtn:
-      document.getElementById("readOnlyBtn"),
+    loginSubmit:
+      document.getElementById("loginSubmit"),
+
+    usersBtn:
+      document.getElementById("usersBtn"),
 
     logoutBtn:
       document.getElementById("logoutBtn"),
@@ -5661,8 +6072,124 @@ body:not(.logged-out) .login-screen {
 
     state.removeAcuerdo = false;
 
-    /* cualquier cambio de pantalla cierra el editor de acuerdo */
+    /* cualquier cambio de pantalla cierra el editor de acuerdo
+       y la pantalla de usuarios */
     state.acuerdoEditor = null;
+
+    state.usuariosView = false;
+
+  }
+
+
+
+  /* ========================================================
+     ESPACIOS PERSONALIZADOS
+     Se guardan en el mismo mapa "espacios" del cliente con una
+     clave que empieza con "x_" y además: titulo, desde, hasta.
+  ======================================================== */
+
+  var CUSTOM_PREFIX = "x_";
+
+
+
+  function esCustomKey(key) {
+
+    return String(key).indexOf(CUSTOM_PREFIX) === 0;
+
+  }
+
+
+
+  /* Espacios fijos + los personalizados de ese cliente */
+
+  function espaciosDe(c) {
+
+    var esp =
+      (c && c.espacios) || {};
+
+
+    var extra =
+      Object.keys(esp)
+        .filter(esCustomKey)
+        .map(
+          function (k) {
+
+            return {
+              key: k,
+              label: (esp[k].titulo || "").trim() || "Espacio personalizado",
+              custom: true,
+              creado: esp[k].creado || 0
+            };
+
+          }
+        )
+        .sort(
+          function (a, b) {
+
+            return a.creado - b.creado;
+
+          }
+        );
+
+
+    return ESPACIOS.concat(extra);
+
+  }
+
+
+
+  /* "Del 10 may. 2027 al 20 may. 2027", "Desde …", "Hasta …" o ""
+     (sin flechas: la letra de los PDF no las tiene) */
+
+  function fechasEspacio(d) {
+
+    if (!d) {
+
+      return "";
+
+    }
+
+
+    if (d.desde && d.hasta) {
+
+      return "Del " + fmtDate(d.desde) + " al " + fmtDate(d.hasta);
+
+    }
+
+
+    if (d.desde) {
+
+      return "Desde " + fmtDate(d.desde);
+
+    }
+
+
+    if (d.hasta) {
+
+      return "Hasta " + fmtDate(d.hasta);
+
+    }
+
+
+    return "";
+
+  }
+
+
+
+  function nuevoEspacioCustom() {
+
+    return {
+      activo: true,
+      custom: true,
+      titulo: "",
+      detalle: "",
+      desde: "",
+      hasta: "",
+      fotoUrl: "",
+      fotoPath: "",
+      creado: Date.now()
+    };
 
   }
 
@@ -6888,7 +7415,7 @@ body:not(.logged-out) .login-screen {
 
 
           var activos =
-            ESPACIOS.filter(
+            espaciosDe(c).filter(
               function (e) {
 
                 return (
@@ -7050,6 +7577,23 @@ body:not(.logged-out) .login-screen {
     els.mainInner.classList.remove(
       "wide"
     );
+
+
+    if (
+      state.usuariosView &&
+      state.canEdit
+    ) {
+
+      /* no se redibuja si ya está en pantalla (no pisa lo que se escribe) */
+      if (!els.mainInner.querySelector(".usuarios-view")) {
+
+        renderUsuarios();
+
+      }
+
+      return;
+
+    }
 
 
     if (
@@ -7418,6 +7962,8 @@ body:not(.logged-out) .login-screen {
 
     var espCount = {};
 
+    var customLabels = {};
+
     var grupoCount = {};
 
     var proximos = [];
@@ -7513,7 +8059,7 @@ body:not(.logged-out) .login-screen {
         var activosCliente = 0;
 
 
-        ESPACIOS.forEach(
+        espaciosDe(c).forEach(
           function (e) {
 
             if (
@@ -7522,8 +8068,22 @@ body:not(.logged-out) .login-screen {
               c.espacios[e.key].activo
             ) {
 
-              espCount[e.key] =
-                (espCount[e.key] || 0) + 1;
+              /* los personalizados se agrupan por título */
+              var k =
+                e.custom
+                  ? "t:" + e.label.toLowerCase()
+                  : e.key;
+
+
+              if (e.custom && !customLabels[k]) {
+
+                customLabels[k] = e.label;
+
+              }
+
+
+              espCount[k] =
+                (espCount[k] || 0) + 1;
 
               activosCliente++;
 
@@ -7888,6 +8448,19 @@ body:not(.logged-out) .login-screen {
             };
 
           }
+        )
+        .concat(
+          Object.keys(customLabels).map(
+            function (k) {
+
+              return {
+                label: customLabels[k],
+                n: espCount[k] || 0,
+                sub: "espacio personalizado"
+              };
+
+            }
+          )
         )
         .filter(
           function (it) {
@@ -8511,6 +9084,17 @@ body:not(.logged-out) .login-screen {
         var el;
 
 
+        /* ---- Usuarios de vendedores ---- */
+
+        if ((el = e.target.closest("[data-user-gen], [data-user-copy], [data-user-del], [data-user-reset]"))) {
+
+          accionUsuario(el);
+
+          return;
+
+        }
+
+
         /* ---- Acuerdo comercial para firmar ---- */
 
         if ((el = e.target.closest("[data-ac-open]"))) {
@@ -8931,13 +9515,17 @@ body:not(.logged-out) .login-screen {
 
 
                 (
-                  d.activo
+                  e.custom
 
-                    ? ""
+                    ? '<span class="custom-badge">Personalizado</span>'
 
-                    : '<span class="espacio-badge-off">' +
-                        'No incluido' +
-                      '</span>'
+                    : d.activo
+
+                      ? ""
+
+                      : '<span class="espacio-badge-off">' +
+                          'No incluido' +
+                        '</span>'
                 ) +
 
               '</div>' +
@@ -8953,6 +9541,18 @@ body:not(.logged-out) .login-screen {
                         d.detalle
                       ) +
 
+                    '</div>'
+
+                  : ""
+              ) +
+
+
+              (
+                e.custom &&
+                fechasEspacio(d)
+
+                  ? '<div class="custom-fecha-view">' +
+                      '&#128197; ' + escapeHtml(fechasEspacio(d)) +
                     '</div>'
 
                   : ""
@@ -8989,13 +9589,13 @@ body:not(.logged-out) .login-screen {
 
 
     var espaciosIncluidos =
-      ESPACIOS.filter(
+      espaciosDe(c).filter(
         espacioActivo
       );
 
 
     var espaciosNoIncluidos =
-      ESPACIOS.filter(
+      espaciosDe(c).filter(
         function (e) {
 
           return !espacioActivo(e);
@@ -9326,7 +9926,7 @@ body:not(.logged-out) .login-screen {
   ) {
 
     var espaciosHtml =
-      ESPACIOS.map(
+      espaciosDe(draft).map(
         function (e) {
 
           var d =
@@ -9463,6 +10063,12 @@ body:not(.logged-out) .login-screen {
                   : ""
               ) +
 
+              (
+                e.custom
+                  ? " custom"
+                  : ""
+              ) +
+
               '" ' +
 
               'data-key="' +
@@ -9473,36 +10079,54 @@ body:not(.logged-out) .login-screen {
               '<div class="espacio-row">' +
 
 
-                '<span class="espacio-name">' +
+                (
+                  e.custom
 
-                  escapeHtml(
-                    e.label
-                  ) +
+                    ? (
+                      '<input type="text" class="custom-titulo" ' +
+                        'data-custom-key="' + e.key + '" data-custom-field="titulo" ' +
+                        'maxlength="80" ' +
+                        'placeholder="Título del espacio (ej: Exhibición Día de la Madre)" ' +
+                        'value="' + escapeHtml(d.titulo || "") + '">' +
 
-                '</span>' +
+                      '<button type="button" class="custom-remove" ' +
+                        'data-custom-remove="' + e.key + '" ' +
+                        'title="Quitar este espacio" aria-label="Quitar este espacio">&times;</button>'
+                    )
+
+                    : (
+                      '<span class="espacio-name">' +
+
+                        escapeHtml(
+                          e.label
+                        ) +
+
+                      '</span>' +
 
 
-                '<button ' +
+                      '<button ' +
 
-                  'type="button" ' +
+                        'type="button" ' +
 
-                  'class="espacio-toggle' +
+                        'class="espacio-toggle' +
 
-                  (
-                    d.activo
-                      ? " on"
-                      : ""
-                  ) +
+                        (
+                          d.activo
+                            ? " on"
+                            : ""
+                        ) +
 
-                  '" ' +
+                        '" ' +
 
-                  'data-key="' +
-                  e.key +
-                  '">' +
+                        'data-key="' +
+                        e.key +
+                        '">' +
 
-                  '<span class="knob"></span>' +
+                        '<span class="knob"></span>' +
 
-                '</button>' +
+                      '</button>'
+                    )
+                ) +
 
 
               '</div>' +
@@ -9538,6 +10162,29 @@ body:not(.logged-out) .login-screen {
                     d.detalle
                   ) +
                   '">' +
+
+
+                (
+                  e.custom
+                    ? (
+                      '<div class="custom-fechas">' +
+
+                        '<label>Desde' +
+                          '<input type="date" data-custom-key="' + e.key + '" data-custom-field="desde" ' +
+                            'value="' + escapeHtml(d.desde || "") + '">' +
+                        '</label>' +
+
+                        '<label>Hasta' +
+                          '<input type="date" data-custom-key="' + e.key + '" data-custom-field="hasta" ' +
+                            'value="' + escapeHtml(d.hasta || "") + '">' +
+                        '</label>' +
+
+                      '</div>' +
+
+                      '<div class="custom-hint">Las fechas son opcionales.</div>'
+                    )
+                    : ""
+                ) +
 
 
                 photoHtml +
@@ -9757,6 +10404,13 @@ body:not(.logged-out) .login-screen {
         espaciosHtml +
 
       '</div>' +
+
+
+      '<button type="button" class="ac-add custom-add" data-custom-add="1">' +
+        '+ Agregar espacio personalizado' +
+      '</button>' +
+
+      '<div class="custom-hint">Para espacios que no están en la lista: elegís el título y, si querés, fechas.</div>' +
 
 
       '<div class="section-label">' +
@@ -10129,6 +10783,151 @@ body:not(.logged-out) .login-screen {
 
             espacio.activo =
               !espacio.activo;
+
+
+            renderForm(
+              draft,
+              isNew
+            );
+
+          }
+        );
+
+      }
+
+    );
+
+
+
+    /* ESPACIOS PERSONALIZADOS */
+
+    var addCustom =
+      els.mainInner.querySelector("[data-custom-add]");
+
+
+    if (addCustom) {
+
+      addCustom.addEventListener(
+        "click",
+        function () {
+
+          var key =
+            CUSTOM_PREFIX + Date.now().toString(36);
+
+
+          draft.espacios[key] =
+            nuevoEspacioCustom();
+
+
+          renderForm(
+            draft,
+            isNew
+          );
+
+
+          var nuevo =
+            els.mainInner.querySelector('[data-custom-key="' + key + '"][data-custom-field="titulo"]');
+
+
+          if (nuevo) {
+
+            nuevo.scrollIntoView({ block: "center" });
+
+            nuevo.focus();
+
+          }
+
+        }
+      );
+
+    }
+
+
+    Array.prototype.forEach.call(
+
+      els.mainInner.querySelectorAll(
+        "[data-custom-field]"
+      ),
+
+      function (input) {
+
+        input.addEventListener(
+          "input",
+          function () {
+
+            var d =
+              draft.espacios[input.getAttribute("data-custom-key")];
+
+
+            if (d) {
+
+              d[input.getAttribute("data-custom-field")] =
+                input.value;
+
+            }
+
+          }
+        );
+
+      }
+
+    );
+
+
+    Array.prototype.forEach.call(
+
+      els.mainInner.querySelectorAll(
+        "[data-custom-remove]"
+      ),
+
+      function (btn) {
+
+        btn.addEventListener(
+          "click",
+          function () {
+
+            var key =
+              btn.getAttribute("data-custom-remove");
+
+
+            var d =
+              draft.espacios[key];
+
+
+            if (
+              d &&
+              (d.titulo || d.detalle || d.fotoUrl) &&
+              !confirm('¿Quitar el espacio "' + (d.titulo || "sin título") + '"?')
+            ) {
+
+              return;
+
+            }
+
+
+            /* si tenía foto guardada, se borra de Storage al guardar */
+            if (d && (d.fotoUrl || d.fotoPath)) {
+
+              state.removedPhotos[key] = true;
+
+            }
+
+
+            if (
+              state.pendingPhotos[key] &&
+              state.pendingPhotos[key].previewUrl
+            ) {
+
+              URL.revokeObjectURL(
+                state.pendingPhotos[key].previewUrl
+              );
+
+            }
+
+
+            delete state.pendingPhotos[key];
+
+            delete draft.espacios[key];
 
 
             renderForm(
@@ -10900,7 +11699,7 @@ body:not(.logged-out) .login-screen {
     if (!original) {
 
       var n =
-        ESPACIOS.filter(
+        espaciosDe(nuevo).filter(
           function (e) {
 
             return activo(nuevo, e.key);
@@ -11007,6 +11806,87 @@ body:not(.logged-out) .login-screen {
       );
 
 
+      /* Espacios personalizados */
+
+      var customAntes = original.espacios || {};
+
+      var customAhora = nuevo.espacios || {};
+
+
+      var customKeys =
+        Object.keys(customAntes)
+          .concat(Object.keys(customAhora))
+          .filter(esCustomKey)
+          .filter(
+            function (k, i, arr) {
+
+              return arr.indexOf(k) === i;
+
+            }
+          );
+
+
+      customKeys.forEach(
+        function (k) {
+
+          var a = customAntes[k];
+
+          var b = customAhora[k];
+
+          var fb = b ? fechasEspacio(b) : "";
+
+
+          if (!a && b) {
+
+            cambios.push(
+              'Se agregó el espacio personalizado "' + corto(b.titulo, 50) + '"' +
+              (fb ? " (" + fb + ")" : "") +
+              (b.detalle ? ": " + corto(b.detalle, 50) : "")
+            );
+
+          } else if (a && !b) {
+
+            cambios.push(
+              'Se quitó el espacio personalizado "' + corto(a.titulo, 50) + '"'
+            );
+
+          } else if (a && b) {
+
+            if ((a.titulo || "").trim() !== (b.titulo || "").trim()) {
+
+              cambios.push(
+                'Espacio personalizado: "' + corto(a.titulo, 40) + '" → "' + corto(b.titulo, 40) + '"'
+              );
+
+            }
+
+
+            if ((a.detalle || "").trim() !== (b.detalle || "").trim()) {
+
+              cambios.push(
+                corto(b.titulo, 40) + ': detalle "' +
+                (corto(a.detalle, 40) || "vacío") + '" → "' +
+                (corto(b.detalle, 40) || "vacío") + '"'
+              );
+
+            }
+
+
+            if (fechasEspacio(a) !== fb) {
+
+              cambios.push(
+                corto(b.titulo, 40) + ": fechas (" +
+                (fechasEspacio(a) || "sin fecha") + ") → (" + (fb || "sin fecha") + ")"
+              );
+
+            }
+
+          }
+
+        }
+      );
+
+
       if ((original.notas || "").trim() !== (nuevo.notas || "").trim()) {
 
         cambios.push(
@@ -11018,9 +11898,21 @@ body:not(.logged-out) .login-screen {
     }
 
 
-    /* Fotos de los espacios */
+    /* Fotos de los espacios (incluye personalizados, aunque se hayan quitado) */
 
-    ESPACIOS.forEach(
+    var conFotos =
+      espaciosDe(nuevo).concat(
+        espaciosDe(original).filter(
+          function (e) {
+
+            return e.custom && !(nuevo.espacios && nuevo.espacios[e.key]);
+
+          }
+        )
+      );
+
+
+    conFotos.forEach(
       function (e) {
 
         if (extra.fotosNuevas[e.key]) {
@@ -11147,6 +12039,53 @@ body:not(.logged-out) .login-screen {
       return;
 
     }
+
+
+    /* Espacios personalizados: título obligatorio y fechas coherentes */
+
+    var customMal =
+      Object.keys(draft.espacios || {})
+        .filter(esCustomKey)
+        .map(
+          function (k) {
+
+            var x = draft.espacios[k];
+
+
+            x.titulo = (x.titulo || "").trim();
+
+
+            if (!x.titulo) {
+
+              return "Poné un título a cada espacio personalizado (o quitalo).";
+
+            }
+
+
+            if (x.desde && x.hasta && x.hasta < x.desde) {
+
+              return 'En "' + x.titulo + '" la fecha "hasta" es anterior a "desde".';
+
+            }
+
+
+            return "";
+
+          }
+        )
+        .filter(Boolean);
+
+
+    if (customMal.length) {
+
+      showToast(
+        customMal[0]
+      );
+
+      return;
+
+    }
+
 
 
     /* Si lo escribieron a mano pero ya existe en la lista
@@ -11529,7 +12468,7 @@ body:not(.logged-out) .login-screen {
 
         ? Promise.all(
 
-          ESPACIOS.map(
+          espaciosDe(state.clients.find(function (x) { return x.id === id; })).map(
             function (e) {
 
               return state.storage
@@ -12173,7 +13112,7 @@ body:not(.logged-out) .login-screen {
     /* ---------- ESPACIOS ACORDADOS ---------- */
 
     var activos =
-      ESPACIOS.filter(
+      espaciosDe(c).filter(
         function (e) {
 
           return (
@@ -12235,9 +13174,13 @@ body:not(.logged-out) .login-screen {
             );
 
 
+            var fechasTxt =
+              e.custom ? fechasEspacio(d) : "";
+
+
             return [
               e.label,
-              d.detalle || "-",
+              [d.detalle, fechasTxt].filter(Boolean).join(" · ") || "-",
               d.fotoUrl ? "Ver foto" : "-"
             ];
 
@@ -13197,7 +14140,7 @@ body:not(.logged-out) .login-screen {
 
 
     var secundaria =
-      ESPACIOS
+      espaciosDe(c)
         .filter(
           function (e) {
 
@@ -13210,7 +14153,10 @@ body:not(.logged-out) .login-screen {
 
             return {
               item: AC_SECUNDARIA_NOMBRES[e.key] || e.label,
-              detalle: esp[e.key].detalle || ""
+              detalle: [
+                esp[e.key].detalle || "",
+                e.custom ? fechasEspacio(esp[e.key]) : ""
+              ].filter(Boolean).join(" · ")
             };
 
           }
@@ -15320,7 +16266,7 @@ body:not(.logged-out) .login-screen {
           function (c) {
 
             var activos =
-              ESPACIOS.filter(
+              espaciosDe(c).filter(
                 function (e) {
 
                   return (
@@ -15349,7 +16295,10 @@ body:not(.logged-out) .login-screen {
                 function (e) {
 
                   var det =
-                    c.espacios[e.key].detalle;
+                    [
+                      c.espacios[e.key].detalle,
+                      e.custom ? fechasEspacio(c.espacios[e.key]) : ""
+                    ].filter(Boolean).join(" · ");
 
 
                   return e.label + (det ? " (" + det + ")" : "");
@@ -15402,6 +16351,8 @@ body:not(.logged-out) .login-screen {
 
           }
         )
+      ).concat(
+        ["Espacios personalizados"]
       );
 
 
@@ -15427,7 +16378,32 @@ body:not(.logged-out) .login-screen {
 
                 }
               )
-            );
+            ).concat([
+              espaciosDe(c)
+                .filter(
+                  function (e) {
+
+                    return e.custom;
+
+                  }
+                )
+                .map(
+                  function (e) {
+
+                    var d =
+                      c.espacios[e.key];
+
+
+                    var det =
+                      [d.detalle, fechasEspacio(d)].filter(Boolean).join(" · ");
+
+
+                    return e.label + (det ? " (" + det + ")" : "");
+
+                  }
+                )
+                .join("; ")
+            ]);
 
           }
         )
@@ -15445,7 +16421,7 @@ body:not(.logged-out) .login-screen {
 
             }
           )
-        ),
+        ).concat([50]),
         {}
       );
 
@@ -15816,11 +16792,20 @@ body:not(.logged-out) .login-screen {
     );
 
 
+    var nombreVendedor =
+      safeSession("get", "vendedorNombre");
+
+
     els.roleText.textContent =
 
       canEdit
         ? "Administrador"
-        : "Solo lectura";
+        : "Solo lectura" + (nombreVendedor ? " · " + nombreVendedor : "");
+
+
+    /* solo el administrador crea usuarios de vendedores */
+    els.usersBtn.style.display =
+      canEdit ? "" : "none";
 
   }
 
@@ -15978,6 +16963,10 @@ body:not(.logged-out) .login-screen {
 
     safeSession("remove", "avisoCerrado");
 
+    safeSession("remove", "vendedorId");
+
+    safeSession("remove", "vendedorNombre");
+
 
     setRole(
       false
@@ -15996,7 +16985,7 @@ body:not(.logged-out) .login-screen {
 
 
 
-  function tryAdminLogin() {
+  function tryLogin() {
 
     var user =
       els.loginUser.value
@@ -16034,13 +17023,832 @@ body:not(.logged-out) .login-screen {
     }
 
 
-    els.loginError.textContent =
-      "Usuario o contraseña incorrectos.";
+    var fallo = function (msg) {
+
+      els.loginError.textContent =
+        msg || "Usuario o contraseña incorrectos.";
 
 
-    els.loginPass.value = "";
+      els.loginPass.value = "";
 
-    els.loginPass.focus();
+      els.loginPass.focus();
+
+    };
+
+
+    if (!user || !pass) {
+
+      fallo("Completá usuario y contraseña.");
+
+      return;
+
+    }
+
+
+    /* Vendedores: usuarios creados por el administrador */
+
+    els.loginSubmit.disabled = true;
+
+    els.loginSubmit.textContent = "Verificando…";
+
+
+    obtenerVendedores()
+
+      .then(
+        function (lista) {
+
+          var v =
+            lista.find(
+              function (x) {
+
+                return (x.usuario || "").toLowerCase() === user;
+
+              }
+            );
+
+
+          if (!v) {
+
+            return false;
+
+          }
+
+
+          return hashClave(v.salt, pass).then(
+            function (h) {
+
+              if (h !== v.hash) {
+
+                return false;
+
+              }
+
+
+              safeSession("set", "vendedorId", v.id);
+
+              safeSession("set", "vendedorNombre", v.nombre || v.usuario);
+
+              safeSession("remove", "usuario");
+
+
+              enterApp(
+                "lectura"
+              );
+
+
+              showToast(
+                "¡Hola " + (v.nombre || v.usuario) + "!"
+              );
+
+
+              return true;
+
+            }
+          );
+
+        }
+      )
+
+      .then(
+        function (ok) {
+
+          if (!ok) {
+
+            fallo();
+
+          }
+
+        }
+      )
+
+      .catch(
+        function (err) {
+
+          console.error(err);
+
+
+          fallo(
+            "No se pudo verificar el usuario. Revisá tu conexión."
+          );
+
+        }
+      )
+
+      .then(
+        function () {
+
+          els.loginSubmit.disabled = false;
+
+          els.loginSubmit.textContent = "Ingresar";
+
+        }
+      );
+
+  }
+
+
+
+  /* ========================================================
+     USUARIOS DE VENDEDORES (solo lectura)
+     Los crea el administrador. Se guardan en el documento
+     clientes/_usuarios (así no hace falta cambiar las reglas
+     de Firestore). La contraseña nunca se guarda: se guarda
+     un hash SHA-256 con "sal" aleatoria.
+  ======================================================== */
+
+  var USUARIOS_DOC_ID = "_usuarios";
+
+
+  state.vendedores = [];
+
+  state.vendedoresCargados = false;
+
+  state.usuariosView = false;
+
+  state.usuarioCreado = null;
+
+
+
+  function nuevoSalt() {
+
+    var a =
+      new Uint8Array(16);
+
+
+    crypto.getRandomValues(a);
+
+
+    return Array.prototype.map.call(
+      a,
+      function (b) {
+
+        return ("0" + b.toString(16)).slice(-2);
+
+      }
+    ).join("");
+
+  }
+
+
+
+  function hashClave(salt, clave) {
+
+    var datos =
+      new TextEncoder().encode(salt + ":" + clave);
+
+
+    return crypto.subtle.digest("SHA-256", datos).then(
+      function (buf) {
+
+        return Array.prototype.map.call(
+          new Uint8Array(buf),
+          function (b) {
+
+            return ("0" + b.toString(16)).slice(-2);
+
+          }
+        ).join("");
+
+      }
+    );
+
+  }
+
+
+
+  /* contraseña fácil de dictar: sin 0/O ni 1/l */
+
+  function generarClave() {
+
+    var letras = "abcdefghjkmnpqrstuvwxyz";
+
+    var nums = "23456789";
+
+    var a = new Uint8Array(8);
+
+
+    crypto.getRandomValues(a);
+
+
+    var s = "";
+
+
+    for (var i = 0; i < 8; i++) {
+
+      var set = i < 5 ? letras : nums;
+
+      s += set.charAt(a[i] % set.length);
+
+    }
+
+
+    return s;
+
+  }
+
+
+
+  function obtenerVendedores() {
+
+    if (state.vendedoresCargados) {
+
+      return Promise.resolve(state.vendedores);
+
+    }
+
+
+    if (!state.db) {
+
+      return Promise.reject(new Error("Firebase no está listo"));
+
+    }
+
+
+    return state.db
+      .doc("clientes/" + USUARIOS_DOC_ID)
+      .get()
+      .then(
+        function (snap) {
+
+          var d =
+            snap.exists ? snap.data() : {};
+
+
+          return Array.isArray(d.vendedores) ? d.vendedores : [];
+
+        }
+      );
+
+  }
+
+
+
+  /* Si el administrador borró al vendedor, se le cierra la sesión */
+
+  function verificarSesionVendedor() {
+
+    if (
+      safeSession("get", "sesion") !== "lectura"
+    ) {
+
+      return;
+
+    }
+
+
+    var id =
+      safeSession("get", "vendedorId");
+
+
+    var existe =
+      state.vendedores.some(
+        function (v) {
+
+          return v.id === id;
+
+        }
+      );
+
+
+    if (!existe) {
+
+      safeSession("remove", "sesion");
+
+      safeSession("remove", "vendedorId");
+
+      safeSession("remove", "vendedorNombre");
+
+
+      setRole(false);
+
+
+      showLogin();
+
+
+      els.loginError.textContent =
+        "Tu usuario ya no está activo. Pedile acceso al administrador.";
+
+    }
+
+  }
+
+
+
+  function guardarVendedores(lista) {
+
+    return state.db
+      .doc("clientes/" + USUARIOS_DOC_ID)
+      .set(
+        {
+          vendedores: lista,
+          updatedAt: Date.now()
+        },
+        { merge: true }
+      );
+
+  }
+
+
+
+  function abrirUsuarios() {
+
+    if (!state.canEdit) {
+
+      return;
+
+    }
+
+
+    if (
+      (state.editing || state.creating) &&
+      !confirm("Tenés cambios sin guardar. ¿Querés descartarlos?")
+    ) {
+
+      return;
+
+    }
+
+
+    resetPendingPhotos();
+
+
+    state.editing = false;
+
+    state.creating = false;
+
+    state.draft = null;
+
+    state.usuariosView = true;
+
+    state.usuarioCreado = null;
+
+
+    render();
+
+
+    els.mainInner.parentNode.scrollTop = 0;
+
+  }
+
+
+
+  function renderUsuarios() {
+
+    var lista =
+      state.vendedores
+        .slice()
+        .sort(
+          function (a, b) {
+
+            return (a.nombre || a.usuario).localeCompare(b.nombre || b.usuario, "es");
+
+          }
+        );
+
+
+    var creado =
+      state.usuarioCreado;
+
+
+    els.mainInner.innerHTML =
+
+      '<div class="usuarios-view">' +
+
+        '<button type="button" class="back-link" data-back-home="1">&larr; Panel general</button>' +
+
+        '<div class="detail-head">' +
+
+          '<div>' +
+
+            '<h1 class="detail-title">Usuarios de vendedores</h1>' +
+
+            '<p class="dash-sub">' +
+              'Los vendedores entran con su usuario y contraseña y solo pueden <strong>ver</strong> ' +
+              'los clientes y descargar sus PDF. No pueden editar ni ven los acuerdos firmados.' +
+            '</p>' +
+
+          '</div>' +
+
+        '</div>' +
+
+
+        (
+          creado
+            ? '<div class="user-created" role="status">' +
+                '<strong>' + escapeHtml(creado.titulo) + '</strong>' +
+                '<div>Pasale estos datos a <strong>' + escapeHtml(creado.nombre) + '</strong> ' +
+                  '(la contraseña no se vuelve a mostrar):</div>' +
+                '<div class="user-cred">' +
+                  '<span>Usuario: <code>' + escapeHtml(creado.usuario) + '</code></span>' +
+                  '<span>Contraseña: <code>' + escapeHtml(creado.clave) + '</code></span>' +
+                '</div>' +
+                '<button type="button" class="btn btn-ghost" data-user-copy="1">Copiar datos</button>' +
+              '</div>'
+            : ""
+        ) +
+
+
+        '<div class="ac-sec">' +
+
+          '<h2 class="ac-sec-title">Nuevo vendedor</h2>' +
+
+          '<form id="userForm" class="user-form" autocomplete="off" novalidate>' +
+
+            '<div class="ac-grid">' +
+
+              '<div class="ac-field">' +
+                '<label>Nombre</label>' +
+                '<input type="text" id="userNombre" maxlength="40" placeholder="Ej: Juan Pérez">' +
+              '</div>' +
+
+              '<div class="ac-field">' +
+                '<label>Usuario (para ingresar)</label>' +
+                '<input type="text" id="userUsuario" maxlength="30" placeholder="Ej: juanp" ' +
+                  'autocapitalize="none" spellcheck="false">' +
+              '</div>' +
+
+              '<div class="ac-field">' +
+                '<label>Contraseña</label>' +
+                '<div class="user-pass">' +
+                  '<input type="text" id="userClave" maxlength="40" value="' + generarClave() + '">' +
+                  '<button type="button" class="btn btn-ghost" data-user-gen="1" title="Generar otra">&#8635;</button>' +
+                '</div>' +
+              '</div>' +
+
+            '</div>' +
+
+            '<div class="ac-hint">Mínimo 6 caracteres. Te sugerimos una; podés cambiarla.</div>' +
+
+            '<div id="userError" class="login-error" role="alert"></div>' +
+
+            '<button type="submit" class="btn btn-primary" id="userSubmit">Crear usuario</button>' +
+
+          '</form>' +
+
+        '</div>' +
+
+
+        '<div class="ac-sec">' +
+
+          '<h2 class="ac-sec-title">Vendedores (' + lista.length + ')</h2>' +
+
+          (
+            lista.length
+              ? '<div class="user-list">' +
+                  lista.map(
+                    function (v) {
+
+                      return (
+                        '<div class="user-row">' +
+
+                          '<span class="user-info">' +
+                            '<strong>' + escapeHtml(v.nombre || v.usuario) + '</strong>' +
+                            '<small>Usuario: ' + escapeHtml(v.usuario) +
+                              (v.creado ? ' · creado el ' + escapeHtml(new Date(v.creado).toLocaleDateString("es-UY")) : "") +
+                            '</small>' +
+                          '</span>' +
+
+                          '<span class="user-actions">' +
+                            '<button type="button" class="btn btn-ghost" data-user-reset="' + escapeHtml(v.id) + '">Nueva contraseña</button>' +
+                            '<button type="button" class="btn btn-danger" data-user-del="' + escapeHtml(v.id) + '">Eliminar</button>' +
+                          '</span>' +
+
+                        '</div>'
+                      );
+
+                    }
+                  ).join("") +
+                '</div>'
+              : '<div class="hist-empty">Todavía no creaste ningún vendedor.</div>'
+          ) +
+
+        '</div>' +
+
+      '</div>';
+
+
+    var form =
+      document.getElementById("userForm");
+
+
+    form.addEventListener(
+      "submit",
+      function (e) {
+
+        e.preventDefault();
+
+        crearVendedor();
+
+      }
+    );
+
+  }
+
+
+
+  function crearVendedor() {
+
+    var nombre =
+      document.getElementById("userNombre").value.trim();
+
+
+    var usuario =
+      document.getElementById("userUsuario").value.trim().toLowerCase();
+
+
+    var clave =
+      document.getElementById("userClave").value.trim();
+
+
+    var errorEl =
+      document.getElementById("userError");
+
+
+    var error =
+      !nombre
+        ? "Poné el nombre del vendedor."
+        : !/^[a-z0-9._-]{3,30}$/.test(usuario)
+          ? "El usuario tiene que tener entre 3 y 30 caracteres: letras, números, punto, guion o guion bajo (sin espacios ni tildes)."
+          : usuario === ADMIN_USER
+            ? 'El usuario "' + ADMIN_USER + '" está reservado para el administrador.'
+            : state.vendedores.some(
+              function (v) {
+
+                return (v.usuario || "").toLowerCase() === usuario;
+
+              }
+            )
+              ? 'Ya existe un vendedor con el usuario "' + usuario + '".'
+              : clave.length < 6
+                ? "La contraseña tiene que tener al menos 6 caracteres."
+                : "";
+
+
+    if (error) {
+
+      errorEl.textContent = error;
+
+      return;
+
+    }
+
+
+    var btn =
+      document.getElementById("userSubmit");
+
+
+    btn.disabled = true;
+
+    btn.textContent = "Creando…";
+
+
+    var salt =
+      nuevoSalt();
+
+
+    hashClave(salt, clave)
+
+      .then(
+        function (hash) {
+
+          var nuevo = {
+            id: "v" + Date.now().toString(36) + nuevoSalt().slice(0, 4),
+            nombre: nombre,
+            usuario: usuario,
+            salt: salt,
+            hash: hash,
+            creado: Date.now(),
+            creadoPor: usuarioActual()
+          };
+
+
+          var lista =
+            state.vendedores.concat([nuevo]);
+
+
+          return guardarVendedores(lista).then(
+            function () {
+
+              state.vendedores = lista;
+
+
+              state.usuarioCreado = {
+                titulo: "✓ Usuario creado",
+                nombre: nombre,
+                usuario: usuario,
+                clave: clave
+              };
+
+
+              showToast("Usuario de " + nombre + " creado.");
+
+
+              renderUsuarios();
+
+            }
+          );
+
+        }
+      )
+
+      .catch(
+        function (err) {
+
+          console.error(err);
+
+
+          btn.disabled = false;
+
+          btn.textContent = "Crear usuario";
+
+
+          errorEl.textContent =
+            "No se pudo guardar el usuario. Revisá tu conexión.";
+
+        }
+      );
+
+  }
+
+
+
+  function accionUsuario(el) {
+
+    if (el.hasAttribute("data-user-gen")) {
+
+      document.getElementById("userClave").value =
+        generarClave();
+
+      return;
+
+    }
+
+
+    if (el.hasAttribute("data-user-copy")) {
+
+      var c =
+        state.usuarioCreado;
+
+
+      var texto =
+        "Acceso a Espacios & Condiciones (Distrishop)\n" +
+        "Link: " + location.origin + "\n" +
+        "Usuario: " + c.usuario + "\n" +
+        "Contraseña: " + c.clave;
+
+
+      (
+        navigator.clipboard
+          ? navigator.clipboard.writeText(texto)
+          : Promise.reject()
+      )
+        .then(
+          function () {
+
+            showToast("Datos copiados.");
+
+          }
+        )
+        .catch(
+          function () {
+
+            window.prompt("Copiá los datos:", texto);
+
+          }
+        );
+
+      return;
+
+    }
+
+
+    var id =
+      el.getAttribute("data-user-del") ||
+      el.getAttribute("data-user-reset");
+
+
+    var v =
+      state.vendedores.find(
+        function (x) {
+
+          return x.id === id;
+
+        }
+      );
+
+
+    if (!v) {
+
+      return;
+
+    }
+
+
+    if (el.hasAttribute("data-user-del")) {
+
+      if (!confirm('¿Eliminar el usuario de "' + (v.nombre || v.usuario) + '"? Ya no va a poder entrar.')) {
+
+        return;
+
+      }
+
+
+      var lista =
+        state.vendedores.filter(
+          function (x) {
+
+            return x.id !== id;
+
+          }
+        );
+
+
+      guardarVendedores(lista)
+        .then(
+          function () {
+
+            state.vendedores = lista;
+
+            state.usuarioCreado = null;
+
+
+            showToast("Usuario eliminado.");
+
+
+            renderUsuarios();
+
+          }
+        )
+        .catch(
+          function () {
+
+            showToast("No se pudo eliminar el usuario.");
+
+          }
+        );
+
+      return;
+
+    }
+
+
+    /* nueva contraseña */
+
+    var clave =
+      generarClave();
+
+
+    var salt =
+      nuevoSalt();
+
+
+    hashClave(salt, clave)
+      .then(
+        function (hash) {
+
+          var lista =
+            state.vendedores.map(
+              function (x) {
+
+                return x.id === id
+                  ? Object.assign({}, x, { salt: salt, hash: hash, claveCambiada: Date.now() })
+                  : x;
+
+              }
+            );
+
+
+          return guardarVendedores(lista).then(
+            function () {
+
+              state.vendedores = lista;
+
+
+              state.usuarioCreado = {
+                titulo: "✓ Contraseña nueva generada",
+                nombre: v.nombre || v.usuario,
+                usuario: v.usuario,
+                clave: clave
+              };
+
+
+              renderUsuarios();
+
+
+              els.mainInner.parentNode.scrollTop = 0;
+
+            }
+          );
+
+        }
+      )
+      .catch(
+        function () {
+
+          showToast("No se pudo cambiar la contraseña.");
+
+        }
+      );
 
   }
 
@@ -16059,7 +17867,7 @@ body:not(.logged-out) .login-screen {
 
           e.preventDefault();
 
-          tryAdminLogin();
+          tryLogin();
 
         }
       );
@@ -16078,16 +17886,10 @@ body:not(.logged-out) .login-screen {
 
 
 
-    els.readOnlyBtn
+    els.usersBtn
       .addEventListener(
         "click",
-        function () {
-
-          enterApp(
-            "lectura"
-          );
-
-        }
+        abrirUsuarios
       );
 
 
@@ -16115,9 +17917,14 @@ body:not(.logged-out) .login-screen {
       );
 
 
+    /* "lectura" ahora requiere un usuario de vendedor (ya no hay
+       acceso libre); se valida contra la lista cuando carga */
     if (
       sesion === "admin" ||
-      sesion === "lectura"
+      (
+        sesion === "lectura" &&
+        safeSession("get", "vendedorId")
+      )
     ) {
 
       enterApp(
@@ -16125,6 +17932,8 @@ body:not(.logged-out) .login-screen {
       );
 
     } else {
+
+      safeSession("remove", "sesion");
 
       setRole(
         false
@@ -16176,9 +17985,40 @@ body:not(.logged-out) .login-screen {
           true;
 
 
+        /* Documentos internos (empiezan con "_"), ej: _usuarios */
+
+        var usuariosDoc =
+          snap.docs.find(
+            function (doc) {
+
+              return doc.id === USUARIOS_DOC_ID;
+
+            }
+          );
+
+
+        state.vendedores =
+          usuariosDoc && Array.isArray((usuariosDoc.data() || {}).vendedores)
+            ? usuariosDoc.data().vendedores
+            : [];
+
+
+        state.vendedoresCargados =
+          true;
+
+
+        verificarSesionVendedor();
+
+
         state.clients =
 
-          snap.docs.map(
+          snap.docs.filter(
+            function (doc) {
+
+              return doc.id.charAt(0) !== "_";
+
+            }
+          ).map(
             function (doc) {
 
               var data =
@@ -16231,6 +18071,34 @@ body:not(.logged-out) .login-screen {
                       };
 
                     }
+
+                  }
+                );
+
+
+                /* espacios personalizados */
+                Object.keys(
+                  data.espacios
+                ).filter(
+                  esCustomKey
+                ).forEach(
+                  function (k) {
+
+                    var x =
+                      data.espacios[k] || {};
+
+
+                    esp[k] = {
+                      activo: true,
+                      custom: true,
+                      titulo: x.titulo || "",
+                      detalle: x.detalle || "",
+                      desde: x.desde || "",
+                      hasta: x.hasta || "",
+                      fotoUrl: x.fotoUrl || "",
+                      fotoPath: x.fotoPath || "",
+                      creado: x.creado || 0
+                    };
 
                   }
                 );
