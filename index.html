@@ -3732,6 +3732,314 @@ button.dash-tile:focus-visible {
 
 
 /* ==========================================================
+   DEVOLUCIONES POR CUMPLIMIENTO
+========================================================== */
+
+.dev-lista {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 10px;
+
+}
+
+
+
+.dev-card {
+
+  border: 1px solid var(--border);
+
+  border-left: 4px solid var(--accent);
+
+  border-radius: var(--radius);
+
+  background: var(--surface);
+
+  padding: 12px 14px;
+
+}
+
+
+
+.dev-head {
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 10px;
+
+  flex-wrap: wrap;
+
+  margin-bottom: 8px;
+
+}
+
+
+
+.dev-card.editando .dev-head {
+
+  flex-wrap: nowrap;
+
+}
+
+
+
+.dev-periodo {
+
+  font-size: 12.5px;
+
+  color: var(--ink-soft);
+
+  font-weight: 600;
+
+}
+
+
+
+.dev-grid {
+
+  display: grid;
+
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+
+  gap: 8px;
+
+  margin-bottom: 10px;
+
+}
+
+
+
+.dev-campo {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 3px;
+
+  font-size: 11px;
+
+  font-weight: 600;
+
+  color: var(--ink-faint);
+
+}
+
+
+
+.dev-campo input {
+
+  width: 100%;
+
+  min-width: 0;
+
+  padding: 7px 8px;
+
+  border: 1px solid var(--border-strong);
+
+  border-radius: 6px;
+
+  background: var(--surface);
+
+  outline: none;
+
+  font-size: 13px;
+
+  color: var(--ink);
+
+}
+
+
+
+.dev-campo input:focus {
+
+  border-color: var(--accent);
+
+}
+
+
+
+.dev-barra {
+
+  height: 10px;
+
+  border-radius: 999px;
+
+  background: var(--accent-soft);
+
+  overflow: hidden;
+
+}
+
+
+
+.dev-barra.mini {
+
+  display: block;
+
+  height: 6px;
+
+  width: 100%;
+
+  max-width: 220px;
+
+  margin: 5px 0 3px;
+
+}
+
+
+
+.dev-fill {
+
+  display: block;
+
+  height: 100%;
+
+  border-radius: 999px;
+
+  background: var(--chart-bar);
+
+}
+
+
+
+.dev-fill.cumplida {
+
+  background: var(--chart-vigente);
+
+}
+
+
+
+.dev-fill.vencida {
+
+  background: var(--chart-vencido);
+
+}
+
+
+
+.dev-numeros {
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 8px;
+
+  flex-wrap: wrap;
+
+  margin-top: 6px;
+
+  font-size: 13px;
+
+  color: var(--ink-soft);
+
+}
+
+
+
+.dev-numeros strong {
+
+  color: var(--ink);
+
+}
+
+
+
+.dev-detalle {
+
+  margin-top: 4px;
+
+  font-size: 12.8px;
+
+  color: var(--ink-soft);
+
+}
+
+
+
+.dev-vacio {
+
+  font-size: 12.5px;
+
+  color: var(--ink-faint);
+
+}
+
+
+
+.plazo-texto {
+
+  display: block;
+
+  font-size: 12px;
+
+  color: var(--ink-soft);
+
+}
+
+
+
+.plazo-dev {
+
+  display: block;
+
+}
+
+
+
+.plazo-chip {
+
+  display: inline-block;
+
+  font-size: 10px;
+
+  font-weight: 700;
+
+  text-transform: uppercase;
+
+  letter-spacing: 0.04em;
+
+  border-radius: 999px;
+
+  padding: 1px 7px;
+
+  margin-right: 2px;
+
+}
+
+
+
+.plazo-chip.dev {
+
+  background: var(--accent-soft);
+
+  color: var(--accent);
+
+}
+
+
+
+.plazo-chip.esp {
+
+  background: var(--porvencer-bg);
+
+  color: var(--porvencer);
+
+}
+
+
+
+/* ==========================================================
    USUARIOS DE VENDEDORES
 ========================================================== */
 
@@ -4997,6 +5305,126 @@ body:not(.logged-out) .login-screen {
 
 
 
+.acuerdo-lista {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 8px;
+
+}
+
+
+
+.acuerdo-item {
+
+  background: var(--surface);
+
+  border: 1px solid var(--border);
+
+  border-radius: 10px;
+
+  padding: 8px;
+
+}
+
+
+
+.acuerdo-item .acuerdo-file {
+
+  border: none;
+
+  padding: 2px 4px;
+
+}
+
+
+
+.acuerdo-item .acuerdo-actions {
+
+  margin-top: 6px;
+
+}
+
+
+
+.acuerdo-item.removing {
+
+  background: var(--vencido-bg);
+
+  border-color: var(--vencido);
+
+}
+
+
+
+.acuerdo-item-view {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 8px;
+
+}
+
+
+
+.acuerdo-item-view .acuerdo-file {
+
+  flex: 1;
+
+  min-width: 0;
+
+}
+
+
+
+.acuerdo-item-view .btn {
+
+  flex-shrink: 0;
+
+  padding: 7px 14px;
+
+  font-size: 12.5px;
+
+  text-decoration: none;
+
+}
+
+
+
+.acuerdo-etiqueta {
+
+  width: 100%;
+
+  margin-top: 6px;
+
+  padding: 7px 9px;
+
+  border: 1px solid var(--border-strong);
+
+  border-radius: 7px;
+
+  background: var(--surface);
+
+  font-size: 12.8px;
+
+  outline: none;
+
+}
+
+
+
+.acuerdo-etiqueta:focus {
+
+  border-color: var(--accent);
+
+}
+
+
+
 .acuerdo-actions {
 
   display: flex;
@@ -5743,10 +6171,12 @@ body:not(.logged-out) .login-screen {
 
     dashAllEspacios: false,
 
-    /* Acuerdo firmado (solo administradores) */
-    pendingAcuerdo: null,
+    /* Acuerdos firmados (solo administradores)
+       archivos nuevos elegidos: [{ id, file, etiqueta }] */
+    pendingAcuerdos: [],
 
-    removeAcuerdo: false,
+    /* archivos ya subidos marcados para quitar: { path: true } */
+    acuerdosQuitados: {},
 
     search: "",
 
@@ -6068,9 +6498,9 @@ body:not(.logged-out) .login-screen {
 
     state.removedPhotos = {};
 
-    state.pendingAcuerdo = null;
+    state.pendingAcuerdos = [];
 
-    state.removeAcuerdo = false;
+    state.acuerdosQuitados = {};
 
     /* cualquier cambio de pantalla cierra el editor de acuerdo
        y la pantalla de usuarios */
@@ -6195,6 +6625,344 @@ body:not(.logged-out) .login-screen {
 
 
 
+  /* ========================================================
+     DEVOLUCIONES POR CUMPLIMIENTO (metas de compra)
+     Cada cliente puede tener varios tratos:
+     { id, descripcion, meta, porcentaje, desde, hasta, comprado }
+     Si en el período compra "meta", se le devuelve "porcentaje".
+  ======================================================== */
+
+  /* "35.000", "$ 35000", "35000,50" → 35000 / 35000.5 */
+
+  function parseMonto(v) {
+
+    if (typeof v === "number") {
+
+      return isFinite(v) ? v : 0;
+
+    }
+
+
+    var t =
+      String(v || "")
+        .replace(/[^\d.,-]/g, "");
+
+
+    if (!t) {
+
+      return 0;
+
+    }
+
+
+    /* "35.000,50" → punto de miles y coma decimal (formato Uruguay) */
+    if (t.indexOf(",") !== -1) {
+
+      t = t.replace(/\./g, "").replace(",", ".");
+
+    } else if (/^\d{1,3}(\.\d{3})+$/.test(t)) {
+
+      t = t.replace(/\./g, "");
+
+    }
+
+
+    var n =
+      Number(t);
+
+
+    return isFinite(n) ? n : 0;
+
+  }
+
+
+
+  function fmtMonto(n) {
+
+    return "$ " + Math.round(Number(n) || 0).toLocaleString("es-UY");
+
+  }
+
+
+
+  function nuevaDevolucion() {
+
+    return {
+      id: "d" + Date.now().toString(36),
+      descripcion: "",
+      meta: "",
+      porcentaje: "",
+      desde: "",
+      hasta: "",
+      comprado: ""
+    };
+
+  }
+
+
+
+  /* Avance y estado de un trato */
+
+  function calcDevolucion(d) {
+
+    var meta = parseMonto(d.meta);
+
+    var comprado = parseMonto(d.comprado);
+
+    var porcentaje = parseMonto(d.porcentaje);
+
+    var dias = daysUntil(d.hasta);
+
+
+    var avance =
+      meta > 0 ? Math.min(100, comprado / meta * 100) : 0;
+
+
+    var cumplida =
+      meta > 0 && comprado >= meta;
+
+
+    var estado =
+      cumplida
+        ? "cumplida"
+        : dias !== null && dias < 0
+          ? "vencida"
+          : "curso";
+
+
+    return {
+      meta: meta,
+      comprado: comprado,
+      porcentaje: porcentaje,
+      avance: avance,
+      falta: Math.max(0, meta - comprado),
+      cumplida: cumplida,
+      /* se devuelve el % sobre lo comprado (o sobre la meta si todavía no llegó) */
+      devolucion: (cumplida ? comprado : meta) * porcentaje / 100,
+      dias: dias,
+      estado: estado
+    };
+
+  }
+
+
+
+  var DEV_ESTADOS = {
+    cumplida: { label: "Meta cumplida", clase: "vigente" },
+    vencida: { label: "Venció sin cumplir", clase: "vencido" },
+    curso: { label: "En curso", clase: "indef" }
+  };
+
+
+
+  /* Barra de avance + textos (se usa en ficha, formulario y panel) */
+
+  function devResumenHtml(d) {
+
+    var r =
+      calcDevolucion(d);
+
+
+    if (!r.meta) {
+
+      return '<div class="dev-resumen dev-vacio">Cargá la meta para ver el avance.</div>';
+
+    }
+
+
+    var estado =
+      DEV_ESTADOS[r.estado];
+
+
+    return (
+      '<div class="dev-resumen">' +
+
+        '<div class="dev-barra" role="img" aria-label="' + escapeHtml("Avance " + Math.round(r.avance) + "%") + '">' +
+          '<span class="dev-fill ' + r.estado + '" style="width:' + r.avance.toFixed(1) + '%"></span>' +
+        '</div>' +
+
+        '<div class="dev-numeros">' +
+
+          '<span><strong>' + fmtMonto(r.comprado) + '</strong> de ' + fmtMonto(r.meta) +
+            ' · ' + Math.round(r.avance) + '%</span>' +
+
+          '<span class="status-badge ' + estado.clase + '">' + estado.label + '</span>' +
+
+        '</div>' +
+
+        '<div class="dev-detalle">' +
+
+          (
+            r.cumplida
+              ? "Le corresponde una devolución de <strong>" + fmtMonto(r.devolucion) + "</strong> (" + r.porcentaje + "%)."
+              : "Le faltan <strong>" + fmtMonto(r.falta) + "</strong> para la meta. " +
+                "Si la cumple, se le devuelve <strong>" + fmtMonto(r.devolucion) + "</strong> (" + r.porcentaje + "%)."
+          ) +
+
+          (
+            r.dias !== null && r.estado === "curso"
+              ? " " + (r.dias === 0 ? "El plazo vence hoy." : "Quedan " + plural(r.dias, "día", "días") + ".")
+              : ""
+          ) +
+
+        '</div>' +
+
+      '</div>'
+    );
+
+  }
+
+
+
+  function devPeriodo(d) {
+
+    if (d.desde && d.hasta) {
+
+      return "Del " + fmtDate(d.desde) + " al " + fmtDate(d.hasta);
+
+    }
+
+
+    if (d.hasta) {
+
+      return "Hasta el " + fmtDate(d.hasta);
+
+    }
+
+
+    if (d.desde) {
+
+      return "Desde el " + fmtDate(d.desde);
+
+    }
+
+
+    return "Sin plazo cargado";
+
+  }
+
+
+
+  /* Ficha del cliente */
+
+  function devolucionesViewHtml(c) {
+
+    var lista =
+      c.devoluciones || [];
+
+
+    if (!lista.length) {
+
+      return (
+        '<div class="hist-empty">' +
+          'No tiene devoluciones por cumplimiento cargadas.' +
+          (state.canEdit ? ' Usá <strong>Editar</strong> para agregar una.' : '') +
+        '</div>'
+      );
+
+    }
+
+
+    return (
+      '<div class="dev-lista">' +
+
+        lista.map(
+          function (d) {
+
+            return (
+              '<div class="dev-card">' +
+
+                '<div class="dev-head">' +
+                  '<strong>' + escapeHtml(d.descripcion || "Devolución por cumplimiento") + '</strong>' +
+                  '<span class="dev-periodo">&#128197; ' + escapeHtml(devPeriodo(d)) + '</span>' +
+                '</div>' +
+
+                devResumenHtml(d) +
+
+              '</div>'
+            );
+
+          }
+        ).join("") +
+
+      '</div>'
+    );
+
+  }
+
+
+
+  /* Formulario de edición */
+
+  function devolucionesFormHtml(draft) {
+
+    var lista =
+      draft.devoluciones || [];
+
+
+    var campo = function (d, k, label, attrs) {
+
+      return (
+        '<label class="dev-campo">' +
+          '<span>' + label + '</span>' +
+          '<input ' + attrs + ' data-dev-id="' + escapeHtml(d.id) + '" data-dev-field="' + k + '" ' +
+            'value="' + escapeHtml(d[k] === 0 ? "0" : (d[k] || "")) + '">' +
+        '</label>'
+      );
+
+    };
+
+
+    return (
+      '<div class="dev-lista">' +
+
+        lista.map(
+          function (d) {
+
+            return (
+              '<div class="dev-card editando">' +
+
+                '<div class="dev-head">' +
+                  '<input type="text" class="custom-titulo" maxlength="80" ' +
+                    'data-dev-id="' + escapeHtml(d.id) + '" data-dev-field="descripcion" ' +
+                    'placeholder="Descripción (ej: Rappel anual chocolates)" ' +
+                    'value="' + escapeHtml(d.descripcion || "") + '">' +
+                  '<button type="button" class="custom-remove" data-dev-remove="' + escapeHtml(d.id) + '" ' +
+                    'title="Quitar este trato" aria-label="Quitar este trato">&times;</button>' +
+                '</div>' +
+
+                '<div class="dev-grid">' +
+                  campo(d, "meta", "Meta de compra ($)", 'type="text" inputmode="decimal" placeholder="Ej: 500000"') +
+                  campo(d, "porcentaje", "Devolución (%)", 'type="text" inputmode="decimal" placeholder="Ej: 3"') +
+                  campo(d, "desde", "Desde", 'type="date"') +
+                  campo(d, "hasta", "Hasta (límite)", 'type="date"') +
+                  campo(d, "comprado", "Comprado a la fecha ($)", 'type="text" inputmode="decimal" placeholder="Ej: 320000"') +
+                '</div>' +
+
+                '<div data-dev-preview="' + escapeHtml(d.id) + '">' +
+                  devResumenHtml(d) +
+                '</div>' +
+
+              '</div>'
+            );
+
+          }
+        ).join("") +
+
+      '</div>' +
+
+      '<button type="button" class="ac-add" data-dev-add="1">+ Agregar trato de devolución</button>' +
+
+      '<div class="custom-hint">' +
+        'Ej: si en el año compra $ 500.000, se le devuelve el 3%. ' +
+        'Actualizá "Comprado a la fecha" para ver cuánto le falta.' +
+      '</div>'
+    );
+
+  }
+
+
+
   function blankClient() {
 
     return {
@@ -6204,6 +6972,10 @@ body:not(.logged-out) .login-screen {
       grupoCompra: "",
 
       acuerdoFirmado: null,
+
+      acuerdosFirmados: [],
+
+      devoluciones: [],
 
       vigenciaInicio: "",
 
@@ -6682,7 +7454,49 @@ body:not(.logged-out) .login-screen {
 
 
 
-  /* Sección arriba del formulario de edición / alta */
+  /* Lista de acuerdos firmados guardada en Firestore.
+     Compatible con los clientes viejos que tienen un solo
+     "acuerdoFirmado". */
+
+  function leerAcuerdosFirmados(data) {
+
+    var crudos =
+      Array.isArray(data.acuerdosFirmados)
+        ? data.acuerdosFirmados
+        : (data.acuerdoFirmado ? [data.acuerdoFirmado] : []);
+
+
+    return crudos
+      .filter(
+        function (a) {
+
+          return a && a.url;
+
+        }
+      )
+      .map(
+        function (a) {
+
+          return {
+            url: a.url,
+            path: a.path || "",
+            nombre: a.nombre || "Acuerdo firmado",
+            tipo: a.tipo || "",
+            tamano: a.tamano || 0,
+            subidoEn: a.subidoEn || null,
+            etiqueta: a.etiqueta || ""
+          };
+
+        }
+      );
+
+  }
+
+
+
+  /* Sección arriba del formulario de edición / alta.
+     Se pueden cargar varios archivos (contrato, extensiones, anexos),
+     cada uno con una descripción opcional. */
 
   function acuerdoFormHtml(draft) {
 
@@ -6693,123 +7507,126 @@ body:not(.logged-out) .login-screen {
     }
 
 
-    var actual =
-      draft.acuerdoFirmado;
+    var lista =
+      draft.acuerdosFirmados || [];
 
 
-    var pending =
-      state.pendingAcuerdo;
+    var pendientes =
+      state.pendingAcuerdos;
 
 
-    var picker = function (label, primary) {
+    var hayAlgo =
+      lista.length || pendientes.length;
+
+
+    var etiquetaInput = function (attr, id, valor) {
 
       return (
-        '<label class="btn ' +
-          (primary ? "btn-primary" : "btn-ghost") +
-          ' photo-picker">' +
-
-          label +
-
-          '<input type="file" ' +
-            'accept="application/pdf,image/*" ' +
-            'data-acuerdo-file="1">' +
-
-        '</label>'
+        '<input type="text" class="acuerdo-etiqueta" ' + attr + '="' + escapeHtml(id) + '" ' +
+          'maxlength="60" ' +
+          'placeholder="Descripción (ej: Contrato original, Extensión jun. 2026)" ' +
+          'value="' + escapeHtml(valor || "") + '">'
       );
 
     };
 
 
-    var body;
+    var existentes =
+      lista.map(
+        function (a) {
+
+          var quitado =
+            !!state.acuerdosQuitados[a.path];
 
 
-    if (pending) {
+          return (
+            '<div class="acuerdo-item' + (quitado ? " removing" : "") + '">' +
 
-      body =
-        acuerdoFileHtml(
-          pending.file.name,
-          fmtSize(pending.file.size) + " · Se sube al guardar",
-          "pending"
-        ) +
+              acuerdoFileHtml(
+                a.nombre,
+                quitado ? "Se va a eliminar al guardar" : acuerdoMeta(a),
+                quitado ? "pending" : ""
+              ) +
 
-        '<div class="acuerdo-actions">' +
+              (quitado ? "" : etiquetaInput("data-acuerdo-etiqueta", a.path, a.etiqueta)) +
 
-          picker("Elegir otro archivo", false) +
+              '<div class="acuerdo-actions">' +
 
-          '<button type="button" class="btn btn-danger" data-acuerdo-remove="1">' +
-            'Descartar' +
-          '</button>' +
+                (
+                  quitado
+                    ? '<button type="button" class="btn btn-ghost" data-acuerdo-deshacer="' + escapeHtml(a.path) + '">Deshacer</button>'
+                    : (
+                      '<a class="btn btn-ghost" target="_blank" rel="noopener" href="' + escapeHtml(a.url) + '">Ver</a>' +
+                      '<button type="button" class="btn btn-danger" data-acuerdo-quitar="' + escapeHtml(a.path) + '">Quitar</button>'
+                    )
+                ) +
 
-        '</div>';
+              '</div>' +
 
-    } else if (
-      actual &&
-      state.removeAcuerdo
-    ) {
+            '</div>'
+          );
 
-      body =
-        acuerdoFileHtml(
-          actual.nombre,
-          "Se va a eliminar al guardar",
-          "pending"
-        ) +
+        }
+      ).join("");
 
-        '<div class="acuerdo-actions">' +
 
-          '<button type="button" class="btn btn-ghost" data-acuerdo-undo="1">' +
-            'Deshacer' +
-          '</button>' +
+    var nuevos =
+      pendientes.map(
+        function (p) {
 
-        '</div>';
+          return (
+            '<div class="acuerdo-item">' +
 
-    } else if (actual) {
+              acuerdoFileHtml(
+                p.file.name,
+                fmtSize(p.file.size) + " · Se sube al guardar",
+                "pending"
+              ) +
 
-      body =
-        acuerdoFileHtml(
-          actual.nombre,
-          acuerdoMeta(actual)
-        ) +
+              etiquetaInput("data-pend-etiqueta", p.id, p.etiqueta) +
 
-        '<div class="acuerdo-actions">' +
+              '<div class="acuerdo-actions">' +
+                '<button type="button" class="btn btn-danger" data-pend-descartar="' + escapeHtml(p.id) + '">Descartar</button>' +
+              '</div>' +
 
-          '<a class="btn btn-ghost" target="_blank" rel="noopener" href="' +
-            escapeHtml(actual.url) +
-          '">Ver acuerdo</a>' +
+            '</div>'
+          );
 
-          picker("Reemplazar", false) +
+        }
+      ).join("");
 
-          '<button type="button" class="btn btn-danger" data-acuerdo-remove="1">' +
-            'Quitar' +
-          '</button>' +
 
-        '</div>';
+    var picker =
+      '<label class="btn ' + (hayAlgo ? "btn-ghost" : "btn-primary") + ' photo-picker">' +
 
-    } else {
+        (hayAlgo ? "+ Agregar otro archivo (extensión, anexo…)" : "Cargar acuerdo firmado") +
 
-      body =
-        '<div class="acuerdo-actions" style="margin-top:0;">' +
+        '<input type="file" multiple ' +
+          'accept="application/pdf,image/*" ' +
+          'data-acuerdo-file="1">' +
 
-          picker("Cargar acuerdo firmado", true) +
-
-        '</div>' +
-
-        '<div class="acuerdo-hint">' +
-          'PDF o imagen (foto/escaneo), hasta ' + ACUERDO_MAX_MB + ' MB.' +
-        '</div>';
-
-    }
+      '</label>';
 
 
     return (
-      '<div class="acuerdo-box' +
-        (actual && state.removeAcuerdo && !pending ? " removing" : "") +
-      '">' +
+      '<div class="acuerdo-box">' +
 
         acuerdoHeadHtml(
           "Los usuarios de solo lectura no pueden verlo."
         ) +
 
-        body +
+        (existentes || nuevos
+          ? '<div class="acuerdo-lista">' + existentes + nuevos + '</div>'
+          : "") +
+
+        '<div class="acuerdo-actions"' + (hayAlgo ? "" : ' style="margin-top:0;"') + '>' +
+          picker +
+        '</div>' +
+
+        '<div class="acuerdo-hint">' +
+          'PDF o imagen (foto/escaneo), hasta ' + ACUERDO_MAX_MB + ' MB cada uno. ' +
+          'Podés cargar varios: el contrato y sus extensiones o anexos.' +
+        '</div>' +
 
       '</div>'
     );
@@ -6829,30 +7646,44 @@ body:not(.logged-out) .login-screen {
     }
 
 
-    var a =
-      c.acuerdoFirmado;
+    var lista =
+      c.acuerdosFirmados || [];
 
 
     return (
       '<div class="acuerdo-box">' +
 
         acuerdoHeadHtml(
-          "Los usuarios de solo lectura no pueden verlo."
+          lista.length > 1
+            ? lista.length + " archivos · los usuarios de solo lectura no pueden verlos."
+            : "Los usuarios de solo lectura no pueden verlo."
         ) +
 
         (
-          a
+          lista.length
             ? (
-              acuerdoFileHtml(
-                a.nombre,
-                acuerdoMeta(a)
-              ) +
+              '<div class="acuerdo-lista">' +
 
-              '<div class="acuerdo-actions">' +
+                lista.map(
+                  function (a) {
 
-                '<a class="btn btn-primary" target="_blank" rel="noopener" href="' +
-                  escapeHtml(a.url) +
-                '">Ver acuerdo firmado</a>' +
+                    return (
+                      '<div class="acuerdo-item acuerdo-item-view">' +
+
+                        acuerdoFileHtml(
+                          a.etiqueta ? a.etiqueta : a.nombre,
+                          (a.etiqueta ? a.nombre + " · " : "") + acuerdoMeta(a)
+                        ) +
+
+                        '<a class="btn btn-primary" target="_blank" rel="noopener" href="' +
+                          escapeHtml(a.url) +
+                        '">Ver</a>' +
+
+                      '</div>'
+                    );
+
+                  }
+                ).join("") +
 
               '</div>'
             )
@@ -8342,6 +9173,161 @@ body:not(.logged-out) .login-screen {
 
 
 
+    /* ---------- PLAZOS DE DEVOLUCIÓN Y FINALIZACIÓN DE ESPACIOS ---------- */
+
+    var plazos = [];
+
+
+    clients.forEach(
+      function (c) {
+
+        (c.devoluciones || []).forEach(
+          function (d) {
+
+            var r =
+              calcDevolucion(d);
+
+
+            if (r.dias !== null && r.dias >= 0) {
+
+              plazos.push({ tipo: "dev", c: c, d: d, r: r, dias: r.dias, fecha: d.hasta });
+
+            }
+
+          }
+        );
+
+
+        espaciosDe(c).forEach(
+          function (e) {
+
+            var x =
+              c.espacios && c.espacios[e.key];
+
+
+            if (!e.custom || !x || !x.hasta) {
+
+              return;
+
+            }
+
+
+            var dias =
+              daysUntil(x.hasta);
+
+
+            if (dias !== null && dias >= 0) {
+
+              plazos.push({ tipo: "esp", c: c, e: e, x: x, dias: dias, fecha: x.hasta });
+
+            }
+
+          }
+        );
+
+      }
+    );
+
+
+    plazos.sort(
+      function (a, b) {
+
+        return a.dias - b.dias;
+
+      }
+    );
+
+
+    var LIMITE_PLAZOS = 8;
+
+
+    var plazosHtml =
+
+      plazos.length
+
+        ? (
+          '<div class="dash-list">' +
+
+            plazos.slice(0, LIMITE_PLAZOS).map(
+              function (p) {
+
+                var urgencia =
+                  p.dias <= 7 ? "vencido" : p.dias <= 30 ? "porvencer" : "vigente";
+
+
+                var medio;
+
+
+                if (p.tipo === "dev") {
+
+                  medio =
+                    '<span class="plazo-dev">' +
+                      '<span class="dev-barra mini"><span class="dev-fill ' + p.r.estado + '" style="width:' + p.r.avance.toFixed(1) + '%"></span></span>' +
+                      '<span class="plazo-texto">' +
+                        (
+                          p.r.cumplida
+                            ? "✓ Meta cumplida · devolver " + fmtMonto(p.r.devolucion)
+                            : "Faltan " + fmtMonto(p.r.falta) + " (" + Math.round(p.r.avance) + "% de " + fmtMonto(p.r.meta) + ")"
+                        ) +
+                      '</span>' +
+                    '</span>';
+
+                } else {
+
+                  medio =
+                    '<span class="plazo-texto">Finaliza el espacio acordado</span>';
+
+                }
+
+
+                return (
+                  '<button type="button" class="dash-row plazo-row"' +
+                    ' data-dash-client="' + escapeHtml(p.c.id) + '"' +
+                    ' title="' + escapeHtml("Abrir " + (p.c.nombre || "cliente")) + '">' +
+
+                    '<span style="min-width:0;">' +
+
+                      '<span class="dash-row-name">' +
+                        escapeHtml(p.c.nombre || "Sin nombre") +
+                      '</span>' +
+
+                      '<span class="dash-row-meta">' +
+                        '<span class="plazo-chip ' + p.tipo + '">' + (p.tipo === "dev" ? "Devolución" : "Espacio") + '</span> ' +
+                        escapeHtml(
+                          p.tipo === "dev"
+                            ? (p.d.descripcion || "Devolución por cumplimiento") + " · " + p.r.porcentaje + "%"
+                            : p.e.label
+                        ) +
+                      '</span>' +
+
+                      medio +
+
+                    '</span>' +
+
+                    '<span class="dash-row-date">' +
+                      fmtDate(p.fecha) +
+                    '</span>' +
+
+                    '<span class="status-badge ' + urgencia + '">' +
+                      (p.dias === 0 ? "Hoy" : "En " + plural(p.dias, "día", "días")) +
+                    '</span>' +
+
+                  '</button>'
+                );
+
+              }
+            ).join("") +
+
+          '</div>'
+        )
+
+        : '<div class="dash-empty">' +
+            'No hay plazos de devolución ni espacios con fecha de fin próximos. ' +
+            'Se cargan en cada cliente (Devoluciones por cumplimiento o espacios personalizados con fecha).' +
+          '</div>';
+
+
+
     /* ---------- VENCIMIENTOS POR MES ---------- */
 
     var maxMes = 0;
@@ -8666,7 +9652,7 @@ body:not(.logged-out) .login-screen {
           '<div class="dash-card">' +
 
             '<div class="dash-card-head">' +
-              '<h2 class="dash-card-title">Próximos vencimientos</h2>' +
+              '<h2 class="dash-card-title">Lista de acuerdos por vencerse</h2>' +
               '<span class="dash-card-hint">' +
                 (
                   proximos.length > 7
@@ -8693,6 +9679,25 @@ body:not(.logged-out) .login-screen {
             colsHtml +
 
           '</div>' +
+
+        '</div>' +
+
+
+        '<div class="dash-card">' +
+
+          '<div class="dash-card-head">' +
+            '<h2 class="dash-card-title">Plazos de devolución y finalización de espacios acordados</h2>' +
+            '<span class="dash-card-hint">' +
+              (
+                plazos.length > LIMITE_PLAZOS
+                  ? LIMITE_PLAZOS + " de " + plazos.length + " · "
+                  : ""
+              ) +
+              'Ordenados por fecha' +
+            '</span>' +
+          '</div>' +
+
+          plazosHtml +
 
         '</div>' +
 
@@ -9784,6 +10789,16 @@ body:not(.logged-out) .login-screen {
       '</div>' +
 
 
+      '<div class="section-label">' +
+        'Devoluciones por cumplimiento' +
+      '</div>' +
+
+
+      devolucionesViewHtml(
+        c
+      ) +
+
+
       updatedHtml +
 
 
@@ -10436,6 +11451,16 @@ body:not(.logged-out) .login-screen {
       '</div>' +
 
 
+      '<div class="section-label">' +
+        'Devoluciones por cumplimiento' +
+      '</div>' +
+
+
+      devolucionesFormHtml(
+        draft
+      ) +
+
+
       '<div class="form-actions">' +
 
         '<button ' +
@@ -10548,7 +11573,7 @@ body:not(.logged-out) .login-screen {
 
 
 
-    /* ACUERDO FIRMADO */
+    /* ACUERDOS FIRMADOS (varios archivos) */
 
     Array.prototype.forEach.call(
 
@@ -10562,98 +11587,59 @@ body:not(.logged-out) .login-screen {
           "change",
           function () {
 
-            var file =
-              input.files &&
-              input.files[0];
+            var archivos =
+              Array.prototype.slice.call(input.files || []);
 
 
-            if (!file) {
-
-              return;
-
-            }
+            var rechazados = [];
 
 
-            var esPdf =
-              file.type === "application/pdf" ||
-              /\.pdf$/i.test(file.name);
+            archivos.forEach(
+              function (file) {
+
+                var esPdf =
+                  file.type === "application/pdf" ||
+                  /\.pdf$/i.test(file.name);
 
 
-            var esImagen =
-              !!file.type &&
-              file.type.indexOf("image/") === 0;
+                var esImagen =
+                  !!file.type &&
+                  file.type.indexOf("image/") === 0;
 
 
-            if (
-              !esPdf &&
-              !esImagen
-            ) {
+                if (!esPdf && !esImagen) {
 
-              showToast(
-                "El acuerdo tiene que ser un PDF o una imagen."
-              );
+                  rechazados.push(file.name + " (no es PDF ni imagen)");
 
-              return;
+                  return;
 
-            }
+                }
 
 
-            if (
-              file.size >
-              ACUERDO_MAX_MB * 1024 * 1024
-            ) {
+                if (file.size > ACUERDO_MAX_MB * 1024 * 1024) {
 
-              showToast(
-                "El acuerdo no puede superar " + ACUERDO_MAX_MB + " MB."
-              );
+                  rechazados.push(file.name + " (más de " + ACUERDO_MAX_MB + " MB)");
 
-              return;
+                  return;
 
-            }
+                }
 
 
-            state.pendingAcuerdo = {
-              file: file
-            };
+                state.pendingAcuerdos.push({
+                  id: "p" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+                  file: file,
+                  etiqueta: ""
+                });
 
-
-            state.removeAcuerdo =
-              false;
-
-
-            renderForm(
-              draft,
-              isNew
+              }
             );
 
-          }
-        );
 
-      }
+            if (rechazados.length) {
 
-    );
-
-
-    Array.prototype.forEach.call(
-
-      els.mainInner.querySelectorAll(
-        "[data-acuerdo-remove]"
-      ),
-
-      function (btn) {
-
-        btn.addEventListener(
-          "click",
-          function () {
-
-            if (state.pendingAcuerdo) {
-
-              /* descarta el archivo elegido y vuelve al que había */
-              state.pendingAcuerdo = null;
-
-            } else if (draft.acuerdoFirmado) {
-
-              state.removeAcuerdo = true;
+              showToast(
+                "No se agregó: " + rechazados.join(", ")
+              );
 
             }
 
@@ -10671,10 +11657,12 @@ body:not(.logged-out) .login-screen {
     );
 
 
+    /* quitar / deshacer un archivo ya subido */
+
     Array.prototype.forEach.call(
 
       els.mainInner.querySelectorAll(
-        "[data-acuerdo-undo]"
+        "[data-acuerdo-quitar], [data-acuerdo-deshacer]"
       ),
 
       function (btn) {
@@ -10683,12 +11671,128 @@ body:not(.logged-out) .login-screen {
           "click",
           function () {
 
-            state.removeAcuerdo = false;
+            var path =
+              btn.getAttribute("data-acuerdo-quitar");
+
+
+            if (path) {
+
+              state.acuerdosQuitados[path] = true;
+
+            } else {
+
+              delete state.acuerdosQuitados[
+                btn.getAttribute("data-acuerdo-deshacer")
+              ];
+
+            }
 
 
             renderForm(
               draft,
               isNew
+            );
+
+          }
+        );
+
+      }
+
+    );
+
+
+    /* descartar un archivo elegido que todavía no se subió */
+
+    Array.prototype.forEach.call(
+
+      els.mainInner.querySelectorAll(
+        "[data-pend-descartar]"
+      ),
+
+      function (btn) {
+
+        btn.addEventListener(
+          "click",
+          function () {
+
+            var id =
+              btn.getAttribute("data-pend-descartar");
+
+
+            state.pendingAcuerdos =
+              state.pendingAcuerdos.filter(
+                function (p) {
+
+                  return p.id !== id;
+
+                }
+              );
+
+
+            renderForm(
+              draft,
+              isNew
+            );
+
+          }
+        );
+
+      }
+
+    );
+
+
+    /* descripción de cada archivo */
+
+    Array.prototype.forEach.call(
+
+      els.mainInner.querySelectorAll(
+        "[data-acuerdo-etiqueta], [data-pend-etiqueta]"
+      ),
+
+      function (input) {
+
+        input.addEventListener(
+          "input",
+          function () {
+
+            var path =
+              input.getAttribute("data-acuerdo-etiqueta");
+
+
+            if (path) {
+
+              (draft.acuerdosFirmados || []).forEach(
+                function (a) {
+
+                  if (a.path === path) {
+
+                    a.etiqueta = input.value;
+
+                  }
+
+                }
+              );
+
+              return;
+
+            }
+
+
+            var id =
+              input.getAttribute("data-pend-etiqueta");
+
+
+            state.pendingAcuerdos.forEach(
+              function (p) {
+
+                if (p.id === id) {
+
+                  p.etiqueta = input.value;
+
+                }
+
+              }
             );
 
           }
@@ -10783,6 +11887,179 @@ body:not(.logged-out) .login-screen {
 
             espacio.activo =
               !espacio.activo;
+
+
+            renderForm(
+              draft,
+              isNew
+            );
+
+          }
+        );
+
+      }
+
+    );
+
+
+
+    /* DEVOLUCIONES POR CUMPLIMIENTO */
+
+    if (!draft.devoluciones) {
+
+      draft.devoluciones = [];
+
+    }
+
+
+    var addDev =
+      els.mainInner.querySelector("[data-dev-add]");
+
+
+    if (addDev) {
+
+      addDev.addEventListener(
+        "click",
+        function () {
+
+          var nueva =
+            nuevaDevolucion();
+
+
+          /* por defecto, el mismo período del acuerdo */
+          nueva.desde = draft.vigenciaInicio || "";
+
+          nueva.hasta = draft.vigenciaFin || "";
+
+
+          draft.devoluciones.push(nueva);
+
+
+          renderForm(
+            draft,
+            isNew
+          );
+
+
+          var campo =
+            els.mainInner.querySelector('[data-dev-id="' + nueva.id + '"][data-dev-field="descripcion"]');
+
+
+          if (campo) {
+
+            campo.scrollIntoView({ block: "center" });
+
+            campo.focus();
+
+          }
+
+        }
+      );
+
+    }
+
+
+    Array.prototype.forEach.call(
+
+      els.mainInner.querySelectorAll(
+        "[data-dev-field]"
+      ),
+
+      function (input) {
+
+        input.addEventListener(
+          "input",
+          function () {
+
+            var id =
+              input.getAttribute("data-dev-id");
+
+
+            var d =
+              draft.devoluciones.find(
+                function (x) {
+
+                  return x.id === id;
+
+                }
+              );
+
+
+            if (!d) {
+
+              return;
+
+            }
+
+
+            d[input.getAttribute("data-dev-field")] =
+              input.value;
+
+
+            /* actualiza la barra de avance sin redibujar todo */
+            var prev =
+              els.mainInner.querySelector('[data-dev-preview="' + id + '"]');
+
+
+            if (prev) {
+
+              prev.innerHTML = devResumenHtml(d);
+
+            }
+
+          }
+        );
+
+      }
+
+    );
+
+
+    Array.prototype.forEach.call(
+
+      els.mainInner.querySelectorAll(
+        "[data-dev-remove]"
+      ),
+
+      function (btn) {
+
+        btn.addEventListener(
+          "click",
+          function () {
+
+            var id =
+              btn.getAttribute("data-dev-remove");
+
+
+            var d =
+              draft.devoluciones.find(
+                function (x) {
+
+                  return x.id === id;
+
+                }
+              );
+
+
+            if (
+              d &&
+              (d.descripcion || parseMonto(d.meta)) &&
+              !confirm('¿Quitar "' + (d.descripcion || "este trato de devolución") + '"?')
+            ) {
+
+              return;
+
+            }
+
+
+            draft.devoluciones =
+              draft.devoluciones.filter(
+                function (x) {
+
+                  return x.id !== id;
+
+                }
+              );
 
 
             renderForm(
@@ -11373,44 +12650,12 @@ body:not(.logged-out) .login-screen {
 
 
   /* ========================================================
-     SUBIR ACUERDO FIRMADO A FIREBASE STORAGE
-     Devuelve los datos del archivo subido, o null si no hay
-     nada nuevo para subir.
+     SUBIR ACUERDOS FIRMADOS A FIREBASE STORAGE
+     Sube todos los archivos nuevos elegidos y devuelve sus
+     datos (lista vacía si no hay nada para subir).
   ======================================================== */
 
-  function uploadAcuerdo(
-    clientId
-  ) {
-
-    var pending =
-      state.pendingAcuerdo;
-
-
-    if (
-      !state.canEdit ||
-      !pending ||
-      !pending.file
-    ) {
-
-      return Promise.resolve(null);
-
-    }
-
-
-    if (
-      !state.storage
-    ) {
-
-      return Promise.reject(
-        { code: "storage/unavailable" }
-      );
-
-    }
-
-
-    var file =
-      pending.file;
-
+  function subirArchivoAcuerdo(clientId, file, etiqueta, indice) {
 
     var ext =
       (
@@ -11433,7 +12678,7 @@ body:not(.logged-out) .login-screen {
 
       "/acuerdo-firmado/" +
 
-      Date.now() +
+      Date.now() + "-" + indice +
 
       "-" +
 
@@ -11442,13 +12687,10 @@ body:not(.logged-out) .login-screen {
       ext;
 
 
-    var ref =
-      state.storage
-        .ref()
-        .child(path);
+    return state.storage
+      .ref()
+      .child(path)
 
-
-    return ref
       .put(
         file,
         {
@@ -11482,12 +12724,57 @@ body:not(.logged-out) .login-screen {
 
             tamano: file.size || 0,
 
-            subidoEn: Date.now()
+            subidoEn: Date.now(),
+
+            etiqueta: (etiqueta || "").trim()
 
           };
 
         }
       );
+
+  }
+
+
+
+  function uploadAcuerdos(
+    clientId
+  ) {
+
+    var pendientes =
+      state.pendingAcuerdos;
+
+
+    if (
+      !state.canEdit ||
+      !pendientes.length
+    ) {
+
+      return Promise.resolve([]);
+
+    }
+
+
+    if (
+      !state.storage
+    ) {
+
+      return Promise.reject(
+        { code: "storage/unavailable" }
+      );
+
+    }
+
+
+    return Promise.all(
+      pendientes.map(
+        function (p, i) {
+
+          return subirArchivoAcuerdo(clientId, p.file, p.etiqueta, i);
+
+        }
+      )
+    );
 
   }
 
@@ -11898,6 +13185,123 @@ body:not(.logged-out) .login-screen {
     }
 
 
+    /* Devoluciones por cumplimiento */
+
+    var devAntes =
+      (original && original.devoluciones) || [];
+
+
+    var devAhora =
+      nuevo.devoluciones || [];
+
+
+    var nombreDev = function (d) {
+
+      return '"' + corto(d.descripcion || "Devolución", 40) + '"';
+
+    };
+
+
+    devAhora.forEach(
+      function (b) {
+
+        var a =
+          devAntes.find(
+            function (x) {
+
+              return x.id === b.id;
+
+            }
+          );
+
+
+        if (!a) {
+
+          cambios.push(
+            "Se agregó la devolución " + nombreDev(b) + ": " +
+            b.porcentaje + "% si compra " + fmtMonto(b.meta) +
+            " (" + devPeriodo(b).toLowerCase() + ")"
+          );
+
+          return;
+
+        }
+
+
+        if ((a.descripcion || "") !== (b.descripcion || "")) {
+
+          cambios.push(
+            "Devolución " + nombreDev(a) + " pasó a llamarse " + nombreDev(b)
+          );
+
+        }
+
+
+        if (parseMonto(a.meta) !== parseMonto(b.meta)) {
+
+          cambios.push(
+            "Devolución " + nombreDev(b) + ": meta " + fmtMonto(a.meta) + " → " + fmtMonto(b.meta)
+          );
+
+        }
+
+
+        if (parseMonto(a.porcentaje) !== parseMonto(b.porcentaje)) {
+
+          cambios.push(
+            "Devolución " + nombreDev(b) + ": porcentaje " + a.porcentaje + "% → " + b.porcentaje + "%"
+          );
+
+        }
+
+
+        if ((a.desde || "") !== (b.desde || "") || (a.hasta || "") !== (b.hasta || "")) {
+
+          cambios.push(
+            "Devolución " + nombreDev(b) + ": plazo (" + devPeriodo(a) + ") → (" + devPeriodo(b) + ")"
+          );
+
+        }
+
+
+        if (parseMonto(a.comprado) !== parseMonto(b.comprado)) {
+
+          cambios.push(
+            "Devolución " + nombreDev(b) + ": comprado a la fecha " +
+            fmtMonto(a.comprado) + " → " + fmtMonto(b.comprado) +
+            " (" + Math.round(calcDevolucion(b).avance) + "% de la meta)"
+          );
+
+        }
+
+      }
+    );
+
+
+    devAntes.forEach(
+      function (a) {
+
+        if (
+          !devAhora.some(
+            function (x) {
+
+              return x.id === a.id;
+
+            }
+          )
+        ) {
+
+          cambios.push(
+            "Se quitó la devolución " + nombreDev(a)
+          );
+
+        }
+
+      }
+    );
+
+
+
     /* Fotos de los espacios (incluye personalizados, aunque se hayan quitado) */
 
     var conFotos =
@@ -11940,24 +13344,69 @@ body:not(.logged-out) .login-screen {
 
     /* Acuerdo firmado (en el historial solo lo ven los administradores) */
 
-    if (extra.acuerdoNuevo) {
+    var nombreAcuerdo = function (a) {
 
-      cambios.push(
-        HIST_ACUERDO_PREFIJO +
-        (extra.acuerdoAnterior ? " reemplazado: " : " cargado: ") +
-        corto(extra.acuerdoNuevo.nombre, 50)
-      );
+      return corto(a.nombre, 50) + (a.etiqueta ? " (" + corto(a.etiqueta, 40) + ")" : "");
 
-    } else if (
-      extra.acuerdoQuitado &&
-      extra.acuerdoAnterior
-    ) {
+    };
 
-      cambios.push(
-        HIST_ACUERDO_PREFIJO + " quitado"
-      );
 
-    }
+    (extra.acuerdosSubidos || []).forEach(
+      function (a) {
+
+        cambios.push(
+          HIST_ACUERDO_PREFIJO + " cargado: " + nombreAcuerdo(a)
+        );
+
+      }
+    );
+
+
+    (extra.acuerdosQuitados || []).forEach(
+      function (a) {
+
+        cambios.push(
+          HIST_ACUERDO_PREFIJO + " quitado: " + nombreAcuerdo(a)
+        );
+
+      }
+    );
+
+
+    /* descripciones cambiadas en archivos que ya estaban */
+
+    var previos =
+      (original && original.acuerdosFirmados) || [];
+
+
+    (extra.acuerdosFinal || []).forEach(
+      function (a) {
+
+        var antes =
+          previos.find(
+            function (p) {
+
+              return p.path === a.path;
+
+            }
+          );
+
+
+        if (
+          antes &&
+          (antes.etiqueta || "").trim() !== (a.etiqueta || "").trim()
+        ) {
+
+          cambios.push(
+            HIST_ACUERDO_PREFIJO + " " + corto(a.nombre, 40) + ': descripción "' +
+            (corto(antes.etiqueta, 40) || "sin descripción") + '" → "' +
+            (corto(a.etiqueta, 40) || "sin descripción") + '"'
+          );
+
+        }
+
+      }
+    );
 
 
     return cambios;
@@ -12088,6 +13537,61 @@ body:not(.logged-out) .login-screen {
 
 
 
+    /* Devoluciones: meta y porcentaje obligatorios, fechas coherentes */
+
+    var devMal =
+      (draft.devoluciones || [])
+        .map(
+          function (d) {
+
+            var nombre =
+              (d.descripcion || "").trim() || "un trato de devolución";
+
+
+            if (!(parseMonto(d.meta) > 0)) {
+
+              return "Poné la meta de compra en " + nombre + ".";
+
+            }
+
+
+            var p =
+              parseMonto(d.porcentaje);
+
+
+            if (!(p > 0 && p <= 100)) {
+
+              return "El porcentaje de devolución en " + nombre + " tiene que estar entre 0 y 100.";
+
+            }
+
+
+            if (d.desde && d.hasta && d.hasta < d.desde) {
+
+              return 'En ' + nombre + ' la fecha "hasta" es anterior a "desde".';
+
+            }
+
+
+            return "";
+
+          }
+        )
+        .filter(Boolean);
+
+
+    if (devMal.length) {
+
+      showToast(
+        devMal[0]
+      );
+
+      return;
+
+    }
+
+
+
     /* Si lo escribieron a mano pero ya existe en la lista
        (ej: "san roque"), se usa el nombre de la lista */
 
@@ -12149,12 +13653,24 @@ body:not(.logged-out) .login-screen {
 
 
 
-    var acuerdoAnterior =
-      draft.acuerdoFirmado || null;
+    /* Acuerdos firmados: los que ya estaban (con descripciones
+       editadas) menos los quitados, más los nuevos que se suban */
+
+    var acuerdosPrevios =
+      draft.acuerdosFirmados || [];
 
 
-    var acuerdoNuevo =
-      null;
+    var acuerdosQuitadosLista =
+      acuerdosPrevios.filter(
+        function (a) {
+
+          return state.acuerdosQuitados[a.path];
+
+        }
+      );
+
+
+    var acuerdosSubidos = [];
 
 
     uploadPendingPhotos(
@@ -12165,7 +13681,7 @@ body:not(.logged-out) .login-screen {
     .then(
       function () {
 
-        return uploadAcuerdo(
+        return uploadAcuerdos(
           clientId
         );
 
@@ -12173,10 +13689,10 @@ body:not(.logged-out) .login-screen {
     )
 
     .then(
-      function (subido) {
+      function (subidos) {
 
-        acuerdoNuevo =
-          subido || null;
+        acuerdosSubidos =
+          subidos || [];
 
 
         var payload = {
@@ -12198,6 +13714,23 @@ body:not(.logged-out) .login-screen {
           espacios:
             draft.espacios,
 
+          devoluciones:
+            (draft.devoluciones || []).map(
+              function (d) {
+
+                return {
+                  id: d.id,
+                  descripcion: (d.descripcion || "").trim(),
+                  meta: parseMonto(d.meta),
+                  porcentaje: parseMonto(d.porcentaje),
+                  desde: d.desde || "",
+                  hasta: d.hasta || "",
+                  comprado: parseMonto(d.comprado)
+                };
+
+              }
+            ),
+
           notas:
             draft.notas ||
             "",
@@ -12208,22 +13741,42 @@ body:not(.logged-out) .login-screen {
         };
 
 
-        /* El acuerdo firmado solo se toca si cambió */
+        /* Lista final de acuerdos firmados */
 
-        if (acuerdoNuevo) {
+        var acuerdosFinal =
+          acuerdosPrevios
+            .filter(
+              function (a) {
 
-          payload.acuerdoFirmado =
-            acuerdoNuevo;
+                return !state.acuerdosQuitados[a.path];
 
-        } else if (
-          state.removeAcuerdo ||
-          isNew
-        ) {
+              }
+            )
+            .map(
+              function (a) {
 
-          payload.acuerdoFirmado =
-            null;
+                return {
+                  url: a.url,
+                  path: a.path,
+                  nombre: a.nombre,
+                  tipo: a.tipo || "",
+                  tamano: a.tamano || 0,
+                  subidoEn: a.subidoEn || null,
+                  etiqueta: (a.etiqueta || "").trim()
+                };
 
-        }
+              }
+            )
+            .concat(acuerdosSubidos);
+
+
+        payload.acuerdosFirmados =
+          acuerdosFinal;
+
+
+        /* el primero también en "acuerdoFirmado" (compatibilidad) */
+        payload.acuerdoFirmado =
+          acuerdosFinal[0] || null;
 
 
         /* Historial: qué cambió, quién y cuándo */
@@ -12267,9 +13820,9 @@ body:not(.logged-out) .login-screen {
               renovacion: !!draft._renovacion,
               fotosNuevas: fotosNuevas,
               fotosQuitadas: state.removedPhotos,
-              acuerdoNuevo: acuerdoNuevo,
-              acuerdoAnterior: acuerdoAnterior,
-              acuerdoQuitado: state.removeAcuerdo
+              acuerdosSubidos: acuerdosSubidos,
+              acuerdosQuitados: acuerdosQuitadosLista,
+              acuerdosFinal: acuerdosFinal
             }
           );
 
@@ -12325,26 +13878,19 @@ body:not(.logged-out) .login-screen {
     .then(
       function () {
 
-        /* Borra el archivo viejo si se reemplazó o se quitó */
+        /* Borra de Storage los acuerdos que se quitaron */
 
-        if (
-          acuerdoAnterior &&
-          acuerdoAnterior.path &&
-          (
-            acuerdoNuevo ||
-            state.removeAcuerdo
-          ) &&
-          (
-            !acuerdoNuevo ||
-            acuerdoNuevo.path !== acuerdoAnterior.path
+        return Promise.all(
+          acuerdosQuitadosLista.map(
+            function (a) {
+
+              return deleteStorageFile(
+                a.path
+              );
+
+            }
           )
-        ) {
-
-          return deleteStorageFile(
-            acuerdoAnterior.path
-          );
-
-        }
+        );
 
       }
     )
@@ -12537,11 +14083,16 @@ body:not(.logged-out) .login-screen {
 
     var deleteAcuerdo =
 
-      clienteBorrado &&
-      clienteBorrado.acuerdoFirmado
+      clienteBorrado
 
-        ? deleteStorageFile(
-          clienteBorrado.acuerdoFirmado.path
+        ? Promise.all(
+          (clienteBorrado.acuerdosFirmados || []).map(
+            function (a) {
+
+              return deleteStorageFile(a.path);
+
+            }
+          )
         )
 
         : Promise.resolve();
@@ -13327,6 +14878,97 @@ body:not(.logged-out) .login-screen {
 
 
       y += 6;
+
+    }
+
+
+
+    /* ---------- DEVOLUCIONES POR CUMPLIMIENTO ---------- */
+
+    var devs =
+      c.devoluciones || [];
+
+
+    if (devs.length) {
+
+      sectionTitle(
+        "Devoluciones por cumplimiento (" + devs.length + ")"
+      );
+
+
+      doc.autoTable({
+
+        startY: y - 2,
+
+        margin: {
+          left: margin,
+          right: margin,
+          top: 18,
+          bottom: 18
+        },
+
+        head: [[
+          "Trato",
+          "Plazo",
+          "Meta",
+          "%",
+          "Comprado",
+          "Situación"
+        ]],
+
+        body: devs.map(
+          function (d) {
+
+            var r =
+              calcDevolucion(d);
+
+
+            return [
+              d.descripcion || "Devolución",
+              devPeriodo(d),
+              fmtMonto(r.meta),
+              r.porcentaje + "%",
+              fmtMonto(r.comprado) + " (" + Math.round(r.avance) + "%)",
+              r.cumplida
+                ? "Meta cumplida. Devolver " + fmtMonto(r.devolucion)
+                : DEV_ESTADOS[r.estado].label + ". Faltan " + fmtMonto(r.falta) +
+                  " (devolución " + fmtMonto(r.devolucion) + ")"
+            ];
+
+          }
+        ),
+
+        theme: "grid",
+
+        styles: {
+          font: "helvetica",
+          fontSize: 8.8,
+          textColor: C.ink,
+          lineColor: C.border,
+          lineWidth: 0.2,
+          cellPadding: 2.2
+        },
+
+        headStyles: {
+          fillColor: C.accent,
+          textColor: [255, 255, 255],
+          fontStyle: "bold"
+        },
+
+        alternateRowStyles: {
+          fillColor: C.zebra
+        },
+
+        columnStyles: {
+          0: { fontStyle: "bold", cellWidth: 32 },
+          1: { cellWidth: 34 },
+          3: { cellWidth: 12, halign: "center" }
+        }
+
+      });
+
+
+      y = doc.lastAutoTable.finalY + 10;
 
     }
 
@@ -16313,8 +17955,14 @@ body:not(.logged-out) .login-screen {
             if (admin) {
 
               fila.push(
-                c.acuerdoFirmado
-                  ? c.acuerdoFirmado.url
+                (c.acuerdosFirmados || []).length
+                  ? c.acuerdosFirmados.map(
+                    function (a) {
+
+                      return (a.etiqueta || a.nombre) + ": " + a.url;
+
+                    }
+                  ).join("\n")
                   : "No cargado"
               );
 
@@ -16426,6 +18074,74 @@ body:not(.logged-out) .login-screen {
       );
 
 
+    /* ---- Hoja: Devoluciones por cumplimiento ---- */
+
+    var filasDev =
+      [[
+        "Cliente",
+        "Grupo de compra",
+        "Descripción",
+        "Desde",
+        "Hasta",
+        "Días para el límite",
+        "Meta de compra",
+        "Devolución %",
+        "Comprado a la fecha",
+        "Avance %",
+        "Falta para la meta",
+        "Devolución estimada",
+        "Estado"
+      ]];
+
+
+    clients.forEach(
+      function (c) {
+
+        (c.devoluciones || []).forEach(
+          function (d) {
+
+            var r =
+              calcDevolucion(d);
+
+
+            filasDev.push([
+              c.nombre || "Sin nombre",
+              grupoDe(c),
+              d.descripcion || "",
+              excelFecha(d.desde),
+              excelFecha(d.hasta),
+              r.dias === null ? "" : r.dias,
+              r.meta,
+              r.porcentaje,
+              r.comprado,
+              Math.round(r.avance),
+              r.falta,
+              Math.round(r.devolucion),
+              DEV_ESTADOS[r.estado].label
+            ]);
+
+          }
+        );
+
+      }
+    );
+
+
+    var wsDev =
+      armarHoja(
+        filasDev,
+        [28, 18, 30, 12, 12, 10, 14, 10, 16, 9, 16, 16, 18],
+        {
+          3: "dd/mm/yyyy",
+          4: "dd/mm/yyyy",
+          6: "#,##0",
+          8: "#,##0",
+          10: "#,##0",
+          11: "#,##0"
+        }
+      );
+
+
     /* ---- Hoja 3: Info del archivo ---- */
 
     var filtros = [];
@@ -16476,6 +18192,8 @@ body:not(.logged-out) .login-screen {
     XLSX.utils.book_append_sheet(wb, ws1, "Clientes");
 
     XLSX.utils.book_append_sheet(wb, ws2, "Espacios");
+
+    XLSX.utils.book_append_sheet(wb, wsDev, "Devoluciones");
 
     XLSX.utils.book_append_sheet(wb, ws3, "Info");
 
@@ -18157,18 +19875,39 @@ body:not(.logged-out) .login-screen {
                     )
                     : [],
 
+                acuerdosFirmados:
+                  leerAcuerdosFirmados(data),
+
+                devoluciones:
+                  Array.isArray(data.devoluciones)
+                    ? data.devoluciones
+                      .filter(
+                        function (d) {
+
+                          return d && d.id;
+
+                        }
+                      )
+                      .map(
+                        function (d) {
+
+                          return {
+                            id: d.id,
+                            descripcion: d.descripcion || "",
+                            meta: parseMonto(d.meta),
+                            porcentaje: parseMonto(d.porcentaje),
+                            desde: d.desde || "",
+                            hasta: d.hasta || "",
+                            comprado: parseMonto(d.comprado)
+                          };
+
+                        }
+                      )
+                    : [],
+
+                /* el primero (compatibilidad: panel, Excel, etc.) */
                 acuerdoFirmado:
-                  data.acuerdoFirmado &&
-                  data.acuerdoFirmado.url
-                    ? {
-                      url: data.acuerdoFirmado.url,
-                      path: data.acuerdoFirmado.path || "",
-                      nombre: data.acuerdoFirmado.nombre || "Acuerdo firmado",
-                      tipo: data.acuerdoFirmado.tipo || "",
-                      tamano: data.acuerdoFirmado.tamano || 0,
-                      subidoEn: data.acuerdoFirmado.subidoEn || null
-                    }
-                    : null,
+                  leerAcuerdosFirmados(data)[0] || null,
 
                 vigenciaInicio:
                   data.vigenciaInicio ||
