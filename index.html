@@ -2392,9 +2392,18 @@ button.dash-tile:focus-visible {
 
   display: grid;
 
-  grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
 
   gap: 14px;
+
+}
+
+
+
+/* dentro de una fila, las tarjetas quedan alineadas arriba */
+.dash-grid > .dash-card + .dash-card {
+
+  margin-top: 0;
 
 }
 
@@ -9238,7 +9247,7 @@ body:not(.logged-out) .login-screen {
     );
 
 
-    var LIMITE_PLAZOS = 8;
+    var LIMITE_PLAZOS = 7;
 
 
     var plazosHtml =
@@ -9667,16 +9676,22 @@ body:not(.logged-out) .login-screen {
           '</div>' +
 
 
+          /* al lado: espacios con fecha de fin y devoluciones */
           '<div class="dash-card">' +
 
             '<div class="dash-card-head">' +
-              '<h2 class="dash-card-title">Vencimientos por mes</h2>' +
+              '<h2 class="dash-card-title">Lista de espacios acordados por vencerse</h2>' +
               '<span class="dash-card-hint">' +
-                'Próximos 12 meses · ' + plural(totalMeses, "acuerdo", "acuerdos") +
+                (
+                  plazos.length > LIMITE_PLAZOS
+                    ? LIMITE_PLAZOS + " de " + plazos.length + " · "
+                    : ""
+                ) +
+                'Ordenados por fecha' +
               '</span>' +
             '</div>' +
 
-            colsHtml +
+            plazosHtml +
 
           '</div>' +
 
@@ -9686,18 +9701,13 @@ body:not(.logged-out) .login-screen {
         '<div class="dash-card">' +
 
           '<div class="dash-card-head">' +
-            '<h2 class="dash-card-title">Plazos de devolución y finalización de espacios acordados</h2>' +
+            '<h2 class="dash-card-title">Vencimientos por mes</h2>' +
             '<span class="dash-card-hint">' +
-              (
-                plazos.length > LIMITE_PLAZOS
-                  ? LIMITE_PLAZOS + " de " + plazos.length + " · "
-                  : ""
-              ) +
-              'Ordenados por fecha' +
+              'Próximos 12 meses · ' + plural(totalMeses, "acuerdo", "acuerdos") +
             '</span>' +
           '</div>' +
 
-          plazosHtml +
+          colsHtml +
 
         '</div>' +
 
