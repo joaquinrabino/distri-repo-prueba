@@ -2989,6 +2989,74 @@ button.dash-tile:focus-visible {
 
 
 
+/* Listas con barra para subir y bajar (se ven todos los ítems) */
+
+.dash-scroll {
+
+  max-height: 440px;
+
+  overflow-y: auto;
+
+  overscroll-behavior: contain;
+
+  padding-right: 4px;
+
+  scrollbar-width: thin;
+
+  scrollbar-color: var(--border-strong) transparent;
+
+  outline: none;
+
+}
+
+
+
+.dash-scroll:focus-visible {
+
+  box-shadow: 0 0 0 2px var(--accent-soft);
+
+  border-radius: 8px;
+
+}
+
+
+
+.dash-scroll::-webkit-scrollbar {
+
+  width: 8px;
+
+}
+
+
+
+.dash-scroll::-webkit-scrollbar-thumb {
+
+  background: var(--border-strong);
+
+  border-radius: 999px;
+
+}
+
+
+
+.dash-scroll::-webkit-scrollbar-thumb:hover {
+
+  background: var(--ink-faint);
+
+}
+
+
+
+.dash-scroll::-webkit-scrollbar-track {
+
+  background: var(--surface-2);
+
+  border-radius: 999px;
+
+}
+
+
+
 /* Próximos vencimientos */
 
 .dash-list {
@@ -3740,251 +3808,7 @@ button.dash-tile:focus-visible {
 
 
 
-/* ==========================================================
-   DEVOLUCIONES POR CUMPLIMIENTO
-========================================================== */
-
-.dev-lista {
-
-  display: flex;
-
-  flex-direction: column;
-
-  gap: 10px;
-
-}
-
-
-
-.dev-card {
-
-  border: 1px solid var(--border);
-
-  border-left: 4px solid var(--accent);
-
-  border-radius: var(--radius);
-
-  background: var(--surface);
-
-  padding: 12px 14px;
-
-}
-
-
-
-.dev-head {
-
-  display: flex;
-
-  align-items: center;
-
-  justify-content: space-between;
-
-  gap: 10px;
-
-  flex-wrap: wrap;
-
-  margin-bottom: 8px;
-
-}
-
-
-
-.dev-card.editando .dev-head {
-
-  flex-wrap: nowrap;
-
-}
-
-
-
-.dev-periodo {
-
-  font-size: 12.5px;
-
-  color: var(--ink-soft);
-
-  font-weight: 600;
-
-}
-
-
-
-.dev-grid {
-
-  display: grid;
-
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-
-  gap: 8px;
-
-  margin-bottom: 10px;
-
-}
-
-
-
-.dev-campo {
-
-  display: flex;
-
-  flex-direction: column;
-
-  gap: 3px;
-
-  font-size: 11px;
-
-  font-weight: 600;
-
-  color: var(--ink-faint);
-
-}
-
-
-
-.dev-campo input {
-
-  width: 100%;
-
-  min-width: 0;
-
-  padding: 7px 8px;
-
-  border: 1px solid var(--border-strong);
-
-  border-radius: 6px;
-
-  background: var(--surface);
-
-  outline: none;
-
-  font-size: 13px;
-
-  color: var(--ink);
-
-}
-
-
-
-.dev-campo input:focus {
-
-  border-color: var(--accent);
-
-}
-
-
-
-.dev-barra {
-
-  height: 10px;
-
-  border-radius: 999px;
-
-  background: var(--accent-soft);
-
-  overflow: hidden;
-
-}
-
-
-
-.dev-barra.mini {
-
-  display: block;
-
-  height: 6px;
-
-  width: 100%;
-
-  max-width: 220px;
-
-  margin: 5px 0 3px;
-
-}
-
-
-
-.dev-fill {
-
-  display: block;
-
-  height: 100%;
-
-  border-radius: 999px;
-
-  background: var(--chart-bar);
-
-}
-
-
-
-.dev-fill.cumplida {
-
-  background: var(--chart-vigente);
-
-}
-
-
-
-.dev-fill.vencida {
-
-  background: var(--chart-vencido);
-
-}
-
-
-
-.dev-numeros {
-
-  display: flex;
-
-  align-items: center;
-
-  justify-content: space-between;
-
-  gap: 8px;
-
-  flex-wrap: wrap;
-
-  margin-top: 6px;
-
-  font-size: 13px;
-
-  color: var(--ink-soft);
-
-}
-
-
-
-.dev-numeros strong {
-
-  color: var(--ink);
-
-}
-
-
-
-.dev-detalle {
-
-  margin-top: 4px;
-
-  font-size: 12.8px;
-
-  color: var(--ink-soft);
-
-}
-
-
-
-.dev-vacio {
-
-  font-size: 12.5px;
-
-  color: var(--ink-faint);
-
-}
-
-
+/* Lista de espacios acordados por vencerse (panel) */
 
 .plazo-texto {
 
@@ -3993,56 +3817,6 @@ button.dash-tile:focus-visible {
   font-size: 12px;
 
   color: var(--ink-soft);
-
-}
-
-
-
-.plazo-dev {
-
-  display: block;
-
-}
-
-
-
-.plazo-chip {
-
-  display: inline-block;
-
-  font-size: 10px;
-
-  font-weight: 700;
-
-  text-transform: uppercase;
-
-  letter-spacing: 0.04em;
-
-  border-radius: 999px;
-
-  padding: 1px 7px;
-
-  margin-right: 2px;
-
-}
-
-
-
-.plazo-chip.dev {
-
-  background: var(--accent-soft);
-
-  color: var(--accent);
-
-}
-
-
-
-.plazo-chip.esp {
-
-  background: var(--porvencer-bg);
-
-  color: var(--porvencer);
 
 }
 
@@ -6634,344 +6408,6 @@ body:not(.logged-out) .login-screen {
 
 
 
-  /* ========================================================
-     DEVOLUCIONES POR CUMPLIMIENTO (metas de compra)
-     Cada cliente puede tener varios tratos:
-     { id, descripcion, meta, porcentaje, desde, hasta, comprado }
-     Si en el período compra "meta", se le devuelve "porcentaje".
-  ======================================================== */
-
-  /* "35.000", "$ 35000", "35000,50" → 35000 / 35000.5 */
-
-  function parseMonto(v) {
-
-    if (typeof v === "number") {
-
-      return isFinite(v) ? v : 0;
-
-    }
-
-
-    var t =
-      String(v || "")
-        .replace(/[^\d.,-]/g, "");
-
-
-    if (!t) {
-
-      return 0;
-
-    }
-
-
-    /* "35.000,50" → punto de miles y coma decimal (formato Uruguay) */
-    if (t.indexOf(",") !== -1) {
-
-      t = t.replace(/\./g, "").replace(",", ".");
-
-    } else if (/^\d{1,3}(\.\d{3})+$/.test(t)) {
-
-      t = t.replace(/\./g, "");
-
-    }
-
-
-    var n =
-      Number(t);
-
-
-    return isFinite(n) ? n : 0;
-
-  }
-
-
-
-  function fmtMonto(n) {
-
-    return "$ " + Math.round(Number(n) || 0).toLocaleString("es-UY");
-
-  }
-
-
-
-  function nuevaDevolucion() {
-
-    return {
-      id: "d" + Date.now().toString(36),
-      descripcion: "",
-      meta: "",
-      porcentaje: "",
-      desde: "",
-      hasta: "",
-      comprado: ""
-    };
-
-  }
-
-
-
-  /* Avance y estado de un trato */
-
-  function calcDevolucion(d) {
-
-    var meta = parseMonto(d.meta);
-
-    var comprado = parseMonto(d.comprado);
-
-    var porcentaje = parseMonto(d.porcentaje);
-
-    var dias = daysUntil(d.hasta);
-
-
-    var avance =
-      meta > 0 ? Math.min(100, comprado / meta * 100) : 0;
-
-
-    var cumplida =
-      meta > 0 && comprado >= meta;
-
-
-    var estado =
-      cumplida
-        ? "cumplida"
-        : dias !== null && dias < 0
-          ? "vencida"
-          : "curso";
-
-
-    return {
-      meta: meta,
-      comprado: comprado,
-      porcentaje: porcentaje,
-      avance: avance,
-      falta: Math.max(0, meta - comprado),
-      cumplida: cumplida,
-      /* se devuelve el % sobre lo comprado (o sobre la meta si todavía no llegó) */
-      devolucion: (cumplida ? comprado : meta) * porcentaje / 100,
-      dias: dias,
-      estado: estado
-    };
-
-  }
-
-
-
-  var DEV_ESTADOS = {
-    cumplida: { label: "Meta cumplida", clase: "vigente" },
-    vencida: { label: "Venció sin cumplir", clase: "vencido" },
-    curso: { label: "En curso", clase: "indef" }
-  };
-
-
-
-  /* Barra de avance + textos (se usa en ficha, formulario y panel) */
-
-  function devResumenHtml(d) {
-
-    var r =
-      calcDevolucion(d);
-
-
-    if (!r.meta) {
-
-      return '<div class="dev-resumen dev-vacio">Cargá la meta para ver el avance.</div>';
-
-    }
-
-
-    var estado =
-      DEV_ESTADOS[r.estado];
-
-
-    return (
-      '<div class="dev-resumen">' +
-
-        '<div class="dev-barra" role="img" aria-label="' + escapeHtml("Avance " + Math.round(r.avance) + "%") + '">' +
-          '<span class="dev-fill ' + r.estado + '" style="width:' + r.avance.toFixed(1) + '%"></span>' +
-        '</div>' +
-
-        '<div class="dev-numeros">' +
-
-          '<span><strong>' + fmtMonto(r.comprado) + '</strong> de ' + fmtMonto(r.meta) +
-            ' · ' + Math.round(r.avance) + '%</span>' +
-
-          '<span class="status-badge ' + estado.clase + '">' + estado.label + '</span>' +
-
-        '</div>' +
-
-        '<div class="dev-detalle">' +
-
-          (
-            r.cumplida
-              ? "Le corresponde una devolución de <strong>" + fmtMonto(r.devolucion) + "</strong> (" + r.porcentaje + "%)."
-              : "Le faltan <strong>" + fmtMonto(r.falta) + "</strong> para la meta. " +
-                "Si la cumple, se le devuelve <strong>" + fmtMonto(r.devolucion) + "</strong> (" + r.porcentaje + "%)."
-          ) +
-
-          (
-            r.dias !== null && r.estado === "curso"
-              ? " " + (r.dias === 0 ? "El plazo vence hoy." : "Quedan " + plural(r.dias, "día", "días") + ".")
-              : ""
-          ) +
-
-        '</div>' +
-
-      '</div>'
-    );
-
-  }
-
-
-
-  function devPeriodo(d) {
-
-    if (d.desde && d.hasta) {
-
-      return "Del " + fmtDate(d.desde) + " al " + fmtDate(d.hasta);
-
-    }
-
-
-    if (d.hasta) {
-
-      return "Hasta el " + fmtDate(d.hasta);
-
-    }
-
-
-    if (d.desde) {
-
-      return "Desde el " + fmtDate(d.desde);
-
-    }
-
-
-    return "Sin plazo cargado";
-
-  }
-
-
-
-  /* Ficha del cliente */
-
-  function devolucionesViewHtml(c) {
-
-    var lista =
-      c.devoluciones || [];
-
-
-    if (!lista.length) {
-
-      return (
-        '<div class="hist-empty">' +
-          'No tiene devoluciones por cumplimiento cargadas.' +
-          (state.canEdit ? ' Usá <strong>Editar</strong> para agregar una.' : '') +
-        '</div>'
-      );
-
-    }
-
-
-    return (
-      '<div class="dev-lista">' +
-
-        lista.map(
-          function (d) {
-
-            return (
-              '<div class="dev-card">' +
-
-                '<div class="dev-head">' +
-                  '<strong>' + escapeHtml(d.descripcion || "Devolución por cumplimiento") + '</strong>' +
-                  '<span class="dev-periodo">&#128197; ' + escapeHtml(devPeriodo(d)) + '</span>' +
-                '</div>' +
-
-                devResumenHtml(d) +
-
-              '</div>'
-            );
-
-          }
-        ).join("") +
-
-      '</div>'
-    );
-
-  }
-
-
-
-  /* Formulario de edición */
-
-  function devolucionesFormHtml(draft) {
-
-    var lista =
-      draft.devoluciones || [];
-
-
-    var campo = function (d, k, label, attrs) {
-
-      return (
-        '<label class="dev-campo">' +
-          '<span>' + label + '</span>' +
-          '<input ' + attrs + ' data-dev-id="' + escapeHtml(d.id) + '" data-dev-field="' + k + '" ' +
-            'value="' + escapeHtml(d[k] === 0 ? "0" : (d[k] || "")) + '">' +
-        '</label>'
-      );
-
-    };
-
-
-    return (
-      '<div class="dev-lista">' +
-
-        lista.map(
-          function (d) {
-
-            return (
-              '<div class="dev-card editando">' +
-
-                '<div class="dev-head">' +
-                  '<input type="text" class="custom-titulo" maxlength="80" ' +
-                    'data-dev-id="' + escapeHtml(d.id) + '" data-dev-field="descripcion" ' +
-                    'placeholder="Descripción (ej: Rappel anual chocolates)" ' +
-                    'value="' + escapeHtml(d.descripcion || "") + '">' +
-                  '<button type="button" class="custom-remove" data-dev-remove="' + escapeHtml(d.id) + '" ' +
-                    'title="Quitar este trato" aria-label="Quitar este trato">&times;</button>' +
-                '</div>' +
-
-                '<div class="dev-grid">' +
-                  campo(d, "meta", "Meta de compra ($)", 'type="text" inputmode="decimal" placeholder="Ej: 500000"') +
-                  campo(d, "porcentaje", "Devolución (%)", 'type="text" inputmode="decimal" placeholder="Ej: 3"') +
-                  campo(d, "desde", "Desde", 'type="date"') +
-                  campo(d, "hasta", "Hasta (límite)", 'type="date"') +
-                  campo(d, "comprado", "Comprado a la fecha ($)", 'type="text" inputmode="decimal" placeholder="Ej: 320000"') +
-                '</div>' +
-
-                '<div data-dev-preview="' + escapeHtml(d.id) + '">' +
-                  devResumenHtml(d) +
-                '</div>' +
-
-              '</div>'
-            );
-
-          }
-        ).join("") +
-
-      '</div>' +
-
-      '<button type="button" class="ac-add" data-dev-add="1">+ Agregar trato de devolución</button>' +
-
-      '<div class="custom-hint">' +
-        'Ej: si en el año compra $ 500.000, se le devuelve el 3%. ' +
-        'Actualizá "Comprado a la fecha" para ver cuánto le falta.' +
-      '</div>'
-    );
-
-  }
-
-
-
   function blankClient() {
 
     return {
@@ -6983,8 +6419,6 @@ body:not(.logged-out) .login-screen {
       acuerdoFirmado: null,
 
       acuerdosFirmados: [],
-
-      devoluciones: [],
 
       vigenciaInicio: "",
 
@@ -9127,9 +8561,9 @@ body:not(.logged-out) .login-screen {
       proximos.length
 
         ? (
-          '<div class="dash-list">' +
+          '<div class="dash-list dash-scroll" tabindex="0" aria-label="Lista de acuerdos por vencerse">' +
 
-            proximos.slice(0, 7).map(
+            proximos.map(
               function (p) {
 
                 var st =
@@ -9182,30 +8616,13 @@ body:not(.logged-out) .login-screen {
 
 
 
-    /* ---------- PLAZOS DE DEVOLUCIÓN Y FINALIZACIÓN DE ESPACIOS ---------- */
+    /* ---------- LISTA DE ESPACIOS ACORDADOS POR VENCERSE ---------- */
 
     var plazos = [];
 
 
     clients.forEach(
       function (c) {
-
-        (c.devoluciones || []).forEach(
-          function (d) {
-
-            var r =
-              calcDevolucion(d);
-
-
-            if (r.dias !== null && r.dias >= 0) {
-
-              plazos.push({ tipo: "dev", c: c, d: d, r: r, dias: r.dias, fecha: d.hasta });
-
-            }
-
-          }
-        );
-
 
         espaciosDe(c).forEach(
           function (e) {
@@ -9247,7 +8664,6 @@ body:not(.logged-out) .login-screen {
     );
 
 
-    var LIMITE_PLAZOS = 7;
 
 
     var plazosHtml =
@@ -9255,38 +8671,19 @@ body:not(.logged-out) .login-screen {
       plazos.length
 
         ? (
-          '<div class="dash-list">' +
+          '<div class="dash-list dash-scroll" tabindex="0" aria-label="Lista de espacios acordados por vencerse">' +
 
-            plazos.slice(0, LIMITE_PLAZOS).map(
+            plazos.map(
               function (p) {
 
                 var urgencia =
                   p.dias <= 7 ? "vencido" : p.dias <= 30 ? "porvencer" : "vigente";
 
 
-                var medio;
-
-
-                if (p.tipo === "dev") {
-
-                  medio =
-                    '<span class="plazo-dev">' +
-                      '<span class="dev-barra mini"><span class="dev-fill ' + p.r.estado + '" style="width:' + p.r.avance.toFixed(1) + '%"></span></span>' +
-                      '<span class="plazo-texto">' +
-                        (
-                          p.r.cumplida
-                            ? "✓ Meta cumplida · devolver " + fmtMonto(p.r.devolucion)
-                            : "Faltan " + fmtMonto(p.r.falta) + " (" + Math.round(p.r.avance) + "% de " + fmtMonto(p.r.meta) + ")"
-                        ) +
-                      '</span>' +
-                    '</span>';
-
-                } else {
-
-                  medio =
-                    '<span class="plazo-texto">Finaliza el espacio acordado</span>';
-
-                }
+                var medio =
+                  p.x.detalle
+                    ? '<span class="plazo-texto">' + escapeHtml(p.x.detalle) + '</span>'
+                    : "";
 
 
                 return (
@@ -9301,12 +8698,7 @@ body:not(.logged-out) .login-screen {
                       '</span>' +
 
                       '<span class="dash-row-meta">' +
-                        '<span class="plazo-chip ' + p.tipo + '">' + (p.tipo === "dev" ? "Devolución" : "Espacio") + '</span> ' +
-                        escapeHtml(
-                          p.tipo === "dev"
-                            ? (p.d.descripcion || "Devolución por cumplimiento") + " · " + p.r.porcentaje + "%"
-                            : p.e.label
-                        ) +
+                        escapeHtml(p.e.label) +
                       '</span>' +
 
                       medio +
@@ -9331,8 +8723,8 @@ body:not(.logged-out) .login-screen {
         )
 
         : '<div class="dash-empty">' +
-            'No hay plazos de devolución ni espacios con fecha de fin próximos. ' +
-            'Se cargan en cada cliente (Devoluciones por cumplimiento o espacios personalizados con fecha).' +
+            'No hay espacios acordados con fecha de fin próxima. ' +
+            'Se cargan en cada cliente como espacio personalizado con fecha "hasta".' +
           '</div>';
 
 
@@ -9664,8 +9056,8 @@ body:not(.logged-out) .login-screen {
               '<h2 class="dash-card-title">Lista de acuerdos por vencerse</h2>' +
               '<span class="dash-card-hint">' +
                 (
-                  proximos.length > 7
-                    ? "7 de " + proximos.length
+                  proximos.length
+                    ? proximos.length + " en total · ordenados por fecha"
                     : ""
                 ) +
               '</span>' +
@@ -9676,18 +9068,17 @@ body:not(.logged-out) .login-screen {
           '</div>' +
 
 
-          /* al lado: espacios con fecha de fin y devoluciones */
+          /* al lado: espacios personalizados con fecha de fin */
           '<div class="dash-card">' +
 
             '<div class="dash-card-head">' +
               '<h2 class="dash-card-title">Lista de espacios acordados por vencerse</h2>' +
               '<span class="dash-card-hint">' +
                 (
-                  plazos.length > LIMITE_PLAZOS
-                    ? LIMITE_PLAZOS + " de " + plazos.length + " · "
+                  plazos.length
+                    ? plazos.length + " en total · ordenados por fecha"
                     : ""
                 ) +
-                'Ordenados por fecha' +
               '</span>' +
             '</div>' +
 
@@ -10799,16 +10190,6 @@ body:not(.logged-out) .login-screen {
       '</div>' +
 
 
-      '<div class="section-label">' +
-        'Devoluciones por cumplimiento' +
-      '</div>' +
-
-
-      devolucionesViewHtml(
-        c
-      ) +
-
-
       updatedHtml +
 
 
@@ -11461,16 +10842,6 @@ body:not(.logged-out) .login-screen {
       '</div>' +
 
 
-      '<div class="section-label">' +
-        'Devoluciones por cumplimiento' +
-      '</div>' +
-
-
-      devolucionesFormHtml(
-        draft
-      ) +
-
-
       '<div class="form-actions">' +
 
         '<button ' +
@@ -11897,179 +11268,6 @@ body:not(.logged-out) .login-screen {
 
             espacio.activo =
               !espacio.activo;
-
-
-            renderForm(
-              draft,
-              isNew
-            );
-
-          }
-        );
-
-      }
-
-    );
-
-
-
-    /* DEVOLUCIONES POR CUMPLIMIENTO */
-
-    if (!draft.devoluciones) {
-
-      draft.devoluciones = [];
-
-    }
-
-
-    var addDev =
-      els.mainInner.querySelector("[data-dev-add]");
-
-
-    if (addDev) {
-
-      addDev.addEventListener(
-        "click",
-        function () {
-
-          var nueva =
-            nuevaDevolucion();
-
-
-          /* por defecto, el mismo período del acuerdo */
-          nueva.desde = draft.vigenciaInicio || "";
-
-          nueva.hasta = draft.vigenciaFin || "";
-
-
-          draft.devoluciones.push(nueva);
-
-
-          renderForm(
-            draft,
-            isNew
-          );
-
-
-          var campo =
-            els.mainInner.querySelector('[data-dev-id="' + nueva.id + '"][data-dev-field="descripcion"]');
-
-
-          if (campo) {
-
-            campo.scrollIntoView({ block: "center" });
-
-            campo.focus();
-
-          }
-
-        }
-      );
-
-    }
-
-
-    Array.prototype.forEach.call(
-
-      els.mainInner.querySelectorAll(
-        "[data-dev-field]"
-      ),
-
-      function (input) {
-
-        input.addEventListener(
-          "input",
-          function () {
-
-            var id =
-              input.getAttribute("data-dev-id");
-
-
-            var d =
-              draft.devoluciones.find(
-                function (x) {
-
-                  return x.id === id;
-
-                }
-              );
-
-
-            if (!d) {
-
-              return;
-
-            }
-
-
-            d[input.getAttribute("data-dev-field")] =
-              input.value;
-
-
-            /* actualiza la barra de avance sin redibujar todo */
-            var prev =
-              els.mainInner.querySelector('[data-dev-preview="' + id + '"]');
-
-
-            if (prev) {
-
-              prev.innerHTML = devResumenHtml(d);
-
-            }
-
-          }
-        );
-
-      }
-
-    );
-
-
-    Array.prototype.forEach.call(
-
-      els.mainInner.querySelectorAll(
-        "[data-dev-remove]"
-      ),
-
-      function (btn) {
-
-        btn.addEventListener(
-          "click",
-          function () {
-
-            var id =
-              btn.getAttribute("data-dev-remove");
-
-
-            var d =
-              draft.devoluciones.find(
-                function (x) {
-
-                  return x.id === id;
-
-                }
-              );
-
-
-            if (
-              d &&
-              (d.descripcion || parseMonto(d.meta)) &&
-              !confirm('¿Quitar "' + (d.descripcion || "este trato de devolución") + '"?')
-            ) {
-
-              return;
-
-            }
-
-
-            draft.devoluciones =
-              draft.devoluciones.filter(
-                function (x) {
-
-                  return x.id !== id;
-
-                }
-              );
 
 
             renderForm(
@@ -13195,123 +12393,6 @@ body:not(.logged-out) .login-screen {
     }
 
 
-    /* Devoluciones por cumplimiento */
-
-    var devAntes =
-      (original && original.devoluciones) || [];
-
-
-    var devAhora =
-      nuevo.devoluciones || [];
-
-
-    var nombreDev = function (d) {
-
-      return '"' + corto(d.descripcion || "Devolución", 40) + '"';
-
-    };
-
-
-    devAhora.forEach(
-      function (b) {
-
-        var a =
-          devAntes.find(
-            function (x) {
-
-              return x.id === b.id;
-
-            }
-          );
-
-
-        if (!a) {
-
-          cambios.push(
-            "Se agregó la devolución " + nombreDev(b) + ": " +
-            b.porcentaje + "% si compra " + fmtMonto(b.meta) +
-            " (" + devPeriodo(b).toLowerCase() + ")"
-          );
-
-          return;
-
-        }
-
-
-        if ((a.descripcion || "") !== (b.descripcion || "")) {
-
-          cambios.push(
-            "Devolución " + nombreDev(a) + " pasó a llamarse " + nombreDev(b)
-          );
-
-        }
-
-
-        if (parseMonto(a.meta) !== parseMonto(b.meta)) {
-
-          cambios.push(
-            "Devolución " + nombreDev(b) + ": meta " + fmtMonto(a.meta) + " → " + fmtMonto(b.meta)
-          );
-
-        }
-
-
-        if (parseMonto(a.porcentaje) !== parseMonto(b.porcentaje)) {
-
-          cambios.push(
-            "Devolución " + nombreDev(b) + ": porcentaje " + a.porcentaje + "% → " + b.porcentaje + "%"
-          );
-
-        }
-
-
-        if ((a.desde || "") !== (b.desde || "") || (a.hasta || "") !== (b.hasta || "")) {
-
-          cambios.push(
-            "Devolución " + nombreDev(b) + ": plazo (" + devPeriodo(a) + ") → (" + devPeriodo(b) + ")"
-          );
-
-        }
-
-
-        if (parseMonto(a.comprado) !== parseMonto(b.comprado)) {
-
-          cambios.push(
-            "Devolución " + nombreDev(b) + ": comprado a la fecha " +
-            fmtMonto(a.comprado) + " → " + fmtMonto(b.comprado) +
-            " (" + Math.round(calcDevolucion(b).avance) + "% de la meta)"
-          );
-
-        }
-
-      }
-    );
-
-
-    devAntes.forEach(
-      function (a) {
-
-        if (
-          !devAhora.some(
-            function (x) {
-
-              return x.id === a.id;
-
-            }
-          )
-        ) {
-
-          cambios.push(
-            "Se quitó la devolución " + nombreDev(a)
-          );
-
-        }
-
-      }
-    );
-
-
-
     /* Fotos de los espacios (incluye personalizados, aunque se hayan quitado) */
 
     var conFotos =
@@ -13547,61 +12628,6 @@ body:not(.logged-out) .login-screen {
 
 
 
-    /* Devoluciones: meta y porcentaje obligatorios, fechas coherentes */
-
-    var devMal =
-      (draft.devoluciones || [])
-        .map(
-          function (d) {
-
-            var nombre =
-              (d.descripcion || "").trim() || "un trato de devolución";
-
-
-            if (!(parseMonto(d.meta) > 0)) {
-
-              return "Poné la meta de compra en " + nombre + ".";
-
-            }
-
-
-            var p =
-              parseMonto(d.porcentaje);
-
-
-            if (!(p > 0 && p <= 100)) {
-
-              return "El porcentaje de devolución en " + nombre + " tiene que estar entre 0 y 100.";
-
-            }
-
-
-            if (d.desde && d.hasta && d.hasta < d.desde) {
-
-              return 'En ' + nombre + ' la fecha "hasta" es anterior a "desde".';
-
-            }
-
-
-            return "";
-
-          }
-        )
-        .filter(Boolean);
-
-
-    if (devMal.length) {
-
-      showToast(
-        devMal[0]
-      );
-
-      return;
-
-    }
-
-
-
     /* Si lo escribieron a mano pero ya existe en la lista
        (ej: "san roque"), se usa el nombre de la lista */
 
@@ -13723,23 +12749,6 @@ body:not(.logged-out) .login-screen {
 
           espacios:
             draft.espacios,
-
-          devoluciones:
-            (draft.devoluciones || []).map(
-              function (d) {
-
-                return {
-                  id: d.id,
-                  descripcion: (d.descripcion || "").trim(),
-                  meta: parseMonto(d.meta),
-                  porcentaje: parseMonto(d.porcentaje),
-                  desde: d.desde || "",
-                  hasta: d.hasta || "",
-                  comprado: parseMonto(d.comprado)
-                };
-
-              }
-            ),
 
           notas:
             draft.notas ||
@@ -14888,97 +13897,6 @@ body:not(.logged-out) .login-screen {
 
 
       y += 6;
-
-    }
-
-
-
-    /* ---------- DEVOLUCIONES POR CUMPLIMIENTO ---------- */
-
-    var devs =
-      c.devoluciones || [];
-
-
-    if (devs.length) {
-
-      sectionTitle(
-        "Devoluciones por cumplimiento (" + devs.length + ")"
-      );
-
-
-      doc.autoTable({
-
-        startY: y - 2,
-
-        margin: {
-          left: margin,
-          right: margin,
-          top: 18,
-          bottom: 18
-        },
-
-        head: [[
-          "Trato",
-          "Plazo",
-          "Meta",
-          "%",
-          "Comprado",
-          "Situación"
-        ]],
-
-        body: devs.map(
-          function (d) {
-
-            var r =
-              calcDevolucion(d);
-
-
-            return [
-              d.descripcion || "Devolución",
-              devPeriodo(d),
-              fmtMonto(r.meta),
-              r.porcentaje + "%",
-              fmtMonto(r.comprado) + " (" + Math.round(r.avance) + "%)",
-              r.cumplida
-                ? "Meta cumplida. Devolver " + fmtMonto(r.devolucion)
-                : DEV_ESTADOS[r.estado].label + ". Faltan " + fmtMonto(r.falta) +
-                  " (devolución " + fmtMonto(r.devolucion) + ")"
-            ];
-
-          }
-        ),
-
-        theme: "grid",
-
-        styles: {
-          font: "helvetica",
-          fontSize: 8.8,
-          textColor: C.ink,
-          lineColor: C.border,
-          lineWidth: 0.2,
-          cellPadding: 2.2
-        },
-
-        headStyles: {
-          fillColor: C.accent,
-          textColor: [255, 255, 255],
-          fontStyle: "bold"
-        },
-
-        alternateRowStyles: {
-          fillColor: C.zebra
-        },
-
-        columnStyles: {
-          0: { fontStyle: "bold", cellWidth: 32 },
-          1: { cellWidth: 34 },
-          3: { cellWidth: 12, halign: "center" }
-        }
-
-      });
-
-
-      y = doc.lastAutoTable.finalY + 10;
 
     }
 
@@ -18084,74 +17002,6 @@ body:not(.logged-out) .login-screen {
       );
 
 
-    /* ---- Hoja: Devoluciones por cumplimiento ---- */
-
-    var filasDev =
-      [[
-        "Cliente",
-        "Grupo de compra",
-        "Descripción",
-        "Desde",
-        "Hasta",
-        "Días para el límite",
-        "Meta de compra",
-        "Devolución %",
-        "Comprado a la fecha",
-        "Avance %",
-        "Falta para la meta",
-        "Devolución estimada",
-        "Estado"
-      ]];
-
-
-    clients.forEach(
-      function (c) {
-
-        (c.devoluciones || []).forEach(
-          function (d) {
-
-            var r =
-              calcDevolucion(d);
-
-
-            filasDev.push([
-              c.nombre || "Sin nombre",
-              grupoDe(c),
-              d.descripcion || "",
-              excelFecha(d.desde),
-              excelFecha(d.hasta),
-              r.dias === null ? "" : r.dias,
-              r.meta,
-              r.porcentaje,
-              r.comprado,
-              Math.round(r.avance),
-              r.falta,
-              Math.round(r.devolucion),
-              DEV_ESTADOS[r.estado].label
-            ]);
-
-          }
-        );
-
-      }
-    );
-
-
-    var wsDev =
-      armarHoja(
-        filasDev,
-        [28, 18, 30, 12, 12, 10, 14, 10, 16, 9, 16, 16, 18],
-        {
-          3: "dd/mm/yyyy",
-          4: "dd/mm/yyyy",
-          6: "#,##0",
-          8: "#,##0",
-          10: "#,##0",
-          11: "#,##0"
-        }
-      );
-
-
     /* ---- Hoja 3: Info del archivo ---- */
 
     var filtros = [];
@@ -18202,8 +17052,6 @@ body:not(.logged-out) .login-screen {
     XLSX.utils.book_append_sheet(wb, ws1, "Clientes");
 
     XLSX.utils.book_append_sheet(wb, ws2, "Espacios");
-
-    XLSX.utils.book_append_sheet(wb, wsDev, "Devoluciones");
 
     XLSX.utils.book_append_sheet(wb, ws3, "Info");
 
@@ -19887,33 +18735,6 @@ body:not(.logged-out) .login-screen {
 
                 acuerdosFirmados:
                   leerAcuerdosFirmados(data),
-
-                devoluciones:
-                  Array.isArray(data.devoluciones)
-                    ? data.devoluciones
-                      .filter(
-                        function (d) {
-
-                          return d && d.id;
-
-                        }
-                      )
-                      .map(
-                        function (d) {
-
-                          return {
-                            id: d.id,
-                            descripcion: d.descripcion || "",
-                            meta: parseMonto(d.meta),
-                            porcentaje: parseMonto(d.porcentaje),
-                            desde: d.desde || "",
-                            hasta: d.hasta || "",
-                            comprado: parseMonto(d.comprado)
-                          };
-
-                        }
-                      )
-                    : [],
 
                 /* el primero (compatibilidad: panel, Excel, etc.) */
                 acuerdoFirmado:
