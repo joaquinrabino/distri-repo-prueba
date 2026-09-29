@@ -3432,6 +3432,64 @@ button.dash-tile:focus-visible {
 
 
 
+.ac-num.off {
+
+  background: var(--surface-2);
+
+  color: var(--ink-faint);
+
+}
+
+
+
+.ac-sec-opcional {
+
+  border-style: dashed !important;
+
+  border-color: var(--accent) !important;
+
+}
+
+
+
+.ac-opcional-tag {
+
+  margin-left: auto;
+
+  font-family: var(--font-body);
+
+  font-size: 10.5px;
+
+  font-weight: 700;
+
+  color: var(--accent);
+
+  border: 1px solid var(--accent);
+
+  border-radius: 999px;
+
+  padding: 1px 8px;
+
+}
+
+
+
+.ac-add-punto {
+
+  display: block;
+
+  width: 100%;
+
+  margin: 0 0 12px;
+
+  padding: 11px;
+
+  background: var(--surface);
+
+}
+
+
+
 .ac-grid {
 
   display: grid;
@@ -9447,6 +9505,13 @@ body:not(.logged-out) .login-screen {
 
         acOnInput(e.target);
 
+
+        if (e.target.getAttribute("data-ac") === "plazosPago") {
+
+          renumerarAcuerdo();
+
+        }
+
       }
     );
 
@@ -9508,6 +9573,58 @@ body:not(.logged-out) .login-screen {
           openAcuerdoEditor(
             el.getAttribute("data-ac-open")
           );
+
+          return;
+
+        }
+
+
+        if (e.target.closest("[data-ac-crec-add]")) {
+
+          state.acuerdoEditor.datos.crecimientoActivo = true;
+
+
+          renderAcuerdoEditor(true);
+
+
+          var campoCrec =
+            els.mainInner.querySelector('[data-ac="crecimiento"]');
+
+
+          if (campoCrec) {
+
+            campoCrec.scrollIntoView({ block: "center" });
+
+            campoCrec.focus();
+
+          }
+
+          return;
+
+        }
+
+
+        if (e.target.closest("[data-ac-crec-quitar]")) {
+
+          var dCrec =
+            state.acuerdoEditor.datos;
+
+
+          if (
+            lineas(dCrec.crecimiento).length &&
+            !confirm("¿Quitar el punto de crecimiento de este acuerdo?")
+          ) {
+
+            return;
+
+          }
+
+
+          /* se guarda el texto por si se vuelve a agregar */
+          dCrec.crecimientoActivo = false;
+
+
+          renderAcuerdoEditor(true);
 
           return;
 
@@ -14774,9 +14891,114 @@ body:not(.logged-out) .login-screen {
 
       planAcciones: val("planAcciones", AC_TEXTOS.planAcciones),
 
-      merchandising: val("merchandising", AC_TEXTOS.merchandising)
+      merchandising: val("merchandising", AC_TEXTOS.merchandising),
+
+      plazosPago: val("plazosPago", ""),
+
+      /* punto opcional: no todos los clientes tienen acuerdo por crecimiento */
+      crecimientoActivo: !!prev.crecimientoActivo,
+
+      crecimientoTitulo: val("crecimientoTitulo", "Acuerdo por crecimiento"),
+
+      crecimiento: val("crecimiento", "")
 
     };
+
+  }
+
+
+
+  /* Puntos del final del acuerdo (del 5 en adelante), en orden.
+     "Plazos de pago" solo sale en el PDF si tiene texto y
+     "Crecimiento" solo si se agregó; los siguientes se renumeran. */
+
+  function acPuntosFinales(d) {
+
+    var puntos = [
+
+      { key: "pago", titulo: "Pago", vinetas: false },
+
+      { key: "plazosPago", titulo: "Plazos de pago", vinetas: false, siTieneTexto: true }
+
+    ];
+
+
+    if (d.crecimientoActivo) {
+
+      puntos.push({
+        key: "crecimiento",
+        titulo: (d.crecimientoTitulo || "").trim() || "Acuerdo por crecimiento",
+        vinetas: true,
+        removible: true
+      });
+
+    }
+
+
+    puntos.push(
+      { key: "devoluciones", titulo: "Devoluciones", vinetas: false },
+      { key: "medicion", titulo: "Medición y ejecución de exhibiciones acordadas", vinetas: false },
+      { key: "planAcciones", titulo: "Plan de Acciones", vinetas: true },
+      { key: "merchandising", titulo: "Merchandising", vinetas: false }
+    );
+
+
+    var n = 5;
+
+
+    puntos.forEach(
+      function (p) {
+
+        var incluido =
+          !p.siTieneTexto || lineas(d[p.key]).length > 0;
+
+
+        p.num =
+          incluido ? String(n++) : "";
+
+      }
+    );
+
+
+    return puntos;
+
+  }
+
+
+
+  /* Actualiza los números del editor mientras se escribe
+     (por ej. si "Plazos de pago" pasa de vacío a tener texto) */
+
+  function renumerarAcuerdo() {
+
+    var ed =
+      state.acuerdoEditor;
+
+
+    if (!ed) {
+
+      return;
+
+    }
+
+
+    acPuntosFinales(ed.datos).forEach(
+      function (p) {
+
+        var badge =
+          els.mainInner.querySelector('[data-ac-num="' + p.key + '"]');
+
+
+        if (badge) {
+
+          badge.textContent = p.num || "–";
+
+          badge.classList.toggle("off", !p.num);
+
+        }
+
+      }
+    );
 
   }
 
@@ -15071,15 +15293,79 @@ body:not(.logged-out) .login-screen {
         ) +
 
 
-        acSeccion("5", "Pago", acCampo("Texto", "pago", d.pago, { area: true, rows: 3 })) +
+        acPuntosFinales(d).map(
+          function (p) {
 
-        acSeccion("6", "Devoluciones", acCampo("Texto (un párrafo por línea)", "devoluciones", d.devoluciones, { area: true, rows: 3 })) +
+            var cuerpo;
 
-        acSeccion("7", "Medición y ejecución de exhibiciones acordadas", acCampo("Texto (un párrafo por línea)", "medicion", d.medicion, { area: true, rows: 3 })) +
 
-        acSeccion("8", "Plan de Acciones", acCampo("Acciones (una por línea)", "planAcciones", d.planAcciones, { area: true, rows: 3 })) +
+            if (p.key === "plazosPago") {
 
-        acSeccion("9", "Merchandising", acCampo("Texto", "merchandising", d.merchandising, { area: true, rows: 2 })) +
+              cuerpo =
+                acCampo("Texto (un párrafo por línea)", "plazosPago", d.plazosPago, {
+                  area: true,
+                  rows: 3,
+                  placeholder: "Ej: La nota de crédito se emite dentro de los 30 días posteriores al cierre del período.",
+                  hint: "Si lo dejás vacío, este punto no sale en el PDF y los siguientes se renumeran."
+                });
+
+            } else if (p.key === "crecimiento") {
+
+              cuerpo =
+                acCampo("Título del punto", "crecimientoTitulo", d.crecimientoTitulo, {
+                  placeholder: "Ej: Acuerdo por crecimiento"
+                }) +
+                acCampo("Condiciones (una por línea, salen con viñeta)", "crecimiento", d.crecimiento, {
+                  area: true,
+                  rows: 4,
+                  placeholder: "Ej:\nSi las compras crecen +10% vs. 2025: 1% de devolución\n+15%: 1,5%\n+20%: 2%"
+                }) +
+                '<div class="acuerdo-actions">' +
+                  '<button type="button" class="btn btn-danger" data-ac-crec-quitar="1">Quitar este punto</button>' +
+                '</div>';
+
+            } else {
+
+              cuerpo =
+                acCampo(
+                  p.vinetas ? "Una por línea" : (p.key === "pago" || p.key === "merchandising" ? "Texto" : "Texto (un párrafo por línea)"),
+                  p.key,
+                  d[p.key],
+                  { area: true, rows: p.key === "merchandising" ? 2 : 3 }
+                );
+
+            }
+
+
+            var seccion =
+              '<div class="ac-sec' + (p.removible ? " ac-sec-opcional" : "") + '">' +
+
+                '<h2 class="ac-sec-title">' +
+                  '<span class="ac-num' + (p.num ? "" : " off") + '" data-ac-num="' + p.key + '">' + (p.num || "–") + '</span>' +
+                  escapeHtml(p.key === "crecimiento" ? "Crecimiento" : p.titulo) +
+                  (p.removible ? '<span class="ac-opcional-tag">Opcional</span>' : "") +
+                '</h2>' +
+
+                cuerpo +
+
+              '</div>';
+
+
+            /* después de "Plazos de pago", el botón para sumar el punto opcional */
+            if (p.key === "plazosPago" && !d.crecimientoActivo) {
+
+              seccion +=
+                '<button type="button" class="ac-add ac-add-punto" data-ac-crec-add="1">' +
+                  '+ Agregar punto de crecimiento (opcional)' +
+                '</button>';
+
+            }
+
+
+            return seccion;
+
+          }
+        ).join("") +
 
 
         '<div class="ac-actions">' +
@@ -15588,15 +15874,25 @@ body:not(.logged-out) .login-screen {
     y += S.entre;
 
 
-    /* ---- 5 a 9 ---- */
+    /* ---- del 5 en adelante (plazos de pago y crecimiento
+            solo si corresponden; se numeran solos) ---- */
 
-    var textos = [
-      ["5", "Pago", d.pago, false],
-      ["6", "Devoluciones", d.devoluciones, false],
-      ["7", "Medición y ejecución de exhibiciones acordadas", d.medicion, false],
-      ["8", "Plan de Acciones", d.planAcciones, true],
-      ["9", "Merchandising", d.merchandising, false]
-    ];
+    var textos =
+      acPuntosFinales(d)
+        .filter(
+          function (p) {
+
+            return p.num;
+
+          }
+        )
+        .map(
+          function (p) {
+
+            return [p.num, p.titulo, d[p.key], p.vinetas];
+
+          }
+        );
 
 
     textos.forEach(
@@ -15796,6 +16092,10 @@ body:not(.logged-out) .login-screen {
       medicion: d.medicion,
       planAcciones: d.planAcciones,
       merchandising: d.merchandising,
+      plazosPago: d.plazosPago,
+      crecimientoActivo: !!d.crecimientoActivo,
+      crecimientoTitulo: d.crecimientoTitulo,
+      crecimiento: d.crecimiento,
       email: d.email.trim(),
       telefono: d.telefono.trim()
     };
