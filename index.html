@@ -6245,6 +6245,1359 @@ body:not(.logged-out) .login-screen {
 
 }
 
+
+
+/* ==========================================================
+   OPERACIONES: CAMIONEROS / REPONEDORES
+========================================================== */
+
+/* camionero y reponedor: solo su ruta (sin lista de clientes ni avisos) */
+body[data-rol="camionero"] .sidebar,
+body[data-rol="reponedor"] .sidebar,
+body[data-rol="camionero"] #avisoBar,
+body[data-rol="reponedor"] #avisoBar {
+
+  display: none !important;
+
+}
+
+
+.ac-field select,
+.user-actions select.grupo-select {
+
+  padding: 8px 32px 8px 10px;
+
+  border: 1px solid var(--border-strong);
+
+  border-radius: 7px;
+
+  background-color: var(--surface);
+
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238f8ca3' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+
+  background-repeat: no-repeat;
+
+  background-position: right 10px center;
+
+  appearance: none;
+
+  -webkit-appearance: none;
+
+  font: inherit;
+
+  font-size: 13.5px;
+
+  color: var(--ink);
+
+  cursor: pointer;
+
+}
+
+
+.ac-field select {
+
+  width: 100%;
+
+  padding-top: 9px;
+
+  padding-bottom: 9px;
+
+}
+
+
+.user-actions select.grupo-select {
+
+  padding-top: 6px;
+
+  padding-bottom: 6px;
+
+  font-size: 12.5px;
+
+}
+
+
+/* ---------- pantalla de ruta ---------- */
+
+.ruta-vista {
+
+  max-width: 680px;
+
+  margin: 0 auto;
+
+}
+
+
+.ruta-cabecera {
+
+  display: flex;
+
+  align-items: flex-start;
+
+  justify-content: space-between;
+
+  gap: 12px;
+
+  flex-wrap: wrap;
+
+}
+
+
+.ruta-titulo {
+
+  margin: 0;
+
+  font-family: var(--font-display);
+
+  font-size: 24px;
+
+  color: var(--ink);
+
+}
+
+
+.ruta-fecha {
+
+  margin: 2px 0 0;
+
+  color: var(--ink-soft);
+
+  font-size: 14px;
+
+}
+
+
+.ruta-fecha::first-letter {
+
+  text-transform: uppercase;
+
+}
+
+
+.ruta-toggle {
+
+  display: inline-flex;
+
+  background: var(--surface-2);
+
+  border: 1px solid var(--border);
+
+  border-radius: 10px;
+
+  padding: 3px;
+
+}
+
+
+.ruta-toggle button {
+
+  border: none;
+
+  background: transparent;
+
+  font: inherit;
+
+  font-size: 14px;
+
+  font-weight: 600;
+
+  color: var(--ink-soft);
+
+  padding: 8px 16px;
+
+  border-radius: 8px;
+
+  cursor: pointer;
+
+}
+
+
+.ruta-toggle button.activo {
+
+  background: var(--surface);
+
+  color: var(--accent);
+
+  box-shadow: 0 1px 3px rgba(43,40,64,0.12);
+
+}
+
+
+.ruta-progreso {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+
+  margin: 14px 0 16px;
+
+  font-size: 13.5px;
+
+  color: var(--ink-soft);
+
+  white-space: nowrap;
+
+}
+
+
+.ruta-barra,
+.op-barra {
+
+  flex: 1;
+
+  height: 8px;
+
+  background: var(--surface-2);
+
+  border: 1px solid var(--border);
+
+  border-radius: 99px;
+
+  overflow: hidden;
+
+}
+
+
+.ruta-barra span {
+
+  display: block;
+
+  height: 100%;
+
+  background: var(--vigente);
+
+  border-radius: 99px;
+
+  transition: width .4s ease;
+
+}
+
+
+.ruta-proximo {
+
+  background: var(--surface);
+
+  border: 2px solid var(--accent);
+
+  border-radius: 16px;
+
+  padding: 18px;
+
+  box-shadow: 0 8px 24px rgba(111,91,211,0.14);
+
+}
+
+
+.ruta-proximo-tag {
+
+  display: inline-block;
+
+  background: var(--accent);
+
+  color: var(--accent-ink);
+
+  font-size: 11.5px;
+
+  font-weight: 700;
+
+  letter-spacing: .06em;
+
+  text-transform: uppercase;
+
+  padding: 4px 10px;
+
+  border-radius: 99px;
+
+}
+
+
+.ruta-proximo-nombre {
+
+  margin: 10px 0 4px;
+
+  font-family: var(--font-display);
+
+  font-size: 22px;
+
+  line-height: 1.2;
+
+  color: var(--ink);
+
+  overflow-wrap: anywhere;
+
+}
+
+
+.ruta-proximo-dir,
+.ruta-proximo-dist {
+
+  margin: 0 0 4px;
+
+  color: var(--ink-soft);
+
+  font-size: 15px;
+
+}
+
+
+.ruta-proximo-dist {
+
+  font-size: 13.5px;
+
+  color: var(--ink-faint);
+
+}
+
+
+.ruta-proximo-estado {
+
+  margin: 10px 0 0;
+
+  display: flex;
+
+  flex-wrap: wrap;
+
+  align-items: center;
+
+  gap: 6px 8px;
+
+}
+
+
+.ruta-hora {
+
+  font-size: 13px;
+
+  color: var(--ink-soft);
+
+}
+
+
+.ruta-acciones {
+
+  display: grid;
+
+  grid-template-columns: auto 1fr;
+
+  gap: 10px;
+
+  margin-top: 16px;
+
+}
+
+
+.op-btn-grande {
+
+  min-height: 52px;
+
+  font-size: 16px;
+
+  font-weight: 700;
+
+  border-radius: 12px;
+
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  text-align: center;
+
+  text-decoration: none;
+
+  padding: 10px 16px;
+
+}
+
+
+.op-btn-ok {
+
+  background: var(--vigente);
+
+  color: #ffffff;
+
+  border: none;
+
+}
+
+
+.op-btn-ok:hover {
+
+  filter: brightness(1.06);
+
+}
+
+
+.op-btn-ok:disabled {
+
+  opacity: .6;
+
+  cursor: wait;
+
+}
+
+
+.op-btn-peligro {
+
+  background: var(--vencido);
+
+  color: #ffffff;
+
+  border: none;
+
+}
+
+
+.ruta-navegar {
+
+  display: block;
+
+  text-align: center;
+
+  margin: 10px 0 0;
+
+  padding: 10px;
+
+  font-size: 14px;
+
+  font-weight: 600;
+
+  color: var(--accent);
+
+  text-decoration: none;
+
+}
+
+
+.ruta-navegar:hover {
+
+  text-decoration: underline;
+
+}
+
+
+.ruta-seccion {
+
+  margin-top: 20px;
+
+}
+
+
+.ruta-seccion h3 {
+
+  margin: 0 0 8px;
+
+  font-size: 12.5px;
+
+  font-weight: 700;
+
+  letter-spacing: .05em;
+
+  text-transform: uppercase;
+
+  color: var(--ink-faint);
+
+}
+
+
+.ruta-fila {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+
+  background: var(--surface);
+
+  border: 1px solid var(--border);
+
+  border-radius: 12px;
+
+  padding: 12px 14px;
+
+  margin-bottom: 8px;
+
+}
+
+
+.ruta-num {
+
+  flex: none;
+
+  width: 30px;
+
+  height: 30px;
+
+  border-radius: 50%;
+
+  background: var(--accent-soft);
+
+  color: var(--accent);
+
+  font-weight: 700;
+
+  font-size: 14px;
+
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+}
+
+
+.ruta-num-off {
+
+  background: var(--surface-2);
+
+  color: var(--ink-faint);
+
+}
+
+
+.ruta-fila-info {
+
+  flex: 1;
+
+  min-width: 0;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 2px;
+
+  font-size: 13.5px;
+
+  color: var(--ink-soft);
+
+  overflow-wrap: anywhere;
+
+}
+
+
+.ruta-fila-info strong {
+
+  color: var(--ink);
+
+  font-size: 15px;
+
+}
+
+
+.ruta-fila-detalle {
+
+  font-size: 12.5px;
+
+  color: var(--ink-faint);
+
+}
+
+
+.ruta-fila-btn {
+
+  flex: none;
+
+  min-height: 40px;
+
+  font-size: 13px;
+
+}
+
+
+.ruta-hechos .ruta-fila {
+
+  background: var(--surface-2);
+
+}
+
+
+.ruta-hechos .ruta-num {
+
+  background: var(--vigente-bg);
+
+  color: var(--vigente);
+
+}
+
+
+.ruta-bloqueados .ruta-fila {
+
+  background: var(--surface-2);
+
+  border-style: dashed;
+
+}
+
+
+.ruta-vacia,
+.ruta-listo,
+.ruta-espera {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 6px;
+
+  text-align: center;
+
+  background: var(--surface);
+
+  border: 1px dashed var(--border-strong);
+
+  border-radius: 16px;
+
+  padding: 28px 18px;
+
+  color: var(--ink-soft);
+
+  font-size: 15px;
+
+}
+
+
+.ruta-vacia strong {
+
+  color: var(--ink);
+
+  font-size: 16px;
+
+}
+
+
+.ruta-listo {
+
+  border: 2px solid var(--vigente);
+
+  background: var(--vigente-bg);
+
+  color: var(--vigente);
+
+  font-weight: 700;
+
+  font-size: 17px;
+
+}
+
+
+.ruta-espera {
+
+  border-color: var(--porvencer);
+
+  background: var(--porvencer-bg);
+
+  color: var(--porvencer);
+
+  font-weight: 600;
+
+}
+
+
+.ruta-bajo-mapa {
+
+  margin-top: 14px;
+
+}
+
+
+.ruta-mapa {
+
+  height: 62vh;
+
+  min-height: 320px;
+
+  border-radius: 14px;
+
+  border: 1px solid var(--border);
+
+  overflow: hidden;
+
+  z-index: 0;
+
+}
+
+
+.ruta-pin span {
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  width: 30px;
+
+  height: 30px;
+
+  border-radius: 50%;
+
+  color: #ffffff;
+
+  font-weight: 700;
+
+  font-size: 13px;
+
+  border: 2px solid #ffffff;
+
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+
+}
+
+
+/* ---------- estados ---------- */
+
+.op-chip {
+
+  display: inline-block;
+
+  padding: 3px 10px;
+
+  border-radius: 99px;
+
+  font-size: 12.5px;
+
+  font-weight: 600;
+
+  white-space: nowrap;
+
+}
+
+
+.op-chip.op-sin {
+
+  background: var(--surface-2);
+
+  color: var(--ink-faint);
+
+}
+
+
+.op-chip.op-pend {
+
+  background: #ecebf3;
+
+  color: var(--ink-soft);
+
+}
+
+
+.op-chip.op-entregado {
+
+  background: var(--porvencer-bg);
+
+  color: var(--porvencer);
+
+  white-space: normal;
+
+}
+
+
+.op-chip.op-completo {
+
+  background: var(--vigente-bg);
+
+  color: var(--vigente);
+
+}
+
+
+.op-chip.op-prod {
+
+  background: var(--vencido-bg);
+
+  color: var(--vencido);
+
+}
+
+
+.op-nuevo {
+
+  display: inline-block;
+
+  margin-left: 4px;
+
+  padding: 1px 7px;
+
+  border-radius: 99px;
+
+  background: var(--accent);
+
+  color: var(--accent-ink);
+
+  font-size: 11px;
+
+  font-weight: 700;
+
+  vertical-align: middle;
+
+}
+
+
+.op-confirm .modal-card {
+
+  max-width: 440px;
+
+}
+
+
+.op-confirm-botones {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 10px;
+
+  margin-top: 18px;
+
+}
+
+
+/* ---------- administrador: operaciones ---------- */
+
+.ops-view .dash-card {
+
+  margin-top: 16px;
+
+}
+
+
+.ops-view .dash-grid {
+
+  margin-top: 16px;
+
+}
+
+
+.ops-view .dash-grid > .dash-card {
+
+  margin-top: 0;
+
+}
+
+
+.ops-fecha {
+
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 8px;
+
+  font-size: 13.5px;
+
+  color: var(--ink-soft);
+
+}
+
+
+.ops-fecha input {
+
+  font: inherit;
+
+  padding: 7px 10px;
+
+  border: 1px solid var(--border-strong);
+
+  border-radius: 7px;
+
+  background: var(--surface);
+
+  color: var(--ink);
+
+}
+
+
+.op-tabla-wrap {
+
+  overflow-x: auto;
+
+  -webkit-overflow-scrolling: touch;
+
+}
+
+
+.op-tabla {
+
+  width: 100%;
+
+  border-collapse: collapse;
+
+  font-size: 13.5px;
+
+  min-width: 720px;
+
+}
+
+
+.op-tabla th {
+
+  text-align: left;
+
+  font-size: 11.5px;
+
+  text-transform: uppercase;
+
+  letter-spacing: .05em;
+
+  color: var(--ink-faint);
+
+  font-weight: 700;
+
+  padding: 8px 10px;
+
+  border-bottom: 1px solid var(--border);
+
+}
+
+
+.op-tabla td {
+
+  padding: 10px;
+
+  border-bottom: 1px solid var(--border);
+
+  vertical-align: top;
+
+  color: var(--ink);
+
+}
+
+
+.op-tabla small {
+
+  color: var(--ink-faint);
+
+}
+
+
+.op-acciones {
+
+  white-space: nowrap;
+
+}
+
+
+.op-mini {
+
+  padding: 5px 9px;
+
+  font-size: 12px;
+
+  margin: 0 4px 4px 0;
+
+}
+
+
+.op-link {
+
+  border: none;
+
+  background: none;
+
+  padding: 0;
+
+  font: inherit;
+
+  font-weight: 600;
+
+  color: var(--accent);
+
+  cursor: pointer;
+
+  text-align: left;
+
+}
+
+
+.op-link:hover {
+
+  text-decoration: underline;
+
+}
+
+
+.op-personas {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 8px;
+
+}
+
+
+.op-persona {
+
+  display: flex;
+
+  justify-content: space-between;
+
+  gap: 10px;
+
+  padding: 8px 10px;
+
+  background: var(--surface-2);
+
+  border-radius: 8px;
+
+  font-size: 13.5px;
+
+  color: var(--ink-soft);
+
+}
+
+
+.op-persona strong {
+
+  color: var(--ink);
+
+}
+
+
+.op-vacio {
+
+  font-size: 13px;
+
+  color: var(--ink-faint);
+
+}
+
+
+/* ---------- ficha del cliente ---------- */
+
+.op-ficha {
+
+  margin-top: 14px;
+
+  background: var(--surface-2);
+
+  border: 1px solid var(--border);
+
+  border-radius: 10px;
+
+  padding: 12px 14px;
+
+}
+
+
+.op-ficha-head {
+
+  display: flex;
+
+  align-items: center;
+
+  flex-wrap: wrap;
+
+  gap: 8px;
+
+  font-size: 14px;
+
+  color: var(--ink);
+
+}
+
+
+.op-pasos {
+
+  display: flex;
+
+  flex-wrap: wrap;
+
+  gap: 6px 16px;
+
+  margin-top: 8px;
+
+  font-size: 13.5px;
+
+  color: var(--ink-faint);
+
+}
+
+
+.op-pasos .hecho {
+
+  color: var(--vigente);
+
+  font-weight: 600;
+
+}
+
+
+.op-ficha-prog {
+
+  margin-top: 8px;
+
+  font-size: 12.5px;
+
+  color: var(--ink-faint);
+
+}
+
+
+.op-historial {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 8px;
+
+}
+
+
+.op-hist-dia {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 2px;
+
+  font-size: 13.5px;
+
+  color: var(--ink-soft);
+
+  border-left: 3px solid var(--accent-soft);
+
+  padding-left: 10px;
+
+}
+
+
+.op-hist-dia strong {
+
+  color: var(--ink);
+
+}
+
+
+/* ---------- panel general ---------- */
+
+.op-resumen {
+
+  display: grid;
+
+  grid-template-columns: 1fr 1fr;
+
+  gap: 14px;
+
+}
+
+
+.op-resumen > div {
+
+  display: grid;
+
+  grid-template-columns: 1fr auto;
+
+  gap: 6px;
+
+  align-items: center;
+
+  font-size: 13.5px;
+
+  color: var(--ink-soft);
+
+}
+
+
+.op-resumen strong {
+
+  color: var(--ink);
+
+  font-size: 16px;
+
+}
+
+
+.op-resumen .op-barra {
+
+  grid-column: 1 / -1;
+
+}
+
+
+.op-barra span {
+
+  display: block;
+
+  height: 100%;
+
+  border-radius: 99px;
+
+}
+
+
+/* ---------- formulario: logística ---------- */
+
+.logi-form .field-row {
+
+  margin-bottom: 10px;
+
+}
+
+
+.logi-label {
+
+  display: block;
+
+  font-size: 12.5px;
+
+  font-weight: 600;
+
+  color: var(--ink-soft);
+
+  margin-bottom: 6px;
+
+}
+
+
+.logi-dias {
+
+  display: flex;
+
+  flex-wrap: wrap;
+
+  gap: 6px;
+
+}
+
+
+.logi-dia {
+
+  position: relative;
+
+  cursor: pointer;
+
+}
+
+
+.logi-dia input {
+
+  position: absolute;
+
+  opacity: 0;
+
+  pointer-events: none;
+
+}
+
+
+.logi-dia span {
+
+  display: inline-block;
+
+  min-width: 48px;
+
+  text-align: center;
+
+  padding: 8px 10px;
+
+  border: 1px solid var(--border-strong);
+
+  border-radius: 8px;
+
+  background: var(--surface);
+
+  font-size: 13.5px;
+
+  font-weight: 600;
+
+  color: var(--ink-soft);
+
+}
+
+
+.logi-dia input:checked + span {
+
+  background: var(--accent);
+
+  border-color: var(--accent);
+
+  color: var(--accent-ink);
+
+}
+
+
+.logi-dia input:focus-visible + span {
+
+  outline: 2px solid var(--accent);
+
+  outline-offset: 2px;
+
+}
+
+
+@media (max-width: 620px) {
+
+  /* con varios botones arriba, se acomodan en dos renglones
+     y el logo no desaparece */
+
+  .topbar .brand {
+
+    flex-shrink: 0;
+
+  }
+
+  .topbar-right {
+
+    flex-shrink: 1;
+
+    min-width: 0;
+
+    flex-wrap: wrap;
+
+    justify-content: flex-end;
+
+    row-gap: 6px;
+
+  }
+
+  .ruta-titulo {
+
+    font-size: 21px;
+
+  }
+
+  .ruta-acciones {
+
+    grid-template-columns: 1fr;
+
+  }
+
+  .ruta-proximo {
+
+    padding: 16px 14px;
+
+  }
+
+  .op-resumen {
+
+    grid-template-columns: 1fr;
+
+  }
+
+  .ruta-fila {
+
+    flex-wrap: wrap;
+
+  }
+
+  .ruta-fila-btn {
+
+    margin-left: 42px;
+
+  }
+
+}
+
 </style>
 </head>
 
@@ -6405,6 +7758,17 @@ body:not(.logged-out) .login-screen {
           </span>
 
         </div>
+
+
+        <button
+          id="opsBtn"
+          type="button"
+          class="btn btn-ghost logout-btn"
+          title="Entregas de camioneros y reposiciones del día"
+          style="display:none;"
+        >
+          Operaciones
+        </button>
 
 
         <button
@@ -7114,6 +8478,9 @@ body:not(.logged-out) .login-screen {
     loginSubmit:
       document.getElementById("loginSubmit"),
 
+    opsBtn:
+      document.getElementById("opsBtn"),
+
     usersBtn:
       document.getElementById("usersBtn"),
 
@@ -7263,6 +8630,8 @@ body:not(.logged-out) .login-screen {
     state.acuerdoEditor = null;
 
     state.usuariosView = false;
+
+    state.opsView = false;
 
   }
 
@@ -8068,6 +9437,8 @@ body:not(.logged-out) .login-screen {
       !state.loaded ||
       document.body.classList.contains("logged-out") ||
       document.body.classList.contains("booting") ||
+      rolActual() === "camionero" ||
+      rolActual() === "reponedor" ||
       safeSession("get", "alertaProductos") === "1" ||
       document.querySelector(".prod-alerta-modal")
     ) {
@@ -10316,6 +11687,59 @@ body:not(.logged-out) .login-screen {
     );
 
 
+    /* camionero y reponedor solo ven su ruta del día */
+    if (
+      (rolActual() === "camionero" || rolActual() === "reponedor") &&
+      !state.loaded
+    ) {
+
+      els.mainInner.innerHTML =
+        '<div class="ruta-vacia"><strong>Cargando tu ruta…</strong></div>';
+
+      return;
+
+    }
+
+
+    if (rolActual() === "camionero") {
+
+      renderRutaCamionero();
+
+      return;
+
+    }
+
+
+    if (rolActual() === "reponedor") {
+
+      renderRutaReponedor();
+
+      return;
+
+    }
+
+
+    if (mapaRutaActual) {
+
+      mapaRutaActual.remove();
+
+      mapaRutaActual = null;
+
+    }
+
+
+    if (
+      state.opsView &&
+      state.canEdit
+    ) {
+
+      renderOperaciones();
+
+      return;
+
+    }
+
+
     if (
       state.usuariosView &&
       state.canEdit
@@ -11547,6 +12971,10 @@ body:not(.logged-out) .login-screen {
         '</div>' +
 
 
+        /* entregas y reposiciones del día (solo si hay jornada) */
+        operacionHoyCardHtml() +
+
+
         '<div class="dash-card">' +
 
           '<div class="dash-card-head">' +
@@ -12000,6 +13428,21 @@ body:not(.logged-out) .login-screen {
     );
 
 
+    /* cambio de rol en la pantalla de usuarios */
+    els.mainInner.addEventListener(
+      "change",
+      function (e) {
+
+        if (e.target.matches && e.target.matches("[data-user-rol]")) {
+
+          cambiarRolUsuario(e.target);
+
+        }
+
+      }
+    );
+
+
     /* campos del editor de acuerdo */
     els.mainInner.addEventListener(
       "input",
@@ -12092,6 +13535,26 @@ body:not(.logged-out) .login-screen {
           eliminarProducto(
             el.getAttribute("data-prod-del")
           );
+
+          return;
+
+        }
+
+
+        /* ---- Rutas de camioneros / reponedores y operaciones ---- */
+
+        if ((el = e.target.closest("[data-ruta-vista], [data-fijar], [data-op]"))) {
+
+          accionRuta(el);
+
+          return;
+
+        }
+
+
+        if (e.target.closest("[data-abrir-ops]")) {
+
+          abrirOperaciones();
 
           return;
 
@@ -12849,6 +14312,12 @@ body:not(.logged-out) .login-screen {
       ) +
 
 
+      /* estado de entrega y reposición de hoy */
+      operacionHoyHtml(
+        c
+      ) +
+
+
       '<div class="section-label">' +
         'Espacios acordados (' + espaciosIncluidos.length + ')' +
       '</div>' +
@@ -12883,6 +14352,16 @@ body:not(.logged-out) .login-screen {
 
 
       historialHtml(
+        c
+      ) +
+
+
+      '<div class="section-label">' +
+        'Entregas y reposiciones' +
+      '</div>' +
+
+
+      historialOperativoHtml(
         c
       ) +
 
@@ -13578,6 +15057,10 @@ body:not(.logged-out) .login-screen {
         ) +
 
       '</div>' +
+
+
+      /* camionero, reponedor y días de entrega (solo administrador) */
+      logisticaFormHtml(draft) +
 
 
       '<div class="section-label">' +
@@ -14334,6 +15817,9 @@ body:not(.logged-out) .login-screen {
 
     /* el mapa del formulario se ve siempre (para marcar con un clic) */
     mostrarMapaForm(draft);
+
+
+    engancharLogisticaForm(draft);
 
 
 
@@ -15361,6 +16847,23 @@ body:not(.logged-out) .login-screen {
       }
 
 
+      var logiAntes =
+        describirLogistica(logisticaDe(original));
+
+
+      var logiAhora =
+        describirLogistica(logisticaDe(nuevo));
+
+
+      if (logiAntes !== logiAhora) {
+
+        cambios.push(
+          "Logística: " + logiAntes + " → " + logiAhora
+        );
+
+      }
+
+
       if ((original.vigenciaInicio || "") !== nuevo.vigenciaInicio) {
 
         cambios.push(
@@ -15913,6 +17416,10 @@ body:not(.logged-out) .login-screen {
                 lng: draft.mapa.lng
               }
               : null,
+
+          /* camionero, reponedor y días de entrega */
+          logistica:
+            logisticaDe(draft),
 
           notas:
             draft.notas ||
@@ -17754,6 +19261,8 @@ body:not(.logged-out) .login-screen {
     delete copia.id;
 
     delete copia.historial;
+
+    delete copia.operaciones;
 
     delete copia.acuerdoEnviado;
 
@@ -20949,11 +22458,42 @@ body:not(.logged-out) .login-screen {
       safeSession("get", "vendedorNombre");
 
 
+    /* rol: admin, vendedor ("lectura"), camionero o reponedor */
+    var sesionRol =
+      safeSession("get", "sesion");
+
+
+    state.rol =
+      canEdit
+        ? "admin"
+        : sesionRol === "camionero" || sesionRol === "reponedor"
+          ? sesionRol
+          : "vendedor";
+
+
+    /* el body sabe el rol (camionero y reponedor no ven la lista de clientes) */
+    document.body.setAttribute("data-rol", state.rol);
+
+
     els.roleText.textContent =
 
       canEdit
-        ? "Administrador"
-        : "Solo lectura" + (nombreVendedor ? " · " + nombreVendedor : "");
+        ? "Administrador" + (nombreVendedor && safeSession("get", "vendedorId") ? " · " + nombreVendedor : "")
+        : state.rol === "vendedor"
+          ? "Solo lectura" + (nombreVendedor ? " · " + nombreVendedor : "")
+          : (state.rol === "camionero" ? "Camionero" : "Reponedor") + (nombreVendedor ? " · " + nombreVendedor : "");
+
+
+    /* solo el administrador ve las operaciones del día */
+    els.opsBtn.style.display =
+      canEdit ? "" : "none";
+
+
+    if (state.rol !== "camionero" && state.rol !== "reponedor") {
+
+      detenerGeolocalizacion();
+
+    }
 
 
     /* solo el administrador crea usuarios de vendedores */
@@ -20966,7 +22506,7 @@ body:not(.logged-out) .login-screen {
 
   /* ========================================================
      SESIÓN (pantalla de ingreso)
-     sessionStorage "sesion" = "admin" | "lectura"
+     sessionStorage "sesion" = "admin" | "lectura" | "camionero" | "reponedor"
      (se mantiene mientras la pestaña esté abierta)
   ======================================================== */
 
@@ -21123,6 +22663,13 @@ body:not(.logged-out) .login-screen {
     safeSession("remove", "alertaProductos");
 
 
+    state.opsView = false;
+
+    state.vistaRuta = "lista";
+
+    disponiblesAntes = null;
+
+
     setRole(
       false
     );
@@ -21162,6 +22709,11 @@ body:not(.logged-out) .login-screen {
         "usuario",
         els.loginNombre.value.trim().slice(0, 40)
       );
+
+
+      safeSession("remove", "vendedorId");
+
+      safeSession("remove", "vendedorNombre");
 
 
       enterApp(
@@ -21243,11 +22795,25 @@ body:not(.logged-out) .login-screen {
 
               safeSession("set", "vendedorNombre", v.nombre || v.usuario);
 
-              safeSession("remove", "usuario");
+
+              var rolUsuario =
+                rolDeUsuario(v);
+
+
+              /* un usuario con rol administrador firma el historial con su nombre */
+              if (rolUsuario === "admin") {
+
+                safeSession("set", "usuario", v.nombre || v.usuario);
+
+              } else {
+
+                safeSession("remove", "usuario");
+
+              }
 
 
               enterApp(
-                "lectura"
+                sesionDeRol(rolUsuario)
               );
 
 
@@ -21438,40 +23004,81 @@ body:not(.logged-out) .login-screen {
 
 
 
-  /* Si el administrador borró al vendedor, se le cierra la sesión */
+  /* "sesion" que corresponde a cada rol de usuario */
+
+  function sesionDeRol(rol) {
+
+    return rol === "vendedor" ? "lectura" : rol;
+
+  }
+
+
+
+  /* Si el administrador borró al usuario o le cambió el rol, se le cierra la sesión */
 
   function verificarSesionVendedor() {
 
-    if (
-      safeSession("get", "sesion") !== "lectura"
-    ) {
-
-      return;
-
-    }
+    var sesion =
+      safeSession("get", "sesion");
 
 
     var id =
       safeSession("get", "vendedorId");
 
 
-    var existe =
-      state.vendedores.some(
-        function (v) {
+    /* el admin fijo (sin usuario) no se verifica */
+    if (!sesion || (sesion === "admin" && !id)) {
 
-          return v.id === id;
+      return;
+
+    }
+
+
+    var v =
+      state.vendedores.find(
+        function (x) {
+
+          return x.id === id;
 
         }
       );
 
 
-    if (!existe) {
+    var mensaje =
+      !v
+        ? "Tu usuario ya no está activo. Pedile acceso al administrador."
+        : sesionDeRol(rolDeUsuario(v)) !== sesion
+          ? "El administrador cambió tu rol a «" + ROLES[rolDeUsuario(v)] + "». Volvé a ingresar."
+          : "";
+
+
+    if (mensaje) {
+
+      if (state.editing || state.creating) {
+
+        resetPendingPhotos();
+
+        state.editing = false;
+
+        state.creating = false;
+
+        state.draft = null;
+
+      }
+
 
       safeSession("remove", "sesion");
+
+      safeSession("remove", "puedeEditar");
+
+      safeSession("remove", "usuario");
 
       safeSession("remove", "vendedorId");
 
       safeSession("remove", "vendedorNombre");
+
+
+      state.opsView = false;
 
 
       setRole(false);
@@ -21481,7 +23088,7 @@ body:not(.logged-out) .login-screen {
 
 
       els.loginError.textContent =
-        "Tu usuario ya no está activo. Pedile acceso al administrador.";
+        mensaje;
 
     }
 
@@ -21575,11 +23182,14 @@ body:not(.logged-out) .login-screen {
 
           '<div>' +
 
-            '<h1 class="detail-title">Usuarios de vendedores</h1>' +
+            '<h1 class="detail-title">Usuarios</h1>' +
 
             '<p class="dash-sub">' +
-              'Los vendedores entran con su usuario y contraseña y solo pueden <strong>ver</strong> ' +
-              'los clientes y descargar sus PDF. No pueden editar ni ven los acuerdos firmados.' +
+              'Cada usuario entra con su usuario y contraseña y ve solo lo de su rol: ' +
+              '<strong>Vendedor</strong> consulta clientes y su estado (sin editar ni ver acuerdos firmados) · ' +
+              '<strong>Camionero / Repartidor</strong> ve su ruta de entregas · ' +
+              '<strong>Reponedor</strong> ve su ruta de reposición · ' +
+              '<strong>Administrador</strong> tiene acceso completo.' +
             '</p>' +
 
           '</div>' +
@@ -21630,6 +23240,11 @@ body:not(.logged-out) .login-screen {
                 '</div>' +
               '</div>' +
 
+              '<div class="ac-field">' +
+                '<label>Rol</label>' +
+                '<select id="userRol" class="grupo-select">' + opcionesRol("vendedor") + '</select>' +
+              '</div>' +
+
             '</div>' +
 
             '<div class="ac-hint">Mínimo 6 caracteres. Te sugerimos una; podés cambiarla.</div>' +
@@ -21645,7 +23260,7 @@ body:not(.logged-out) .login-screen {
 
         '<div class="ac-sec">' +
 
-          '<h2 class="ac-sec-title">Vendedores (' + lista.length + ')</h2>' +
+          '<h2 class="ac-sec-title">Usuarios (' + lista.length + ')</h2>' +
 
           (
             lista.length
@@ -21664,6 +23279,9 @@ body:not(.logged-out) .login-screen {
                           '</span>' +
 
                           '<span class="user-actions">' +
+                            '<select class="grupo-select user-rol" data-user-rol="' + escapeHtml(v.id) + '" aria-label="Rol de ' + escapeHtml(v.nombre || v.usuario) + '">' +
+                              opcionesRol(rolDeUsuario(v)) +
+                            '</select>' +
                             '<button type="button" class="btn btn-ghost" data-user-reset="' + escapeHtml(v.id) + '">Nueva contraseña</button>' +
                             '<button type="button" class="btn btn-danger" data-user-del="' + escapeHtml(v.id) + '">Eliminar</button>' +
                           '</span>' +
@@ -21674,7 +23292,7 @@ body:not(.logged-out) .login-screen {
                     }
                   ).join("") +
                 '</div>'
-              : '<div class="hist-empty">Todavía no creaste ningún vendedor.</div>'
+              : '<div class="hist-empty">Todavía no creaste ningún usuario.</div>'
           ) +
 
         '</div>' +
@@ -21715,13 +23333,17 @@ body:not(.logged-out) .login-screen {
       document.getElementById("userClave").value.trim();
 
 
+    var rolNuevo =
+      document.getElementById("userRol").value;
+
+
     var errorEl =
       document.getElementById("userError");
 
 
     var error =
       !nombre
-        ? "Poné el nombre del vendedor."
+        ? "Poné el nombre del usuario."
         : !/^[a-z0-9._-]{3,30}$/.test(usuario)
           ? "El usuario tiene que tener entre 3 y 30 caracteres: letras, números, punto, guion o guion bajo (sin espacios ni tildes)."
           : usuario === ADMIN_USER
@@ -21733,7 +23355,7 @@ body:not(.logged-out) .login-screen {
 
               }
             )
-              ? 'Ya existe un vendedor con el usuario "' + usuario + '".'
+              ? 'Ya existe alguien con el usuario "' + usuario + '".'
               : clave.length < 6
                 ? "La contraseña tiene que tener al menos 6 caracteres."
                 : "";
@@ -21773,7 +23395,8 @@ body:not(.logged-out) .login-screen {
             salt: salt,
             hash: hash,
             creado: Date.now(),
-            creadoPor: usuarioActual()
+            creadoPor: usuarioActual(),
+            rol: ROLES[rolNuevo] ? rolNuevo : "vendedor"
           };
 
 
@@ -21795,7 +23418,7 @@ body:not(.logged-out) .login-screen {
               };
 
 
-              showToast("Usuario de " + nombre + " creado.");
+              showToast("Usuario de " + nombre + " creado (" + ROLES[rolDeUsuario(nuevo)] + ").");
 
 
               renderUsuarios();
@@ -22010,6 +23633,3148 @@ body:not(.logged-out) .login-screen {
 
 
   /* ========================================================
+     ROLES EN LA PANTALLA DE USUARIOS
+  ======================================================== */
+
+  function opcionesRol(actual) {
+
+    return ["vendedor", "camionero", "reponedor", "admin"].map(
+      function (r) {
+
+        return '<option value="' + r + '"' + (r === actual ? " selected" : "") + '>' + ROLES[r] + '</option>';
+
+      }
+    ).join("");
+
+  }
+
+
+
+  function cambiarRolUsuario(select) {
+
+    var id =
+      select.getAttribute("data-user-rol");
+
+
+    var nuevoRol =
+      select.value;
+
+
+    var v =
+      state.vendedores.find(
+        function (x) {
+
+          return x.id === id;
+
+        }
+      );
+
+
+    if (!v || !ROLES[nuevoRol] || rolDeUsuario(v) === nuevoRol) {
+
+      return;
+
+    }
+
+
+    var anterior =
+      rolDeUsuario(v);
+
+
+    /* clientes que tenía asignados con el rol anterior */
+    var asignados =
+      state.clients.filter(
+        function (c) {
+
+          var l = logisticaDe(c);
+
+          return (anterior === "camionero" && l.camioneroId === id) || (anterior === "reponedor" && l.reponedorId === id);
+
+        }
+      ).length;
+
+
+    var aviso =
+      "¿Cambiar el rol de " + (v.nombre || v.usuario) + " a «" + ROLES[nuevoRol] + "»?" +
+      (asignados ? "\n\nTiene " + plural(asignados, "cliente asignado", "clientes asignados") + " como " + ROLES[anterior] + ": vas a tener que reasignarlos." : "") +
+      (id === safeSession("get", "vendedorId") ? "\n\nEs tu propio usuario: se va a cerrar tu sesión." : "") +
+      "\n\nSi tiene la sesión abierta, se le cierra y tiene que volver a ingresar.";
+
+
+    if (!confirm(aviso)) {
+
+      select.value = anterior;
+
+      return;
+
+    }
+
+
+    var lista =
+      state.vendedores.map(
+        function (x) {
+
+          return x.id === id
+            ? Object.assign({}, x, { rol: nuevoRol, rolCambiado: Date.now() })
+            : x;
+
+        }
+      );
+
+
+    select.disabled = true;
+
+
+    guardarVendedores(lista)
+
+      .then(
+        function () {
+
+          state.vendedores = lista;
+
+          showToast((v.nombre || v.usuario) + " ahora es " + ROLES[nuevoRol] + ".");
+
+          verificarSesionVendedor();
+
+          if (state.usuariosView) {
+
+            renderUsuarios();
+
+          }
+
+        }
+      )
+
+      .catch(
+        function () {
+
+          select.value = anterior;
+
+          select.disabled = false;
+
+          showToast("No se pudo cambiar el rol.");
+
+        }
+      );
+
+  }
+
+
+
+  /* ========================================================
+     OPERACIONES: CAMIONEROS / REPARTIDORES Y REPONEDORES
+     ----------------------------------------------------------
+     Flujo diario:
+       camionero entrega → se registra la entrega → el local
+       pasa a "pendiente de reposición" → entra en la ruta del
+       reponedor → se recalcula la ruta → el reponedor repone.
+
+     Datos (Firestore, sin cambiar las reglas):
+       clientes/{id}.logistica = { camioneroId, reponedorId, dias:[0..6] }
+         (0 = domingo; los días en que se entrega a ese cliente)
+       clientes/_jornada = {
+         fecha: "AAAA-MM-DD",              ← jornada actual
+         estados: { clienteId: {
+           entrega:    { at, porId, porNombre },
+           reposicion: { at, porId, porNombre } } },
+         destinos: { usuarioId: clienteId } ← destino "fijado"
+       }
+       clientes/{id}.operaciones = [ { fecha, tipo, at, porId, porNombre } ]
+         (historial permanente: "entrega", "reposicion", "anulacion")
+
+     Todas las acciones pasan por transacciones de Firestore:
+     no hay duplicados, no se puede reponer algo no entregado
+     y si cambia el día la jornada se reinicia sola.
+  ======================================================== */
+
+  var ROLES = {
+    admin: "Administrador",
+    vendedor: "Vendedor",
+    camionero: "Camionero / Repartidor",
+    reponedor: "Reponedor"
+  };
+
+
+  var DIAS_SEMANA = [
+    [1, "Lun"], [2, "Mar"], [3, "Mié"], [4, "Jue"], [5, "Vie"], [6, "Sáb"], [0, "Dom"]
+  ];
+
+
+  var JORNADA_DOC_ID = "_jornada";
+
+
+  /* usuario fijo "admin" (el de la clave del código) */
+  var ADMIN_FIJO_ID = "admin";
+
+
+  var ESTADOS_OP = {
+    sin_entrega: { label: "Sin entrega hoy", corto: "Sin entrega hoy", clase: "op-sin" },
+    pendiente_entrega: { label: "Pendiente de entrega", corto: "Pendiente de entrega", clase: "op-pend" },
+    pendiente_reposicion: { label: "Mercadería entregada · pendiente de reposición", corto: "Entregado · falta reponer", clase: "op-entregado" },
+    completado: { label: "Reposición completada", corto: "Repuesto", clase: "op-completo" }
+  };
+
+
+
+  /* ---------- usuario y rol actual ---------- */
+
+  function rolActual() {
+
+    return state.rol || (state.canEdit ? "admin" : "vendedor");
+
+  }
+
+
+
+  function miUsuarioId() {
+
+    return safeSession("get", "vendedorId") || ADMIN_FIJO_ID;
+
+  }
+
+
+
+  function rolDeUsuario(v) {
+
+    return v && ROLES[v.rol] ? v.rol : "vendedor";
+
+  }
+
+
+
+  function usuariosConRol(rol) {
+
+    return state.vendedores.filter(
+      function (v) {
+
+        return rolDeUsuario(v) === rol;
+
+      }
+    );
+
+  }
+
+
+
+  function nombreUsuario(id) {
+
+    if (!id) {
+
+      return "";
+
+    }
+
+
+    if (id === ADMIN_FIJO_ID) {
+
+      return "Administrador";
+
+    }
+
+
+    var v =
+      state.vendedores.find(
+        function (x) {
+
+          return x.id === id;
+
+        }
+      );
+
+
+    return v ? (v.nombre || v.usuario) : "Usuario eliminado";
+
+  }
+
+
+
+  /* Permisos de cada acción (se usan en la pantalla y antes de escribir) */
+
+  function puede(accion, c) {
+
+    var rol = rolActual();
+
+    var yo = miUsuarioId();
+
+    var l = c ? logisticaDe(c) : null;
+
+
+    if (accion === "ver_operaciones" || accion === "deshacer" || accion === "asignar") {
+
+      return rol === "admin";
+
+    }
+
+
+    if (accion === "entregar") {
+
+      return rol === "admin" || (rol === "camionero" && !!l && l.camioneroId === yo);
+
+    }
+
+
+    if (accion === "reponer") {
+
+      return rol === "admin" || (rol === "reponedor" && !!l && (!l.reponedorId || l.reponedorId === yo));
+
+    }
+
+
+    return false;
+
+  }
+
+
+
+  /* ---------- jornada del día ---------- */
+
+  function hoyIso() {
+
+    return isoDia(new Date());
+
+  }
+
+
+
+  function jornadaVacia() {
+
+    return { fecha: hoyIso(), estados: {}, destinos: {} };
+
+  }
+
+
+
+  /* La jornada guardada solo vale si es de hoy */
+
+  function jornadaHoy() {
+
+    var j = state.jornada;
+
+
+    if (!j || j.fecha !== hoyIso()) {
+
+      return jornadaVacia();
+
+    }
+
+
+    return {
+      fecha: j.fecha,
+      estados: j.estados || {},
+      destinos: j.destinos || {}
+    };
+
+  }
+
+
+
+  function logisticaDe(c) {
+
+    var l =
+      (c && c.logistica) || {};
+
+
+    return {
+      camioneroId: l.camioneroId || "",
+      reponedorId: l.reponedorId || "",
+      dias: Array.isArray(l.dias) ? l.dias : []
+    };
+
+  }
+
+
+
+  /* ¿El cliente entra en el flujo de hoy? (tiene camionero y hoy es día de entrega,
+     o ya se le entregó hoy aunque después le cambiaran los días) */
+
+  function enFlujoHoy(c) {
+
+    var l = logisticaDe(c);
+
+    var e = jornadaHoy().estados[c.id];
+
+
+    return (
+      (!!l.camioneroId && l.dias.indexOf(new Date().getDay()) !== -1) ||
+      !!(e && e.entrega)
+    );
+
+  }
+
+
+
+  function estadoHoy(c) {
+
+    var e =
+      jornadaHoy().estados[c.id] || {};
+
+
+    var clave =
+      !enFlujoHoy(c)
+        ? "sin_entrega"
+        : e.reposicion
+          ? "completado"
+          : e.entrega
+            ? "pendiente_reposicion"
+            : "pendiente_entrega";
+
+
+    return {
+      clave: clave,
+      info: ESTADOS_OP[clave],
+      entrega: e.entrega || null,
+      reposicion: e.reposicion || null
+    };
+
+  }
+
+
+
+  function horaDe(ms) {
+
+    return ms
+      ? new Date(ms).toLocaleTimeString("es-UY", { hour: "2-digit", minute: "2-digit", hour12: false })
+      : "";
+
+  }
+
+
+
+  function fechaHoraDe(ms) {
+
+    return ms
+      ? new Date(ms).toLocaleDateString("es-UY") + " " + horaDe(ms)
+      : "";
+
+  }
+
+
+
+  /* ========================================================
+     MOTOR DE RUTAS
+     Separado del resto para poder cambiar de proveedor en el
+     futuro (Google Routes, Mapbox, OpenRouteService…) sin
+     tocar las pantallas: solo hay que reemplazar distanciaKm /
+     tiempoMin o "ordenar".
+     Hoy: distancia geográfica (fórmula de Haversine) con un
+     factor de calles + optimización vecino más cercano y 2-opt.
+     No usa servicios externos ni claves.
+  ======================================================== */
+
+  var MOTOR_RUTAS = {
+
+    proveedor: "linea-recta",
+
+    /* las calles no van en línea recta: ~30 % más de recorrido */
+    factorCalle: 1.3,
+
+    /* velocidad promedio urbana estimada */
+    velocidadKmh: 28,
+
+    /* minutos promedio de parada para buscar estacionamiento, etc. */
+    minutosParada: 3,
+
+
+    distanciaKm: function (a, b) {
+
+      var R = 6371;
+
+      var rad = Math.PI / 180;
+
+      var dLat = (b.lat - a.lat) * rad;
+
+      var dLng = (b.lng - a.lng) * rad;
+
+
+      var h =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(a.lat * rad) * Math.cos(b.lat * rad) *
+        Math.sin(dLng / 2) * Math.sin(dLng / 2);
+
+
+      return 2 * R * Math.asin(Math.sqrt(h)) * this.factorCalle;
+
+    },
+
+
+    tiempoMin: function (km) {
+
+      return km / this.velocidadKmh * 60 + this.minutosParada;
+
+    },
+
+
+    largo: function (orden, origen) {
+
+      var total = 0;
+
+      var prev = origen || null;
+
+
+      for (var i = 0; i < orden.length; i++) {
+
+        if (prev) {
+
+          total += this.distanciaKm(prev, orden[i]);
+
+        }
+
+
+        prev = orden[i];
+
+      }
+
+
+      return total;
+
+    },
+
+
+    vecinoMasCercano: function (puntos, inicio) {
+
+      var resto = puntos.slice();
+
+      var orden = [];
+
+      var actual = inicio;
+
+
+      while (resto.length) {
+
+        var mejor = 0;
+
+        var mejorD = Infinity;
+
+
+        for (var i = 0; i < resto.length; i++) {
+
+          var d = this.distanciaKm(actual, resto[i]);
+
+
+          if (d < mejorD) {
+
+            mejorD = d;
+
+            mejor = i;
+
+          }
+
+        }
+
+
+        actual = resto.splice(mejor, 1)[0];
+
+        orden.push(actual);
+
+      }
+
+
+      return orden;
+
+    },
+
+
+    /* mejora la ruta invirtiendo tramos mientras se acorte */
+    dosOpt: function (orden, origen, desde) {
+
+      var mejoro = true;
+
+      var vueltas = 0;
+
+
+      while (mejoro && vueltas < 60) {
+
+        mejoro = false;
+
+        vueltas++;
+
+
+        for (var i = desde; i < orden.length - 1; i++) {
+
+          for (var k = i + 1; k < orden.length; k++) {
+
+            var nuevo =
+              orden.slice(0, i)
+                .concat(orden.slice(i, k + 1).reverse())
+                .concat(orden.slice(k + 1));
+
+
+            if (this.largo(nuevo, origen) + 1e-9 < this.largo(orden, origen)) {
+
+              orden = nuevo;
+
+              mejoro = true;
+
+            }
+
+          }
+
+        }
+
+      }
+
+
+      return orden;
+
+    },
+
+
+    /* puntos: [{ id, lat, lng }]
+       opciones.origen: { lat, lng } (posición actual o último lugar visitado)
+       opciones.fijo: id del destino actual (se mantiene primero)
+       Devuelve los puntos ordenados. */
+    ordenar: function (puntos, opciones) {
+
+      opciones = opciones || {};
+
+
+      if (puntos.length <= 1) {
+
+        return puntos.slice();
+
+      }
+
+
+      var fijo =
+        opciones.fijo
+          ? puntos.find(
+            function (p) {
+
+              return p.id === opciones.fijo;
+
+            }
+          )
+          : null;
+
+
+      if (fijo) {
+
+        /* el destino actual no se toca: se optimiza el resto desde ahí */
+        var resto =
+          puntos.filter(
+            function (p) {
+
+              return p !== fijo;
+
+            }
+          );
+
+
+        return [fijo].concat(
+          this.dosOpt(this.vecinoMasCercano(resto, fijo), fijo, 0)
+        );
+
+      }
+
+
+      if (opciones.origen) {
+
+        return this.dosOpt(
+          this.vecinoMasCercano(puntos, opciones.origen),
+          opciones.origen,
+          0
+        );
+
+      }
+
+
+      /* sin punto de partida: se prueba arrancando por cada local */
+      var mejor = null;
+
+      var mejorLargo = Infinity;
+
+
+      for (var i = 0; i < puntos.length; i++) {
+
+        var resto2 =
+          puntos.filter(
+            function (p, idx) {
+
+              return idx !== i;
+
+            }
+          );
+
+
+        var orden =
+          [puntos[i]].concat(this.vecinoMasCercano(resto2, puntos[i]));
+
+
+        orden = this.dosOpt(orden, null, 1);
+
+
+        var l = this.largo(orden, null);
+
+
+        if (l < mejorLargo) {
+
+          mejorLargo = l;
+
+          mejor = orden;
+
+        }
+
+      }
+
+
+      return mejor;
+
+    }
+
+  };
+
+
+
+  function puntoDe(c) {
+
+    return tieneUbicacion(c)
+      ? { id: c.id, lat: c.mapa.lat, lng: c.mapa.lng, c: c }
+      : null;
+
+  }
+
+
+
+  /* Ordena clientes: los que tienen ubicación por ruta óptima,
+     los que no tienen ubicación al final (por nombre) */
+
+  function ordenarClientes(clientes, origen, fijoId) {
+
+    var conPunto = [];
+
+    var sinPunto = [];
+
+
+    clientes.forEach(
+      function (c) {
+
+        var p = puntoDe(c);
+
+
+        if (p) {
+
+          conPunto.push(p);
+
+        } else {
+
+          sinPunto.push(c);
+
+        }
+
+      }
+    );
+
+
+    var ordenados =
+      MOTOR_RUTAS.ordenar(conPunto, { origen: origen, fijo: fijoId })
+        .map(
+          function (p) {
+
+            return p.c;
+
+          }
+        );
+
+
+    sinPunto.sort(
+      function (a, b) {
+
+        return (a.nombre || "").localeCompare(b.nombre || "", "es");
+
+      }
+    );
+
+
+    /* si el destino fijado no tiene ubicación, igual va primero */
+    var fijoSin =
+      sinPunto.find(
+        function (c) {
+
+          return c.id === fijoId;
+
+        }
+      );
+
+
+    if (fijoSin) {
+
+      return [fijoSin].concat(ordenados).concat(
+        sinPunto.filter(
+          function (c) {
+
+            return c !== fijoSin;
+
+          }
+        )
+      );
+
+    }
+
+
+    return ordenados.concat(sinPunto);
+
+  }
+
+
+
+  function tramo(desde, c) {
+
+    if (!desde || !tieneUbicacion(c)) {
+
+      return "";
+
+    }
+
+
+    var km =
+      MOTOR_RUTAS.distanciaKm(desde, { lat: c.mapa.lat, lng: c.mapa.lng });
+
+
+    return (
+      "≈ " + km.toFixed(km < 10 ? 1 : 0).replace(".", ",") + " km · " +
+      Math.round(MOTOR_RUTAS.tiempoMin(km)) + " min"
+    );
+
+  }
+
+
+
+  /* Navegación con Google Maps (sin clave): al próximo destino o a toda la ruta */
+
+  function linkNavegar(clientes) {
+
+    var ubicados =
+      clientes.filter(tieneUbicacion);
+
+
+    if (!ubicados.length) {
+
+      return "";
+
+    }
+
+
+    var punto = function (c) {
+
+      return c.mapa.lat + "," + c.mapa.lng;
+
+    };
+
+
+    /* Google Maps admite hasta 9 paradas intermedias */
+    var tramoRuta =
+      ubicados.slice(0, 10);
+
+
+    var destino =
+      tramoRuta[tramoRuta.length - 1];
+
+
+    var paradas =
+      tramoRuta.slice(0, -1).map(punto).join("|");
+
+
+    return (
+      "https://www.google.com/maps/dir/?api=1&travelmode=driving" +
+      "&destination=" + encodeURIComponent(punto(destino)) +
+      (paradas ? "&waypoints=" + encodeURIComponent(paradas) : "")
+    );
+
+  }
+
+
+
+  /* ---------- posición del usuario (opcional, con permiso) ---------- */
+
+  state.miPosicion = null;
+
+  var geoWatchId = null;
+
+
+
+  function iniciarGeolocalizacion() {
+
+    if (geoWatchId !== null || !navigator.geolocation) {
+
+      return;
+
+    }
+
+
+    geoWatchId =
+      navigator.geolocation.watchPosition(
+        function (pos) {
+
+          var nueva = {
+            lat: pos.coords.latitude,
+            lng: pos.coords.longitude,
+            at: Date.now()
+          };
+
+
+          var antes = state.miPosicion;
+
+
+          state.miPosicion = nueva;
+
+
+          /* solo se redibuja si se movió más de 300 m (para no saltar a cada rato) */
+          if (
+            !antes ||
+            MOTOR_RUTAS.distanciaKm(antes, nueva) / MOTOR_RUTAS.factorCalle > 0.3
+          ) {
+
+            if (rolActual() === "camionero" || rolActual() === "reponedor") {
+
+              render();
+
+            }
+
+          }
+
+        },
+        function () {
+
+          /* sin permiso o sin señal: se usa el último local visitado */
+
+        },
+        { enableHighAccuracy: true, maximumAge: 60000, timeout: 20000 }
+      );
+
+  }
+
+
+
+  function detenerGeolocalizacion() {
+
+    if (geoWatchId !== null && navigator.geolocation) {
+
+      navigator.geolocation.clearWatch(geoWatchId);
+
+    }
+
+
+    geoWatchId = null;
+
+    state.miPosicion = null;
+
+  }
+
+
+
+  /* ========================================================
+     ACCIONES (con transacción: consistentes aunque dos
+     personas toquen al mismo tiempo)
+  ======================================================== */
+
+  function modificarJornada(clientId, mutar, entradaHistorial) {
+
+    var db = state.db;
+
+    var jRef = db.doc("clientes/" + JORNADA_DOC_ID);
+
+    var cRef = clientId ? db.doc("clientes/" + clientId) : null;
+
+
+    return db.runTransaction(
+      function (tx) {
+
+        return tx.get(jRef).then(
+          function (snap) {
+
+            var data =
+              snap.exists ? snap.data() : {};
+
+
+            /* nueva jornada: se arranca de cero (el historial
+               de días anteriores ya está guardado en cada cliente) */
+            if (data.fecha !== hoyIso()) {
+
+              data = jornadaVacia();
+
+            }
+
+
+            data.estados = data.estados || {};
+
+            data.destinos = data.destinos || {};
+
+
+            var resultado =
+              mutar(data);
+
+
+            tx.set(jRef, data);
+
+
+            if (cRef && entradaHistorial) {
+
+              tx.update(cRef, {
+                operaciones: firebase.firestore.FieldValue.arrayUnion(entradaHistorial)
+              });
+
+            }
+
+
+            return resultado;
+
+          }
+        );
+
+      }
+    );
+
+  }
+
+
+
+  function clientePorId(id) {
+
+    return state.clients.find(
+      function (x) {
+
+        return x.id === id;
+
+      }
+    );
+
+  }
+
+
+
+  function marcarEntrega(clientId) {
+
+    var c = clientePorId(clientId);
+
+
+    if (!c || !enFlujoHoy(c) || !puede("entregar", c)) {
+
+      showToast("No tenés permiso para marcar esta entrega.");
+
+      return Promise.resolve(false);
+
+    }
+
+
+    var ahora = Date.now();
+
+    var yo = miUsuarioId();
+
+    var nombre = quienSoy();
+
+
+    return modificarJornada(
+      clientId,
+      function (data) {
+
+        var e = data.estados[clientId] || {};
+
+
+        if (e.entrega) {
+
+          throw new Error(
+            "Ya figura entregado por " + e.entrega.porNombre + " a las " + horaDe(e.entrega.at) + "."
+          );
+
+        }
+
+
+        e.entrega = { at: ahora, porId: yo, porNombre: nombre };
+
+        data.estados[clientId] = e;
+
+
+        if (data.destinos[yo] === clientId) {
+
+          delete data.destinos[yo];
+
+        }
+
+      },
+      { fecha: hoyIso(), tipo: "entrega", at: ahora, porId: yo, porNombre: nombre }
+    )
+
+      .then(
+        function () {
+
+          showToast("Entrega registrada a las " + horaDe(ahora) + ".");
+
+          return true;
+
+        }
+      )
+
+      .catch(
+        function (err) {
+
+          console.error(err);
+
+          showToast(err && err.message && err.message.indexOf("Ya figura") === 0 ? err.message : "No se pudo registrar la entrega. Revisá tu conexión.");
+
+          return false;
+
+        }
+      );
+
+  }
+
+
+
+  function marcarReposicion(clientId) {
+
+    var c = clientePorId(clientId);
+
+
+    if (!c || !puede("reponer", c)) {
+
+      showToast("No tenés permiso para marcar esta reposición.");
+
+      return Promise.resolve(false);
+
+    }
+
+
+    var ahora = Date.now();
+
+    var yo = miUsuarioId();
+
+    var nombre = quienSoy();
+
+
+    return modificarJornada(
+      clientId,
+      function (data) {
+
+        var e = data.estados[clientId] || {};
+
+
+        /* regla clave: nunca se repone algo que no se entregó hoy */
+        if (!e.entrega) {
+
+          throw new Error("Todavía no se entregó la mercadería en este local hoy.");
+
+        }
+
+
+        if (e.reposicion) {
+
+          throw new Error(
+            "Ya figura repuesto por " + e.reposicion.porNombre + " a las " + horaDe(e.reposicion.at) + "."
+          );
+
+        }
+
+
+        e.reposicion = { at: ahora, porId: yo, porNombre: nombre };
+
+        data.estados[clientId] = e;
+
+
+        if (data.destinos[yo] === clientId) {
+
+          delete data.destinos[yo];
+
+        }
+
+      },
+      { fecha: hoyIso(), tipo: "reposicion", at: ahora, porId: yo, porNombre: nombre }
+    )
+
+      .then(
+        function () {
+
+          showToast("Reposición completada a las " + horaDe(ahora) + ".");
+
+          return true;
+
+        }
+      )
+
+      .catch(
+        function (err) {
+
+          console.error(err);
+
+
+          var msg =
+            err && err.message && (err.message.indexOf("Ya figura") === 0 || err.message.indexOf("Todavía") === 0)
+              ? err.message
+              : "No se pudo registrar la reposición. Revisá tu conexión.";
+
+
+          showToast(msg);
+
+          return false;
+
+        }
+      );
+
+  }
+
+
+
+  /* Solo administrador: anula la última acción del día (por un error) */
+
+  function deshacerOperacion(clientId, tipo) {
+
+    if (!puede("deshacer")) {
+
+      return Promise.resolve(false);
+
+    }
+
+
+    var ahora = Date.now();
+
+
+    return modificarJornada(
+      clientId,
+      function (data) {
+
+        var e = data.estados[clientId] || {};
+
+
+        if (tipo === "entrega") {
+
+          if (e.reposicion) {
+
+            throw new Error("Primero anulá la reposición.");
+
+          }
+
+
+          if (!e.entrega) {
+
+            throw new Error("No hay entrega para anular.");
+
+          }
+
+
+          delete e.entrega;
+
+        } else {
+
+          if (!e.reposicion) {
+
+            throw new Error("No hay reposición para anular.");
+
+          }
+
+
+          delete e.reposicion;
+
+        }
+
+
+        data.estados[clientId] = e;
+
+      },
+      { fecha: hoyIso(), tipo: "anulacion", detalle: tipo, at: ahora, porId: miUsuarioId(), porNombre: quienSoy() }
+    )
+
+      .then(
+        function () {
+
+          showToast(tipo === "entrega" ? "Entrega anulada." : "Reposición anulada.");
+
+          return true;
+
+        }
+      )
+
+      .catch(
+        function (err) {
+
+          showToast((err && err.message) || "No se pudo anular.");
+
+          return false;
+
+        }
+      );
+
+  }
+
+
+
+  /* Fija el destino actual (para que la ruta no cambie de golpe) */
+
+  var destinoGuardando = {};
+
+
+
+  function fijarDestino(clientId) {
+
+    var yo = miUsuarioId();
+
+
+    if (destinoGuardando[yo] === clientId) {
+
+      return;
+
+    }
+
+
+    destinoGuardando[yo] = clientId;
+
+
+    modificarJornada(
+      null,
+      function (data) {
+
+        if (clientId) {
+
+          data.destinos[yo] = clientId;
+
+        } else {
+
+          delete data.destinos[yo];
+
+        }
+
+      }
+    )
+      .catch(
+        function (err) {
+
+          console.warn("No se pudo fijar el destino", err);
+
+        }
+      )
+      .then(
+        function () {
+
+          delete destinoGuardando[yo];
+
+        }
+      );
+
+  }
+
+
+
+  /* Confirmación grande (pensada para el celular) */
+
+  function confirmarAccion(titulo, texto, botonTexto, clase) {
+
+    return new Promise(
+      function (resolve) {
+
+        var bd =
+          document.createElement("div");
+
+
+        bd.className =
+          "modal-backdrop op-confirm";
+
+
+        bd.innerHTML =
+          '<div class="modal-card" role="alertdialog" aria-modal="true">' +
+            '<h2 class="modal-title">' + escapeHtml(titulo) + '</h2>' +
+            '<p class="modal-sub">' + texto + '</p>' +
+            '<div class="op-confirm-botones">' +
+              '<button type="button" class="btn op-btn-grande ' + (clase || "op-btn-ok") + '" data-r="si">' + escapeHtml(botonTexto) + '</button>' +
+              '<button type="button" class="btn btn-ghost op-btn-grande" data-r="no">Cancelar</button>' +
+            '</div>' +
+          '</div>';
+
+
+        document.body.appendChild(bd);
+
+
+        var cerrar = function (valor) {
+
+          bd.remove();
+
+          resolve(valor);
+
+        };
+
+
+        bd.addEventListener(
+          "click",
+          function (e) {
+
+            if (e.target === bd) {
+
+              cerrar(false);
+
+              return;
+
+            }
+
+
+            var b =
+              e.target.closest("[data-r]");
+
+
+            if (b) {
+
+              cerrar(b.getAttribute("data-r") === "si");
+
+            }
+
+          }
+        );
+
+      }
+    );
+
+  }
+
+
+
+  /* ========================================================
+     PANTALLAS DE RUTA (camionero y reponedor)
+  ======================================================== */
+
+  state.vistaRuta = "lista";
+
+  var mapaRutaActual = null;
+
+  var disponiblesAntes = null;
+
+
+
+  function cabeceraRuta(titulo, hechos, total, textoHechos) {
+
+    var pct =
+      total ? Math.round(hechos / total * 100) : 0;
+
+
+    return (
+      '<div class="ruta-cabecera">' +
+
+        '<div>' +
+          '<h1 class="ruta-titulo">' + escapeHtml(titulo) + '</h1>' +
+          '<p class="ruta-fecha">' +
+            escapeHtml(new Date().toLocaleDateString("es-UY", { weekday: "long", day: "numeric", month: "long" })) +
+          '</p>' +
+        '</div>' +
+
+        '<div class="ruta-toggle" role="tablist">' +
+          '<button type="button" role="tab" class="' + (state.vistaRuta === "lista" ? "activo" : "") + '" data-ruta-vista="lista">Lista</button>' +
+          '<button type="button" role="tab" class="' + (state.vistaRuta === "mapa" ? "activo" : "") + '" data-ruta-vista="mapa">Mapa</button>' +
+        '</div>' +
+
+      '</div>' +
+
+      '<div class="ruta-progreso">' +
+        '<div class="ruta-barra"><span style="width:' + pct + '%"></span></div>' +
+        '<span>' + hechos + ' de ' + total + ' ' + escapeHtml(textoHechos) + '</span>' +
+      '</div>'
+    );
+
+  }
+
+
+
+  function tarjetaDestinoHtml(c, opts) {
+
+    var est = estadoHoy(c);
+
+
+    return (
+      '<div class="ruta-proximo">' +
+
+        '<span class="ruta-proximo-tag">Próximo destino</span>' +
+
+        '<h2 class="ruta-proximo-nombre">' + escapeHtml(c.nombre || "Sin nombre") + '</h2>' +
+
+        '<p class="ruta-proximo-dir">&#128205; ' +
+          escapeHtml(c.mapa && c.mapa.direccion ? c.mapa.direccion : "Sin dirección cargada") +
+        '</p>' +
+
+        (opts.distancia ? '<p class="ruta-proximo-dist">' + escapeHtml(opts.distancia) + '</p>' : "") +
+
+        '<p class="ruta-proximo-estado"><span class="op-chip ' + est.info.clase + '">' + escapeHtml(est.info.label) + '</span>' +
+          (opts.extra || "") +
+        '</p>' +
+
+        '<div class="ruta-acciones">' +
+
+          (
+            tieneUbicacion(c)
+              ? '<a class="btn btn-ghost op-btn-grande" target="_blank" rel="noopener" href="' +
+                  escapeHtml("https://www.google.com/maps/dir/?api=1&travelmode=driving&destination=" + encodeURIComponent(c.mapa.lat + "," + c.mapa.lng)) +
+                '">&#128663; Cómo llegar</a>'
+              : ""
+          ) +
+
+          '<button type="button" class="btn op-btn-grande ' + opts.claseBoton + '" data-op="' + opts.accion + '" data-cliente="' + escapeHtml(c.id) + '">' +
+            escapeHtml(opts.textoBoton) +
+          '</button>' +
+
+        '</div>' +
+
+      '</div>'
+    );
+
+  }
+
+
+
+  function filaRutaHtml(c, num, desde, opts) {
+
+    var est = estadoHoy(c);
+
+
+    return (
+      '<div class="ruta-fila ' + est.info.clase + '">' +
+
+        (num ? '<span class="ruta-num">' + num + '</span>' : '<span class="ruta-num ruta-num-off">·</span>') +
+
+        '<span class="ruta-fila-info">' +
+          '<strong>' + escapeHtml(c.nombre || "Sin nombre") + (opts.nuevo ? ' <span class="op-nuevo">Nuevo</span>' : '') + '</strong>' +
+          '<span>' + escapeHtml(c.mapa && c.mapa.direccion ? c.mapa.direccion : "Sin dirección") + '</span>' +
+          (opts.detalle ? '<span class="ruta-fila-detalle">' + opts.detalle + '</span>' : '') +
+          (desde && tieneUbicacion(c) ? '<span class="ruta-fila-detalle">' + escapeHtml(tramo(desde, c)) + '</span>' : '') +
+        '</span>' +
+
+        (
+          opts.boton
+            ? '<button type="button" class="btn btn-ghost ruta-fila-btn" data-fijar="' + escapeHtml(c.id) + '">Ir a este</button>'
+            : ''
+        ) +
+
+      '</div>'
+    );
+
+  }
+
+
+
+  function seccionRuta(titulo, html, clase) {
+
+    return html
+      ? '<section class="ruta-seccion ' + (clase || "") + '"><h3>' + titulo + '</h3>' + html + '</section>'
+      : "";
+
+  }
+
+
+
+  /* ---------- Camionero / repartidor ---------- */
+
+  /* Ruta del día de un camionero (la usan su pantalla y la del reponedor) */
+
+  function rutaDeCamionero(camioneroId, posicion) {
+
+    var j = jornadaHoy();
+
+
+    var mios =
+      state.clients.filter(
+        function (c) {
+
+          return enFlujoHoy(c) && logisticaDe(c).camioneroId === camioneroId;
+
+        }
+      );
+
+
+    var pendientes =
+      mios.filter(
+        function (c) {
+
+          return !estadoHoy(c).entrega;
+
+        }
+      );
+
+
+    var entregados =
+      mios
+        .filter(
+          function (c) {
+
+            return !!estadoHoy(c).entrega;
+
+          }
+        )
+        .sort(
+          function (a, b) {
+
+            return estadoHoy(b).entrega.at - estadoHoy(a).entrega.at;
+
+          }
+        );
+
+
+    /* origen: posición actual o el último local entregado */
+    var ultimo =
+      entregados.find(tieneUbicacion);
+
+
+    var origen =
+      posicion ||
+      (ultimo ? { lat: ultimo.mapa.lat, lng: ultimo.mapa.lng } : null);
+
+
+    var fijo =
+      j.destinos[camioneroId] && pendientes.some(function (c) { return c.id === j.destinos[camioneroId]; })
+        ? j.destinos[camioneroId]
+        : null;
+
+
+    return {
+      mios: mios,
+      entregados: entregados,
+      origen: origen,
+      fijo: fijo,
+      ruta: ordenarClientes(pendientes, origen, fijo)
+    };
+
+  }
+
+
+
+  function renderRutaCamionero() {
+
+    iniciarGeolocalizacion();
+
+
+    var r =
+      rutaDeCamionero(miUsuarioId(), state.miPosicion);
+
+
+    var mios = r.mios;
+
+    var entregados = r.entregados;
+
+    var origen = r.origen;
+
+    var fijo = r.fijo;
+
+    var ruta = r.ruta;
+
+
+    /* el primero queda fijado para que no cambie de golpe */
+    if (ruta.length && !fijo && state.db) {
+
+      fijarDestino(ruta[0].id);
+
+    }
+
+
+    var destinoHtml =
+      ruta.length
+        ? tarjetaDestinoHtml(ruta[0], {
+          distancia: tramo(origen, ruta[0]),
+          accion: "entregar",
+          textoBoton: "✓ Marcar como entregado",
+          claseBoton: "op-btn-ok"
+        })
+        : '<div class="ruta-listo">&#127881; ¡Terminaste todas las entregas de hoy!</div>';
+
+
+    var html =
+      cabeceraRuta("Mi ruta de entregas", entregados.length, mios.length, "entregados");
+
+
+    if (!mios.length) {
+
+      html +=
+        '<div class="ruta-vacia">' +
+          '<strong>No tenés entregas asignadas para hoy.</strong>' +
+          '<span>El administrador asigna los clientes y los días de entrega.</span>' +
+        '</div>';
+
+    } else if (state.vistaRuta === "mapa") {
+
+      html +=
+        '<div class="ruta-mapa" id="mapaRuta"></div>' +
+        leyendaRutaHtml(true, origen) +
+        '<div class="ruta-bajo-mapa">' + destinoHtml + '</div>';
+
+    } else {
+
+      html +=
+        destinoHtml +
+
+        (
+          ruta.length > 1
+            ? '<a class="ruta-navegar" target="_blank" rel="noopener" href="' + escapeHtml(linkNavegar(ruta)) + '">' +
+                'Abrir toda la ruta en Google Maps' +
+              '</a>'
+            : ""
+        ) +
+
+        seccionRuta(
+          "Siguientes (" + Math.max(0, ruta.length - 1) + ")",
+          ruta.slice(1).map(
+            function (c, i) {
+
+              var desde =
+                tieneUbicacion(ruta[i]) ? { lat: ruta[i].mapa.lat, lng: ruta[i].mapa.lng } : null;
+
+
+              return filaRutaHtml(c, i + 2, desde, { boton: true });
+
+            }
+          ).join("")
+        ) +
+
+        seccionRuta(
+          "Entregados hoy (" + entregados.length + ")",
+          entregados.map(
+            function (c) {
+
+              return filaRutaHtml(c, 0, null, {
+                detalle: "Entregado a las " + horaDe(estadoHoy(c).entrega.at)
+              });
+
+            }
+          ).join(""),
+          "ruta-hechos"
+        );
+
+    }
+
+    pintarRuta(html, mios.length, ruta, [], entregados, origen);
+
+  }
+
+
+
+  /* ---------- Reponedor ---------- */
+
+  function renderRutaReponedor() {
+
+    iniciarGeolocalizacion();
+
+
+    var yo = miUsuarioId();
+
+    var j = jornadaHoy();
+
+
+    /* clientes de hoy asignados a mí (o sin reponedor asignado) */
+    var mios =
+      state.clients.filter(
+        function (c) {
+
+          var l = logisticaDe(c);
+
+
+          return enFlujoHoy(c) && (!l.reponedorId || l.reponedorId === yo);
+
+        }
+      );
+
+
+    var disponibles =
+      mios.filter(
+        function (c) {
+
+          return estadoHoy(c).clave === "pendiente_reposicion";
+
+        }
+      );
+
+
+    var noDisponibles =
+      mios.filter(
+        function (c) {
+
+          return estadoHoy(c).clave === "pendiente_entrega";
+
+        }
+      );
+
+
+    var completados =
+      mios
+        .filter(
+          function (c) {
+
+            return estadoHoy(c).clave === "completado";
+
+          }
+        )
+        .sort(
+          function (a, b) {
+
+            return estadoHoy(b).reposicion.at - estadoHoy(a).reposicion.at;
+
+          }
+        );
+
+
+    /* aviso cuando el camionero libera un local nuevo */
+    var idsDisp =
+      disponibles.map(
+        function (c) {
+
+          return c.id;
+
+        }
+      );
+
+
+    if (disponiblesAntes) {
+
+      var nuevos =
+        disponibles.filter(
+          function (c) {
+
+            return disponiblesAntes.indexOf(c.id) === -1;
+
+          }
+        );
+
+
+      if (nuevos.length) {
+
+        showToast(
+          "🚚 Nuevo local disponible: " +
+          nuevos.map(
+            function (c) {
+
+              return c.nombre;
+
+            }
+          ).join(", ")
+        );
+
+
+        if (navigator.vibrate) {
+
+          navigator.vibrate([150, 80, 150]);
+
+        }
+
+      }
+
+    }
+
+
+    disponiblesAntes = idsDisp;
+
+
+    /* origen: mi posición o el último local repuesto */
+    var ultimo =
+      completados.find(tieneUbicacion);
+
+
+    var origen =
+      state.miPosicion ||
+      (ultimo ? { lat: ultimo.mapa.lat, lng: ultimo.mapa.lng } : null);
+
+
+    /* el destino actual se mantiene mientras siga disponible:
+       solo se reoptimizan los siguientes */
+    var fijo =
+      j.destinos[yo] && idsDisp.indexOf(j.destinos[yo]) !== -1
+        ? j.destinos[yo]
+        : null;
+
+
+    var ruta =
+      ordenarClientes(disponibles, origen, fijo);
+
+
+    if (ruta.length && !fijo && state.db) {
+
+      fijarDestino(ruta[0].id);
+
+    }
+
+
+    var esNuevo = function (c) {
+
+      var e = estadoHoy(c).entrega;
+
+
+      return !!e && Date.now() - e.at < 15 * 60000;
+
+    };
+
+
+    /* orden en que el camionero va a llegar a los que faltan */
+    var posicionCamion =
+      ordenCamioneros();
+
+
+    var destinoHtml =
+      ruta.length
+        ? tarjetaDestinoHtml(ruta[0], {
+          distancia: tramo(origen, ruta[0]),
+          accion: "reponer",
+          textoBoton: "✓ Marcar reposición como completada",
+          claseBoton: "op-btn-ok",
+          extra:
+            ' <span class="ruta-hora">Entregado a las ' + horaDe(estadoHoy(ruta[0]).entrega.at) +
+            ' por ' + escapeHtml(estadoHoy(ruta[0]).entrega.porNombre) + '</span>' +
+            productosChip(ruta[0])
+        })
+        : (
+          noDisponibles.length
+            ? '<div class="ruta-espera">&#9203; Esperando entregas del camionero. ' +
+                'Cuando entregue en un local, va a aparecer acá automáticamente.</div>'
+            : '<div class="ruta-listo">&#127881; ¡Terminaste todas las reposiciones de hoy!</div>'
+        );
+
+
+    var html =
+      cabeceraRuta("Mi ruta de reposición", completados.length, mios.length, "repuestos");
+
+
+    if (!mios.length) {
+
+      html +=
+        '<div class="ruta-vacia">' +
+          '<strong>No tenés locales asignados para hoy.</strong>' +
+          '<span>El administrador asigna los clientes y los días.</span>' +
+        '</div>';
+
+    } else if (state.vistaRuta === "mapa") {
+
+      html +=
+        '<div class="ruta-mapa" id="mapaRuta"></div>' +
+        leyendaRutaHtml(false, origen) +
+        '<div class="ruta-bajo-mapa">' + destinoHtml + '</div>';
+
+    } else {
+
+      html +=
+        destinoHtml +
+
+        (
+          ruta.length > 1
+            ? '<a class="ruta-navegar" target="_blank" rel="noopener" href="' + escapeHtml(linkNavegar(ruta)) + '">' +
+                'Abrir toda la ruta en Google Maps' +
+              '</a>'
+            : ""
+        ) +
+
+        seccionRuta(
+          "Siguientes disponibles (" + Math.max(0, ruta.length - 1) + ")",
+          ruta.slice(1).map(
+            function (c, i) {
+
+              var desde =
+                tieneUbicacion(ruta[i]) ? { lat: ruta[i].mapa.lat, lng: ruta[i].mapa.lng } : null;
+
+
+              return filaRutaHtml(c, i + 2, desde, {
+                boton: true,
+                nuevo: esNuevo(c),
+                detalle: "Entregado a las " + horaDe(estadoHoy(c).entrega.at)
+              });
+
+            }
+          ).join("")
+        ) +
+
+        seccionRuta(
+          "Todavía no disponibles · falta la entrega (" + noDisponibles.length + ")",
+          noDisponibles
+            .sort(
+              function (a, b) {
+
+                return (posicionCamion[a.id] || 999) - (posicionCamion[b.id] || 999);
+
+              }
+            )
+            .map(
+              function (c) {
+
+                var pos = posicionCamion[c.id];
+
+
+                return filaRutaHtml(c, 0, null, {
+                  detalle:
+                    "Camionero: " + escapeHtml(nombreUsuario(logisticaDe(c).camioneroId) || "sin asignar") +
+                    (
+                      pos === 1
+                        ? " · es su próxima entrega"
+                        : pos
+                          ? " · antes tiene " + plural(pos - 1, "entrega", "entregas")
+                          : ""
+                    )
+                });
+
+              }
+            ).join(""),
+          "ruta-bloqueados"
+        ) +
+
+        seccionRuta(
+          "Completados hoy (" + completados.length + ")",
+          completados.map(
+            function (c) {
+
+              var r = estadoHoy(c).reposicion;
+
+
+              return filaRutaHtml(c, 0, null, {
+                detalle: "Repuesto a las " + horaDe(r.at) + (r.porId !== yo ? " por " + escapeHtml(r.porNombre) : "")
+              });
+
+            }
+          ).join(""),
+          "ruta-hechos"
+        );
+
+    }
+
+    pintarRuta(html, mios.length, ruta, noDisponibles, completados, origen);
+
+  }
+
+
+
+  /* Para cada cliente pendiente de entrega: en qué puesto de la ruta del camionero está */
+
+  function ordenCamioneros() {
+
+    var camioneros = {};
+
+
+    state.clients.forEach(
+      function (c) {
+
+        var l = logisticaDe(c);
+
+
+        if (enFlujoHoy(c) && !estadoHoy(c).entrega && l.camioneroId) {
+
+          camioneros[l.camioneroId] = true;
+
+        }
+
+      }
+    );
+
+
+    var posicion = {};
+
+
+    Object.keys(camioneros).forEach(
+      function (cid) {
+
+        rutaDeCamionero(cid, null).ruta.forEach(
+          function (c, i) {
+
+            posicion[c.id] = i + 1;
+
+          }
+        );
+
+      }
+    );
+
+
+    return posicion;
+
+  }
+
+
+
+  function productosChip(c) {
+
+    var n =
+      productosVigentes(c).filter(
+        function (p) {
+
+          var d = daysUntil(p.vence);
+
+          return d !== null && d <= PROD_DIAS_ALERTA;
+
+        }
+      ).length;
+
+
+    return n
+      ? ' <span class="op-chip op-prod">&#9888; ' + plural(n, "producto por vencer", "productos por vencer") + '</span>'
+      : "";
+
+  }
+
+
+
+  function leyendaRutaHtml(esCamionero, origen) {
+
+    return (
+      '<div class="mapa-leyenda">' +
+        '<span><i style="background:#6f5bd3"></i>' + (esCamionero ? "Por entregar (en orden)" : "Disponible (en orden)") + '</span>' +
+        (esCamionero ? "" : '<span><i style="background:#a8a3bf"></i>Falta la entrega</span>') +
+        '<span><i style="background:#2f8a63"></i>' + (esCamionero ? "Entregado" : "Repuesto") + '</span>' +
+        (origen ? '<span><i style="background:#2563eb"></i>' + (state.miPosicion ? "Vos" : "Último lugar visitado") + '</span>' : '') +
+      '</div>'
+    );
+
+  }
+
+
+
+  /* Pinta la pantalla de ruta. En la vista mapa, si nada cambió
+     no se redibuja (así no se pierde el zoom ni la posición). */
+
+  var mapaRutaFirma = null;
+
+
+
+  function pintarRuta(html, total, ruta, bloqueados, hechos, origen) {
+
+    var ids = function (lista) {
+
+      return lista.map(
+        function (c) {
+
+          return c.id;
+
+        }
+      ).join(",");
+
+    };
+
+
+    var firma =
+      state.vistaRuta === "mapa" && total
+        ? [
+          ids(ruta), ids(bloqueados), ids(hechos),
+          origen ? origen.lat.toFixed(4) + "," + origen.lng.toFixed(4) : ""
+        ].join("|")
+        : null;
+
+
+    if (
+      firma &&
+      firma === mapaRutaFirma &&
+      mapaRutaActual &&
+      document.getElementById("mapaRuta")
+    ) {
+
+      return;
+
+    }
+
+
+    mapaRutaFirma = firma;
+
+
+    els.mainInner.innerHTML =
+      '<div class="ruta-vista">' + html + '</div>';
+
+
+    if (firma) {
+
+      dibujarMapaRuta(ruta, bloqueados, hechos, origen);
+
+    }
+
+  }
+
+
+
+  function dibujarMapaRuta(ruta, bloqueados, hechos, origen) {
+
+    var cont =
+      document.getElementById("mapaRuta");
+
+
+    if (!cont) {
+
+      return;
+
+    }
+
+
+    cargarLeaflet()
+
+      .then(
+        function (L) {
+
+          if (!document.body.contains(cont)) {
+
+            return;
+
+          }
+
+
+          if (mapaRutaActual) {
+
+            mapaRutaActual.remove();
+
+            mapaRutaActual = null;
+
+          }
+
+
+          var mapa =
+            L.map(cont).setView(MAPA_CENTRO, 12);
+
+
+          capaOSM(L).addTo(mapa);
+
+
+          var puntos = [];
+
+
+          var numero = function (n, color) {
+
+            return L.divIcon({
+              className: "ruta-pin",
+              html: '<span style="background:' + color + '">' + n + '</span>',
+              iconSize: [30, 30],
+              iconAnchor: [15, 15]
+            });
+
+          };
+
+
+          /* ruta en orden, con línea */
+          var linea = origen ? [[origen.lat, origen.lng]] : [];
+
+
+          ruta.forEach(
+            function (c, i) {
+
+              if (!tieneUbicacion(c)) {
+
+                return;
+
+              }
+
+
+              var pos = [c.mapa.lat, c.mapa.lng];
+
+              puntos.push(pos);
+
+              linea.push(pos);
+
+
+              L.marker(pos, { icon: numero(i + 1, "#6f5bd3") })
+                .addTo(mapa)
+                .bindPopup('<strong>' + (i + 1) + '. ' + escapeHtml(c.nombre) + '</strong><br>' + escapeHtml(c.mapa.direccion || ""));
+
+            }
+          );
+
+
+          if (linea.length > 1) {
+
+            L.polyline(linea, { color: "#6f5bd3", weight: 3, opacity: 0.7, dashArray: "6 6" }).addTo(mapa);
+
+          }
+
+
+          var punto = function (lista, color) {
+
+            lista.filter(tieneUbicacion).forEach(
+              function (c) {
+
+                var pos = [c.mapa.lat, c.mapa.lng];
+
+                puntos.push(pos);
+
+
+                L.circleMarker(pos, { radius: 8, color: "#ffffff", weight: 2, fillColor: color, fillOpacity: 0.95 })
+                  .addTo(mapa)
+                  .bindPopup('<strong>' + escapeHtml(c.nombre) + '</strong><br>' + escapeHtml(estadoHoy(c).info.label));
+
+              }
+            );
+
+          };
+
+
+          punto(bloqueados, "#a8a3bf");
+
+          punto(hechos, "#2f8a63");
+
+
+          if (origen) {
+
+            puntos.push([origen.lat, origen.lng]);
+
+
+            L.circleMarker([origen.lat, origen.lng], { radius: 9, color: "#ffffff", weight: 3, fillColor: "#2563eb", fillOpacity: 1 })
+              .addTo(mapa)
+              .bindTooltip(state.miPosicion ? "Vos" : "Último lugar visitado");
+
+          }
+
+
+          if (puntos.length === 1) {
+
+            mapa.setView(puntos[0], 15);
+
+          } else if (puntos.length > 1) {
+
+            mapa.fitBounds(puntos, { padding: [30, 30], maxZoom: 16 });
+
+          }
+
+
+          mapaRutaActual = mapa;
+
+
+          setTimeout(
+            function () {
+
+              mapa.invalidateSize();
+
+            },
+            50
+          );
+
+        }
+      )
+
+      .catch(
+        function () {
+
+          cont.innerHTML = '<div class="dash-empty">No se pudo cargar el mapa.</div>';
+
+        }
+      );
+
+  }
+
+
+
+  /* Clics de las pantallas de ruta */
+
+  function accionRuta(el) {
+
+    if (el.hasAttribute("data-ruta-vista")) {
+
+      state.vistaRuta = el.getAttribute("data-ruta-vista");
+
+      render();
+
+      return true;
+
+    }
+
+
+    if (el.hasAttribute("data-fijar")) {
+
+      fijarDestino(el.getAttribute("data-fijar"));
+
+
+      /* se muestra al instante, sin esperar a Firebase */
+      state.jornada = jornadaHoy();
+
+      state.jornada.destinos[miUsuarioId()] = el.getAttribute("data-fijar");
+
+      render();
+
+      els.mainInner.parentNode.scrollTop = 0;
+
+      return true;
+
+    }
+
+
+    var op =
+      el.getAttribute("data-op");
+
+
+    if (!op) {
+
+      return false;
+
+    }
+
+
+    var c =
+      clientePorId(el.getAttribute("data-cliente"));
+
+
+    if (!c) {
+
+      return true;
+
+    }
+
+
+    if (op === "entregar") {
+
+      confirmarAccion(
+        "¿Entregaste en " + (c.nombre || "este local") + "?",
+        "Se registra la entrega con la hora actual y el local pasa a estar disponible para el reponedor.",
+        "Sí, marcar entregado"
+      ).then(
+        function (ok) {
+
+          if (ok) {
+
+            el.disabled = true;
+
+            marcarEntrega(c.id).then(
+              function (ok) {
+
+                if (!ok) {
+
+                  el.disabled = false;
+
+                }
+
+              }
+            );
+
+          }
+
+        }
+      );
+
+    } else if (op === "reponer") {
+
+      confirmarAccion(
+        "¿Terminaste la reposición en " + (c.nombre || "este local") + "?",
+        "Se registra la reposición con la hora actual.",
+        "Sí, reposición completada"
+      ).then(
+        function (ok) {
+
+          if (ok) {
+
+            el.disabled = true;
+
+            marcarReposicion(c.id).then(
+              function (ok) {
+
+                if (!ok) {
+
+                  el.disabled = false;
+
+                }
+
+              }
+            );
+
+          }
+
+        }
+      );
+
+    } else if (op === "deshacer-entrega" || op === "deshacer-reposicion") {
+
+      confirmarAccion(
+        "¿Anular la " + (op === "deshacer-entrega" ? "entrega" : "reposición") + " de " + (c.nombre || "este local") + "?",
+        "Usalo solo si se marcó por error. Queda registrado en el historial.",
+        "Sí, anular",
+        "op-btn-peligro"
+      ).then(
+        function (ok) {
+
+          if (ok) {
+
+            deshacerOperacion(c.id, op === "deshacer-entrega" ? "entrega" : "reposicion");
+
+          }
+
+        }
+      );
+
+    }
+
+
+    return true;
+
+  }
+
+
+
+  /* ========================================================
+     ADMINISTRADOR: OPERACIONES DEL DÍA E HISTORIAL
+  ======================================================== */
+
+  state.opsView = false;
+
+  state.opsFecha = "";
+
+
+
+  function abrirOperaciones() {
+
+    if (!puede("ver_operaciones")) {
+
+      return;
+
+    }
+
+
+    if (
+      (state.editing || state.creating) &&
+      !confirm("Tenés cambios sin guardar. ¿Querés descartarlos?")
+    ) {
+
+      return;
+
+    }
+
+
+    resetPendingPhotos();
+
+
+    state.editing = false;
+
+    state.creating = false;
+
+    state.draft = null;
+
+    state.opsView = true;
+
+    state.opsFecha = hoyIso();
+
+
+    render();
+
+
+    els.mainInner.parentNode.scrollTop = 0;
+
+  }
+
+
+
+  /* Datos de una fecha: hoy = jornada en vivo; otro día = historial de cada cliente */
+
+  function operacionesDeFecha(fecha) {
+
+    var esHoy =
+      fecha === hoyIso();
+
+
+    return state.clients
+      .map(
+        function (c) {
+
+          var l = logisticaDe(c);
+
+
+          if (esHoy) {
+
+            if (!enFlujoHoy(c)) {
+
+              return null;
+
+            }
+
+
+            var est = estadoHoy(c);
+
+
+            return { c: c, l: l, entrega: est.entrega, reposicion: est.reposicion, clave: est.clave };
+
+          }
+
+
+          /* reconstruye el día desde el historial guardado */
+          var ops =
+            (c.operaciones || [])
+              .filter(
+                function (o) {
+
+                  return o.fecha === fecha;
+
+                }
+              )
+              .sort(
+                function (a, b) {
+
+                  return a.at - b.at;
+
+                }
+              );
+
+
+          if (!ops.length) {
+
+            return null;
+
+          }
+
+
+          var entrega = null;
+
+          var reposicion = null;
+
+
+          ops.forEach(
+            function (o) {
+
+              if (o.tipo === "entrega") {
+
+                entrega = o;
+
+              } else if (o.tipo === "reposicion") {
+
+                reposicion = o;
+
+              } else if (o.tipo === "anulacion") {
+
+                if (o.detalle === "entrega") {
+
+                  entrega = null;
+
+                } else {
+
+                  reposicion = null;
+
+                }
+
+              }
+
+            }
+          );
+
+
+          if (!entrega && !reposicion) {
+
+            return null;
+
+          }
+
+
+          return {
+            c: c,
+            l: l,
+            entrega: entrega,
+            reposicion: reposicion,
+            clave: reposicion ? "completado" : entrega ? "pendiente_reposicion" : "pendiente_entrega"
+          };
+
+        }
+      )
+      .filter(Boolean)
+      .sort(
+        function (a, b) {
+
+          return (a.c.nombre || "").localeCompare(b.c.nombre || "", "es");
+
+        }
+      );
+
+  }
+
+
+
+  function renderOperaciones() {
+
+    var fecha =
+      state.opsFecha || hoyIso();
+
+
+    var esHoy =
+      fecha === hoyIso();
+
+
+    var filas =
+      operacionesDeFecha(fecha);
+
+
+    var cuenta = function (clave) {
+
+      return filas.filter(
+        function (f) {
+
+          return f.clave === clave;
+
+        }
+      ).length;
+
+    };
+
+
+    var entregados =
+      filas.filter(
+        function (f) {
+
+          return !!f.entrega;
+
+        }
+      ).length;
+
+
+    var personal = function (rol) {
+
+      var lista = usuariosConRol(rol);
+
+
+      if (!lista.length) {
+
+        return '<span class="op-vacio">Todavía no hay usuarios con este rol. Crealos en <strong>Usuarios</strong>.</span>';
+
+      }
+
+
+      return lista.map(
+        function (u) {
+
+          /* asignados a esta persona, más los que hizo sin estar asignada */
+          var asignados =
+            filas.filter(
+              function (f) {
+
+                var hecho =
+                  rol === "camionero" ? f.entrega : f.reposicion;
+
+
+                return (
+                  (rol === "camionero" ? f.l.camioneroId : f.l.reponedorId) === u.id ||
+                  (!!hecho && hecho.porId === u.id)
+                );
+
+              }
+            );
+
+
+          var hechos =
+            asignados.filter(
+              function (f) {
+
+                return rol === "camionero" ? !!f.entrega : !!f.reposicion;
+
+              }
+            ).length;
+
+
+          return (
+            '<span class="op-persona">' +
+              '<strong>' + escapeHtml(u.nombre || u.usuario) + '</strong>' +
+              '<span>' + hechos + ' de ' + (rol === "camionero" ? plural(asignados.length, "entrega", "entregas") : plural(asignados.length, "reposición", "reposiciones")) + '</span>' +
+            '</span>'
+          );
+
+        }
+      ).join("");
+
+    };
+
+
+    var tabla =
+      filas.length
+        ? (
+          '<div class="op-tabla-wrap"><table class="op-tabla">' +
+            '<thead><tr>' +
+              '<th>Cliente</th><th>Estado</th><th>Camionero</th><th>Entrega</th><th>Reponedor</th><th>Reposición</th>' +
+              (esHoy ? '<th></th>' : '') +
+            '</tr></thead>' +
+            '<tbody>' +
+              filas.map(
+                function (f) {
+
+                  var info = ESTADOS_OP[f.clave];
+
+
+                  var acciones = "";
+
+
+                  if (esHoy) {
+
+                    if (!f.entrega) {
+
+                      acciones += '<button type="button" class="btn btn-ghost op-mini" data-op="entregar" data-cliente="' + escapeHtml(f.c.id) + '">Marcar entregado</button>';
+
+                    } else if (!f.reposicion) {
+
+                      acciones +=
+                        '<button type="button" class="btn btn-ghost op-mini" data-op="reponer" data-cliente="' + escapeHtml(f.c.id) + '">Marcar repuesto</button>' +
+                        '<button type="button" class="btn btn-danger op-mini" data-op="deshacer-entrega" data-cliente="' + escapeHtml(f.c.id) + '">Anular entrega</button>';
+
+                    } else {
+
+                      acciones += '<button type="button" class="btn btn-danger op-mini" data-op="deshacer-reposicion" data-cliente="' + escapeHtml(f.c.id) + '">Anular reposición</button>';
+
+                    }
+
+                  }
+
+
+                  return (
+                    '<tr>' +
+                      '<td><button type="button" class="op-link" data-dash-client="' + escapeHtml(f.c.id) + '">' + escapeHtml(f.c.nombre || "Sin nombre") + '</button></td>' +
+                      '<td><span class="op-chip ' + info.clase + '">' + escapeHtml(info.corto) + '</span></td>' +
+                      '<td>' + escapeHtml(nombreUsuario(f.l.camioneroId) || "—") + '</td>' +
+                      '<td>' + (f.entrega ? '<strong>' + horaDe(f.entrega.at) + '</strong><br><small>' + escapeHtml(f.entrega.porNombre) + '</small>' : '—') + '</td>' +
+                      '<td>' + escapeHtml(nombreUsuario(f.l.reponedorId) || "Cualquiera") + '</td>' +
+                      '<td>' + (f.reposicion ? '<strong>' + horaDe(f.reposicion.at) + '</strong><br><small>' + escapeHtml(f.reposicion.porNombre) + '</small>' : '—') + '</td>' +
+                      (esHoy ? '<td class="op-acciones">' + acciones + '</td>' : '') +
+                    '</tr>'
+                  );
+
+                }
+              ).join("") +
+            '</tbody>' +
+          '</table></div>'
+        )
+        : '<div class="dash-empty">' +
+            (
+              esHoy
+                ? 'No hay clientes con entrega hoy. Asigná camionero, reponedor y días de entrega editando cada cliente (sección «Logística»).'
+                : 'No hay entregas ni reposiciones registradas ese día.'
+            ) +
+          '</div>';
+
+
+    els.mainInner.classList.add("wide");
+
+
+    els.mainInner.innerHTML =
+
+      '<div class="ops-view">' +
+
+        '<button type="button" class="back-link" data-back-home="1">&larr; Panel general</button>' +
+
+        '<div class="dash-head">' +
+          '<div>' +
+            '<h1 class="dash-title">Operaciones</h1>' +
+            '<p class="dash-sub">Entregas de camioneros y reposiciones, en vivo. Elegí otra fecha para ver el historial.</p>' +
+          '</div>' +
+          '<label class="ops-fecha">Fecha ' +
+            '<input type="date" id="opsFecha" value="' + fecha + '" max="' + hoyIso() + '">' +
+          '</label>' +
+        '</div>' +
+
+        '<div class="dash-tiles">' +
+          dashTile({ label: esHoy ? "Clientes en la jornada" : "Clientes con actividad", value: filas.length, sub: esHoy ? "Con entrega programada hoy" : "Ese día" }) +
+          dashTile({ label: "Entregados", dot: "#2f8a63", value: entregados, sub: "por los camioneros" }) +
+          (esHoy ? dashTile({ label: "Pendientes de entrega", dot: "#a8a3bf", value: cuenta("pendiente_entrega"), sub: "todavía sin mercadería" }) : "") +
+          dashTile({ label: "Pendientes de reposición", dot: "#e0a526", value: cuenta("pendiente_reposicion"), sub: "entregados sin reponer" }) +
+          dashTile({ label: "Reposiciones completadas", dot: "#6f5bd3", value: cuenta("completado"), sub: "por los reponedores" }) +
+        '</div>' +
+
+        '<div class="dash-grid">' +
+          '<div class="dash-card"><div class="dash-card-head"><h2 class="dash-card-title">Camioneros / repartidores</h2></div><div class="op-personas">' + personal("camionero") + '</div></div>' +
+          '<div class="dash-card"><div class="dash-card-head"><h2 class="dash-card-title">Reponedores</h2></div><div class="op-personas">' + personal("reponedor") + '</div></div>' +
+        '</div>' +
+
+        '<div class="dash-card">' +
+          '<div class="dash-card-head">' +
+            '<h2 class="dash-card-title">' + (esHoy ? "Jornada de hoy" : "Historial del " + escapeHtml(fmtDate(fecha))) + '</h2>' +
+            '<span class="dash-card-hint">' + (esHoy ? "Se actualiza solo" : "Desde el historial de cada cliente") + '</span>' +
+          '</div>' +
+          tabla +
+        '</div>' +
+
+      '</div>';
+
+
+    var inputFecha =
+      document.getElementById("opsFecha");
+
+
+    inputFecha.addEventListener(
+      "change",
+      function () {
+
+        state.opsFecha = inputFecha.value || hoyIso();
+
+        renderOperaciones();
+
+      }
+    );
+
+  }
+
+
+
+  /* ========================================================
+     EN LA FICHA DEL CLIENTE (admin y vendedor)
+  ======================================================== */
+
+  function operacionHoyHtml(c) {
+
+    var est = estadoHoy(c);
+
+    var l = logisticaDe(c);
+
+
+    var programacion =
+      l.camioneroId || l.dias.length
+        ? (
+          "Entrega: " +
+          (
+            l.dias.length
+              ? DIAS_SEMANA.filter(function (d) { return l.dias.indexOf(d[0]) !== -1; }).map(function (d) { return d[1]; }).join(", ")
+              : "sin días"
+          ) +
+          " · Camionero: " + (nombreUsuario(l.camioneroId) || "sin asignar") +
+          " · Reponedor: " + (nombreUsuario(l.reponedorId) || "cualquiera")
+        )
+        : "Sin camionero ni días de entrega asignados.";
+
+
+    var pasos =
+      est.clave === "sin_entrega"
+        ? ""
+        : (
+          '<div class="op-pasos">' +
+            '<span class="' + (est.entrega ? "hecho" : "") + '">&#128666; ' +
+              (est.entrega ? "Entregado " + horaDe(est.entrega.at) + " · " + escapeHtml(est.entrega.porNombre) : "Falta la entrega") +
+            '</span>' +
+            '<span class="' + (est.reposicion ? "hecho" : "") + '">&#128230; ' +
+              (est.reposicion ? "Repuesto " + horaDe(est.reposicion.at) + " · " + escapeHtml(est.reposicion.porNombre) : "Falta la reposición") +
+            '</span>' +
+          '</div>'
+        );
+
+
+    return (
+      '<div class="op-ficha">' +
+        '<div class="op-ficha-head">' +
+          '<strong>Hoy</strong>' +
+          '<span class="op-chip ' + est.info.clase + '">' + escapeHtml(est.info.label) + '</span>' +
+        '</div>' +
+        pasos +
+        '<div class="op-ficha-prog">' + escapeHtml(programacion) + '</div>' +
+      '</div>'
+    );
+
+  }
+
+
+
+  function historialOperativoHtml(c) {
+
+    var porDia = {};
+
+
+    (c.operaciones || []).forEach(
+      function (o) {
+
+        (porDia[o.fecha] = porDia[o.fecha] || []).push(o);
+
+      }
+    );
+
+
+    var dias =
+      Object.keys(porDia).sort().reverse().slice(0, 10);
+
+
+    if (!dias.length) {
+
+      return '<div class="hist-empty">Todavía no hay entregas ni reposiciones registradas.</div>';
+
+    }
+
+
+    return (
+      '<div class="op-historial">' +
+        dias.map(
+          function (f) {
+
+            return (
+              '<div class="op-hist-dia">' +
+                '<strong>' + escapeHtml(fmtDate(f)) + '</strong>' +
+                porDia[f]
+                  .sort(function (a, b) { return a.at - b.at; })
+                  .map(
+                    function (o) {
+
+                      var txt =
+                        o.tipo === "entrega"
+                          ? "Entregado"
+                          : o.tipo === "reposicion"
+                            ? "Repuesto"
+                            : "Anulada la " + (o.detalle === "entrega" ? "entrega" : "reposición");
+
+
+                      return '<span>' + escapeHtml(horaDe(o.at) + " · " + txt + " · " + (o.porNombre || "")) + '</span>';
+
+                    }
+                  ).join("") +
+              '</div>'
+            );
+
+          }
+        ).join("") +
+      '</div>'
+    );
+
+  }
+
+
+
+  /* Sección "Logística" del formulario (solo administrador) */
+
+  function logisticaFormHtml(draft) {
+
+    if (!puede("asignar")) {
+
+      return "";
+
+    }
+
+
+    var l = logisticaDe(draft);
+
+
+    var opciones = function (rol, actual, textoVacio) {
+
+      return (
+        '<option value="">' + textoVacio + '</option>' +
+        usuariosConRol(rol).map(
+          function (u) {
+
+            return '<option value="' + escapeHtml(u.id) + '"' + (u.id === actual ? " selected" : "") + '>' + escapeHtml(u.nombre || u.usuario) + '</option>';
+
+          }
+        ).join("")
+      );
+
+    };
+
+
+    return (
+      '<div class="section-label">Logística (entregas y reposición)</div>' +
+
+      '<div class="logi-form">' +
+
+        '<div class="field-row">' +
+
+          '<div class="field">' +
+            '<label>Camionero / repartidor</label>' +
+            '<select class="grupo-select" id="logiCamionero">' + opciones("camionero", l.camioneroId, "Sin asignar") + '</select>' +
+          '</div>' +
+
+          '<div class="field">' +
+            '<label>Reponedor</label>' +
+            '<select class="grupo-select" id="logiReponedor">' + opciones("reponedor", l.reponedorId, "Cualquier reponedor") + '</select>' +
+          '</div>' +
+
+        '</div>' +
+
+        '<label class="logi-label">Días de entrega</label>' +
+
+        '<div class="logi-dias">' +
+          DIAS_SEMANA.map(
+            function (d) {
+
+              return (
+                '<label class="logi-dia">' +
+                  '<input type="checkbox" data-logi-dia="' + d[0] + '"' + (l.dias.indexOf(d[0]) !== -1 ? " checked" : "") + '>' +
+                  '<span>' + d[1] + '</span>' +
+                '</label>'
+              );
+
+            }
+          ).join("") +
+        '</div>' +
+
+        (
+          !usuariosConRol("camionero").length || !usuariosConRol("reponedor").length
+            ? '<div class="custom-hint">Para asignar, primero creá usuarios con rol Camionero y Reponedor en <strong>Usuarios</strong>.</div>'
+            : '<div class="custom-hint">Los días marcados, este cliente entra en la ruta del camionero; cuando entrega, pasa a la ruta del reponedor.</div>'
+        ) +
+
+      '</div>'
+    );
+
+  }
+
+
+
+  function engancharLogisticaForm(draft) {
+
+    var cam = document.getElementById("logiCamionero");
+
+
+    if (!cam) {
+
+      return;
+
+    }
+
+
+    var leer = function () {
+
+      draft.logistica = {
+        camioneroId: cam.value,
+        reponedorId: document.getElementById("logiReponedor").value,
+        dias: Array.prototype.map.call(
+          els.mainInner.querySelectorAll("[data-logi-dia]:checked"),
+          function (x) {
+
+            return Number(x.getAttribute("data-logi-dia"));
+
+          }
+        )
+      };
+
+    };
+
+
+    cam.addEventListener("change", leer);
+
+    document.getElementById("logiReponedor").addEventListener("change", leer);
+
+
+    Array.prototype.forEach.call(
+      els.mainInner.querySelectorAll("[data-logi-dia]"),
+      function (x) {
+
+        x.addEventListener("change", leer);
+
+      }
+    );
+
+  }
+
+
+
+  function describirLogistica(l) {
+
+    return (
+      (l.dias.length ? DIAS_SEMANA.filter(function (d) { return l.dias.indexOf(d[0]) !== -1; }).map(function (d) { return d[1]; }).join(", ") : "sin días") +
+      " · camionero " + (nombreUsuario(l.camioneroId) || "sin asignar") +
+      " · reponedor " + (nombreUsuario(l.reponedorId) || "cualquiera")
+    );
+
+  }
+
+
+
+  /* Resumen del panel (admin y vendedor) */
+
+  function operacionHoyCardHtml() {
+
+    var filas =
+      operacionesDeFecha(hoyIso());
+
+
+    if (!filas.length) {
+
+      return "";
+
+    }
+
+
+    var entregados = filas.filter(function (f) { return !!f.entrega; }).length;
+
+    var repuestos = filas.filter(function (f) { return !!f.reposicion; }).length;
+
+
+    var barra = function (n, total, color) {
+
+      return '<span class="op-barra"><span style="width:' + (total ? Math.round(n / total * 100) : 0) + '%;background:' + color + '"></span></span>';
+
+    };
+
+
+    return (
+      '<div class="dash-card">' +
+        '<div class="dash-card-head">' +
+          '<h2 class="dash-card-title">Operación de hoy</h2>' +
+          (puede("ver_operaciones") ? '<button type="button" class="hist-more" data-abrir-ops="1">Ver operaciones &rarr;</button>' : '<span class="dash-card-hint">Se actualiza solo</span>') +
+        '</div>' +
+        '<div class="op-resumen">' +
+          '<div><span>&#128666; Entregas</span><strong>' + entregados + ' / ' + filas.length + '</strong>' + barra(entregados, filas.length, "#2f8a63") + '</div>' +
+          '<div><span>&#128230; Reposiciones</span><strong>' + repuestos + ' / ' + filas.length + '</strong>' + barra(repuestos, filas.length, "#6f5bd3") + '</div>' +
+        '</div>' +
+      '</div>'
+    );
+
+  }
+
+
+
+  /* ========================================================
      INIT
   ======================================================== */
 
@@ -22048,6 +26813,13 @@ body:not(.logged-out) .login-screen {
       );
 
 
+    els.opsBtn
+      .addEventListener(
+        "click",
+        abrirOperaciones
+      );
+
+
 
     els.logoutBtn
       .addEventListener(
@@ -22077,7 +26849,7 @@ body:not(.logged-out) .login-screen {
     if (
       sesion === "admin" ||
       (
-        sesion === "lectura" &&
+        (sesion === "lectura" || sesion === "camionero" || sesion === "reponedor") &&
         safeSession("get", "vendedorId")
       )
     ) {
@@ -22160,6 +26932,21 @@ body:not(.logged-out) .login-screen {
 
         state.vendedoresCargados =
           true;
+
+
+        /* jornada de entregas / reposiciones del día */
+        var jornadaDoc =
+          snap.docs.find(
+            function (doc) {
+
+              return doc.id === JORNADA_DOC_ID;
+
+            }
+          );
+
+
+        state.jornada =
+          jornadaDoc ? jornadaDoc.data() : null;
 
 
         verificarSesionVendedor();
@@ -22369,6 +27156,24 @@ body:not(.logged-out) .login-screen {
                 notas:
                   data.notas ||
                   "",
+
+                /* camionero, reponedor y días de entrega */
+                logistica:
+                  data.logistica && typeof data.logistica === "object"
+                    ? data.logistica
+                    : null,
+
+                /* historial permanente de entregas y reposiciones */
+                operaciones:
+                  Array.isArray(data.operaciones)
+                    ? data.operaciones.filter(
+                      function (o) {
+
+                        return o && o.fecha && o.tipo && o.at;
+
+                      }
+                    )
+                    : [],
 
                 updatedAt:
                   data.updatedAt ||

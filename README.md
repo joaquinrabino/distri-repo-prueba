@@ -35,6 +35,9 @@ compartido para todo el equipo de ventas.
      derecha). Ven los clientes y descargan sus PDF, pero no editan ni ven
      los acuerdos firmados. Los usuarios se guardan en el documento
      `clientes/_usuarios` (la contraseña nunca se guarda, solo un hash).
+   - Al crear (o después, en la lista) cada usuario tiene un **rol**:
+     Vendedor, **Camionero / Repartidor**, **Reponedor** o Administrador.
+     Los usuarios creados antes de esto quedan como Vendedor.
 
    Es un filtro simple, no seguridad fuerte: la clave está en el código y
    los datos se leen con las reglas públicas de Firestore. Si más adelante
@@ -98,3 +101,30 @@ que Vercel publica sola junto con la página.
    dominio de la empresa y cargá los registros DNS que te muestra en donde
    esté administrado el dominio. Cuando figure "Verified", cambiá
    `RESEND_FROM` a una dirección de ese dominio y hacé Redeploy.
+
+## 5. Entregas y reposición (camioneros y reponedores)
+
+1. En **Usuarios** creá los camioneros y reponedores (eligiendo el rol).
+2. Editá cada cliente → sección **Logística**: camionero, reponedor
+   (o "Cualquier reponedor") y los **días de entrega**. Para la ruta, el
+   cliente tiene que estar ubicado en el mapa.
+3. Cada día:
+   - El **camionero** entra y ve *Mi ruta de entregas*: el próximo destino,
+     los siguientes en orden y el mapa. Toca **Marcar como entregado**.
+   - El local pasa a *Mercadería entregada · pendiente de reposición* y
+     aparece solo en la ruta del **reponedor**, que se reordena sin cambiarle
+     el destino actual. Toca **Marcar reposición como completada**.
+   - El **administrador** ve todo en vivo en **Operaciones** (y el historial
+     de días anteriores eligiendo la fecha); puede anular una acción marcada
+     por error. El **vendedor** ve el estado de hoy en la ficha del cliente.
+
+Datos (no hace falta cambiar las reglas de Firestore): la jornada del día
+está en `clientes/_jornada` y se reinicia sola cada día; el historial
+permanente queda en cada cliente (`operaciones`).
+
+Rutas: se calculan en la página con distancia geográfica (sin servicios
+externos ni claves). "Cómo llegar" y "Abrir toda la ruta" abren Google Maps
+sin necesidad de API key. El cálculo está separado en `MOTOR_RUTAS` dentro
+de `index.html`; si en el futuro se quiere usar tiempos reales de tránsito
+(Google Routes, Mapbox, OpenRouteService), se haría con una función de
+Vercel y la clave en una variable de entorno, nunca en el código.
