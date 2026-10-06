@@ -4636,6 +4636,24 @@ button.dash-tile:focus-visible {
 
 
 
+.clone-banner {
+
+  background: var(--accent-soft);
+
+  border-color: var(--accent);
+
+}
+
+
+
+.btn-clone {
+
+  margin-left: auto;
+
+}
+
+
+
 .renew-banner strong {
 
   font-weight: 700;
@@ -10817,6 +10835,11 @@ body:not(.logged-out) .login-screen {
       ) +
 
 
+      cloneBannerHtml(
+        draft
+      ) +
+
+
       acuerdoFormHtml(
         draft
       ) +
@@ -10981,6 +11004,21 @@ body:not(.logged-out) .login-screen {
           'Cancelar' +
 
         '</button>' +
+
+
+        (
+          isNew
+            ? ""
+            : '<button type="button" class="btn btn-ghost btn-clone" id="cloneBtn" ' +
+                'title="Crear un cliente nuevo con los mismos datos, espacios y contrato">' +
+                '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
+                  'stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">' +
+                  '<rect x="9" y="9" width="13" height="13" rx="2"/>' +
+                  '<path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>' +
+                '</svg>' +
+                'Clonar cliente' +
+              '</button>'
+        ) +
 
       '</div>';
 
@@ -11853,6 +11891,33 @@ body:not(.logged-out) .login-screen {
         }
       );
 
+
+
+    /* ======================================================
+       CLONAR
+    ====================================================== */
+
+    var cloneBtn =
+      document.getElementById(
+        "cloneBtn"
+      );
+
+
+    if (cloneBtn) {
+
+      cloneBtn.addEventListener(
+        "click",
+        function () {
+
+          clonarCliente(
+            draft
+          );
+
+        }
+      );
+
+    }
+
   }
 
 
@@ -12105,12 +12170,20 @@ body:not(.logged-out) .login-screen {
 
 
 
-  function deleteStorageFile(path) {
+  function deleteStorageFile(path, clientId) {
 
     if (
       !state.storage ||
       !path
     ) {
+
+      return Promise.resolve();
+
+    }
+
+
+    /* si lo usa otro cliente (por ej. una copia), no se borra */
+    if (archivoEnUsoPorOtro(path, clientId)) {
 
       return Promise.resolve();
 
@@ -12200,6 +12273,14 @@ body:not(.logged-out) .login-screen {
             "/espacios/" +
 
             key;
+
+
+          /* una copia del cliente todavía usa esta foto */
+          if (archivoEnUsoPorOtro(path, clientId)) {
+
+            return Promise.resolve();
+
+          }
 
 
 
@@ -12963,6 +13044,20 @@ body:not(.logged-out) .login-screen {
           );
 
 
+        /* cliente clonado: lleva los textos del acuerdo comercial y queda anotado de dónde salió */
+        if (isNew && draft._clonDe) {
+
+          payload.acuerdoComercial =
+            draft.acuerdoComercial || null;
+
+
+          cambios.unshift(
+            'Cliente creado como copia de "' + corto(draft._clonDe, 60) + '"'
+          );
+
+        }
+
+
         if (cambios.length) {
 
           payload.historial =
@@ -13021,7 +13116,8 @@ body:not(.logged-out) .login-screen {
             function (a) {
 
               return deleteStorageFile(
-                a.path
+                a.path,
+                clientId
               );
 
             }
@@ -13153,6 +13249,14 @@ body:not(.logged-out) .login-screen {
           espaciosDe(state.clients.find(function (x) { return x.id === id; })).map(
             function (e) {
 
+              /* una copia del cliente todavía usa esta foto */
+              if (archivoEnUsoPorOtro("clientes/" + id + "/espacios/" + e.key, id)) {
+
+                return Promise.resolve();
+
+              }
+
+
               return state.storage
                 .ref()
                 .child(
@@ -13225,7 +13329,7 @@ body:not(.logged-out) .login-screen {
           (clienteBorrado.acuerdosFirmados || []).map(
             function (a) {
 
-              return deleteStorageFile(a.path);
+              return deleteStorageFile(a.path, id);
 
             }
           )
@@ -14621,6 +14725,210 @@ body:not(.logged-out) .login-screen {
 
 
     okBtn.focus();
+
+  }
+
+
+
+  /* ========================================================
+     CLONAR CLIENTE
+     Copia lo que está en el formulario (datos, vigencia,
+     espacios con sus fotos, espacios personalizados, notas,
+     acuerdos firmados y textos del acuerdo comercial) en un
+     cliente nuevo. Útil para sucursales de una misma cadena.
+     Las fotos y acuerdos firmados quedan compartidos con el
+     original (no se duplican archivos); al borrarlos de uno
+     no se borran del otro (ver archivoEnUsoPorOtro).
+  ======================================================== */
+
+  function clonarCliente(draft) {
+
+    var pendientes =
+      Object.keys(state.pendingPhotos).length +
+      state.pendingAcuerdos.length;
+
+
+    if (
+      pendientes &&
+      !confirm(
+        "Hay fotos o archivos elegidos que todavía no se guardaron: no van a pasar a la copia. ¿Clonar igual?"
+      )
+    ) {
+
+      return;
+
+    }
+
+
+    var original =
+      state.clients.find(
+        function (c) {
+
+          return c.id === state.selectedId;
+
+        }
+      ) || {};
+
+
+    var copia =
+      JSON.parse(
+        JSON.stringify(draft)
+      );
+
+
+    var nombreOriginal =
+      (draft.nombre || original.nombre || "cliente").trim();
+
+
+    copia.nombre =
+      "Copia de " + nombreOriginal;
+
+
+    /* lo que es propio de cada cliente no se copia */
+    delete copia.id;
+
+    delete copia.historial;
+
+    delete copia.acuerdoEnviado;
+
+    delete copia.updatedAt;
+
+    delete copia._renovacion;
+
+    copia.email = "";
+
+    copia.telefono = "";
+
+
+    /* textos del acuerdo comercial (sin los datos de contacto) */
+    copia.acuerdoComercial =
+      original.acuerdoComercial
+        ? Object.assign({}, original.acuerdoComercial, { email: "", telefono: "" })
+        : null;
+
+
+    copia.acuerdosFirmados =
+      (draft.acuerdosFirmados || []).filter(
+        function (a) {
+
+          return !state.acuerdosQuitados[a.path];
+
+        }
+      );
+
+
+    copia._clonDe =
+      nombreOriginal;
+
+
+    resetPendingPhotos();
+
+
+    state.editing = false;
+
+    state.creating = true;
+
+    state.selectedId = null;
+
+    state.draft = copia;
+
+
+    render();
+
+
+    els.mainInner.parentNode.scrollTop = 0;
+
+
+    var nombre =
+      document.getElementById("nombreInput");
+
+
+    if (nombre) {
+
+      nombre.focus();
+
+      nombre.select();
+
+    }
+
+
+    showToast(
+      "Copia lista: cambiá el nombre y tocá Guardar."
+    );
+
+  }
+
+
+
+  function cloneBannerHtml(draft) {
+
+    if (!draft._clonDe) {
+
+      return "";
+
+    }
+
+
+    return (
+      '<div class="renew-banner clone-banner">' +
+        '<span>' +
+          '<strong>Copia de ' + escapeHtml(draft._clonDe) + '.</strong> ' +
+          'Tiene los mismos datos, espacios, notas y contrato. ' +
+          'Cambiá el nombre y lo que haga falta, y tocá <strong>Guardar</strong> para crear el cliente nuevo. ' +
+          'El email y WhatsApp del cliente no se copian.' +
+        '</span>' +
+      '</div>'
+    );
+
+  }
+
+
+
+  /* ¿Algún otro cliente usa este archivo de Storage? (clientes clonados) */
+
+  function archivoEnUsoPorOtro(path, clientId) {
+
+    if (!path) {
+
+      return false;
+
+    }
+
+
+    return state.clients.some(
+      function (c) {
+
+        if (c.id === clientId) {
+
+          return false;
+
+        }
+
+
+        var enAcuerdos =
+          (c.acuerdosFirmados || []).some(
+            function (a) {
+
+              return a.path === path;
+
+            }
+          );
+
+
+        var enFotos =
+          Object.keys(c.espacios || {}).some(
+            function (k) {
+
+              return c.espacios[k] && c.espacios[k].fotoPath === path;
+
+            }
+          );
+
+
+        return enAcuerdos || enFotos;
+
+      }
+    );
 
   }
 
