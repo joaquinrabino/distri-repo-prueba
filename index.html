@@ -3902,6 +3902,358 @@ button.dash-tile:focus-visible {
 
 
 /* ==========================================================
+   MAPA DE CLIENTES
+========================================================== */
+
+.mapa-form {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 8px;
+
+}
+
+
+
+.mapa-buscar {
+
+  display: flex;
+
+  gap: 8px;
+
+}
+
+
+
+.mapa-buscar input {
+
+  flex: 1;
+
+  min-width: 0;
+
+  padding: 9px 11px;
+
+  border: 1px solid var(--border-strong);
+
+  border-radius: 8px;
+
+  background: var(--surface);
+
+  outline: none;
+
+}
+
+
+
+.mapa-buscar input:focus {
+
+  border-color: var(--accent);
+
+}
+
+
+
+.mapa-buscar .btn {
+
+  flex-shrink: 0;
+
+}
+
+
+
+.mapa-estado {
+
+  font-size: 12.5px;
+
+  color: var(--ink-soft);
+
+}
+
+
+
+.mapa-otros {
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: flex-start;
+
+  gap: 4px;
+
+  font-size: 12px;
+
+  color: var(--ink-faint);
+
+}
+
+
+
+.mapa-opcion {
+
+  appearance: none;
+
+  border: 1px solid var(--border);
+
+  background: var(--surface);
+
+  border-radius: 7px;
+
+  padding: 5px 9px;
+
+  font: inherit;
+
+  font-size: 12px;
+
+  color: var(--accent);
+
+  text-align: left;
+
+  cursor: pointer;
+
+}
+
+
+
+.mapa-opcion:hover {
+
+  border-color: var(--accent);
+
+}
+
+
+
+.mapa-mini {
+
+  height: 240px;
+
+  border: 1px solid var(--border);
+
+  border-radius: var(--radius);
+
+  overflow: hidden;
+
+  z-index: 0;
+
+}
+
+
+
+.mapa-quitar {
+
+  color: var(--vencido);
+
+}
+
+
+
+.mapa-vista {
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 10px;
+
+  flex-wrap: wrap;
+
+  padding: 10px 12px;
+
+  margin-bottom: 4px;
+
+  border: 1px solid var(--border);
+
+  border-radius: var(--radius);
+
+  background: var(--surface);
+
+  font-size: 13.5px;
+
+  font-weight: 600;
+
+}
+
+
+
+.mapa-vista .btn {
+
+  padding: 6px 12px;
+
+  font-size: 12.5px;
+
+  text-decoration: none;
+
+}
+
+
+
+.mapa-dash {
+
+  height: 420px;
+
+  border-radius: 10px;
+
+  border: 1px solid var(--border);
+
+  overflow: hidden;
+
+  z-index: 0;
+
+}
+
+
+
+.mapa-leyenda {
+
+  display: flex;
+
+  flex-wrap: wrap;
+
+  align-items: center;
+
+  gap: 6px 16px;
+
+  margin-top: 10px;
+
+  font-size: 12.5px;
+
+  color: var(--ink-soft);
+
+}
+
+
+
+.mapa-leyenda span {
+
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 6px;
+
+}
+
+
+
+.mapa-leyenda i {
+
+  width: 12px;
+
+  height: 12px;
+
+  border-radius: 50%;
+
+  border: 2px solid #ffffff;
+
+  box-shadow: 0 0 0 1px var(--border-strong);
+
+}
+
+
+
+.mapa-leyenda-hint {
+
+  margin-left: auto;
+
+  color: var(--ink-faint);
+
+  font-size: 11.5px;
+
+}
+
+
+
+.mapa-popup {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 3px;
+
+  min-width: 190px;
+
+  font-family: var(--font-body);
+
+  font-size: 12.5px;
+
+}
+
+
+
+.mapa-popup strong {
+
+  font-size: 14px;
+
+}
+
+
+
+.mapa-popup .status-badge {
+
+  align-self: flex-start;
+
+  margin-top: 2px;
+
+}
+
+
+
+.mapa-popup-acciones {
+
+  display: flex;
+
+  gap: 6px;
+
+  margin-top: 6px;
+
+}
+
+
+
+.mapa-popup-acciones .btn {
+
+  padding: 6px 10px;
+
+  font-size: 12px;
+
+  text-decoration: none;
+
+}
+
+
+
+.mapa-popup-acciones .btn-primary {
+
+  color: #ffffff;
+
+}
+
+
+
+@media (max-width: 620px) {
+
+  .mapa-buscar {
+
+    flex-direction: column;
+
+  }
+
+  .mapa-dash {
+
+    height: 320px;
+
+  }
+
+}
+
+
+
+/* ==========================================================
    PRODUCTOS POR VENCER
 ========================================================== */
 
@@ -7823,6 +8175,484 @@ body:not(.logged-out) .login-screen {
 
 
 
+  /* ========================================================
+     MAPA DE CLIENTES (Leaflet + OpenStreetMap, sin clave)
+     c.mapa = { direccion, lat, lng }
+  ======================================================== */
+
+  var LEAFLET_JS = "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js";
+
+  var LEAFLET_CSS = "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css";
+
+  var MAPA_CENTRO = [-34.88, -56.17];   /* Montevideo */
+
+  var leafletPromesa = null;
+
+
+
+  /* La librería del mapa se carga recién cuando hace falta */
+
+  function cargarLeaflet() {
+
+    if (window.L && window.L.map) {
+
+      return Promise.resolve(window.L);
+
+    }
+
+
+    if (!leafletPromesa) {
+
+      var css =
+        document.createElement("link");
+
+
+      css.rel = "stylesheet";
+
+      css.href = LEAFLET_CSS;
+
+      document.head.appendChild(css);
+
+
+      leafletPromesa =
+        loadScript(LEAFLET_JS).then(
+          function () {
+
+            return window.L;
+
+          }
+        );
+
+
+      leafletPromesa.catch(
+        function () {
+
+          leafletPromesa = null;
+
+        }
+      );
+
+    }
+
+
+    return leafletPromesa;
+
+  }
+
+
+
+  /* Busca una dirección (prioriza Uruguay) */
+
+  function geocodificar(direccion) {
+
+    var url =
+      "https://nominatim.openstreetmap.org/search?format=jsonv2&limit=5" +
+      "&countrycodes=uy&accept-language=es&q=" + encodeURIComponent(direccion);
+
+
+    return fetch(url, { headers: { "Accept": "application/json" } })
+      .then(
+        function (r) {
+
+          if (!r.ok) {
+
+            throw new Error("Búsqueda " + r.status);
+
+          }
+
+
+          return r.json();
+
+        }
+      )
+      .then(
+        function (lista) {
+
+          return (lista || []).map(
+            function (x) {
+
+              return {
+                lat: Number(x.lat),
+                lng: Number(x.lon),
+                nombre: x.display_name
+              };
+
+            }
+          );
+
+        }
+      );
+
+  }
+
+
+
+  function tieneUbicacion(c) {
+
+    return !!(
+      c &&
+      c.mapa &&
+      isFinite(c.mapa.lat) &&
+      isFinite(c.mapa.lng) &&
+      c.mapa.lat !== null &&
+      c.mapa.lng !== null
+    );
+
+  }
+
+
+
+  function linkComoLlegar(m) {
+
+    return "https://www.google.com/maps/search/?api=1&query=" +
+      encodeURIComponent(m.lat + "," + m.lng);
+
+  }
+
+
+
+  var mapaFormActual = null;
+
+  var mapaDashActual = null;
+
+
+
+  function capaOSM(L) {
+
+    return L.tileLayer(
+      "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+      {
+        maxZoom: 19,
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>'
+      }
+    );
+
+  }
+
+
+
+  /* Mapa chico del formulario: el punto se puede arrastrar o mover con un clic */
+
+  function mostrarMapaForm(draft) {
+
+    var cont =
+      document.getElementById("mapaForm");
+
+
+    if (!cont) {
+
+      return;
+
+    }
+
+
+    cont.style.display = "";
+
+
+    cargarLeaflet()
+
+      .then(
+        function (L) {
+
+          /* el formulario pudo haberse redibujado mientras cargaba */
+          if (!document.body.contains(cont)) {
+
+            return;
+
+          }
+
+
+          if (mapaFormActual) {
+
+            mapaFormActual.remove();
+
+            mapaFormActual = null;
+
+          }
+
+
+          var pos =
+            [draft.mapa.lat, draft.mapa.lng];
+
+
+          var mapa =
+            L.map(cont, { scrollWheelZoom: false }).setView(pos, 16);
+
+
+          capaOSM(L).addTo(mapa);
+
+
+          var marcador =
+            L.marker(pos, { draggable: true }).addTo(mapa);
+
+
+          var mover = function (latlng) {
+
+            draft.mapa.lat = Number(latlng.lat.toFixed(6));
+
+            draft.mapa.lng = Number(latlng.lng.toFixed(6));
+
+            delete draft.mapa._desactualizado;
+
+
+            var est =
+              document.getElementById("mapaEstado");
+
+
+            if (est) {
+
+              est.textContent = "Punto ajustado a mano. Se guarda al tocar Guardar.";
+
+            }
+
+          };
+
+
+          marcador.on(
+            "dragend",
+            function () {
+
+              mover(marcador.getLatLng());
+
+            }
+          );
+
+
+          mapa.on(
+            "click",
+            function (e) {
+
+              marcador.setLatLng(e.latlng);
+
+              mover(e.latlng);
+
+            }
+          );
+
+
+          mapaFormActual = mapa;
+
+
+          setTimeout(
+            function () {
+
+              mapa.invalidateSize();
+
+            },
+            50
+          );
+
+        }
+      )
+
+      .catch(
+        function () {
+
+          cont.innerHTML =
+            '<div class="dash-empty">No se pudo cargar el mapa. Revisá tu conexión.</div>';
+
+        }
+      );
+
+  }
+
+
+
+  /* Mapa del panel con todos los clientes ubicados */
+
+  function mostrarMapaDashboard(clients) {
+
+    var cont =
+      document.getElementById("mapaDash");
+
+
+    if (!cont) {
+
+      return;
+
+    }
+
+
+    var ubicados =
+      clients.filter(tieneUbicacion);
+
+
+    if (!ubicados.length) {
+
+      return;
+
+    }
+
+
+    cargarLeaflet()
+
+      .then(
+        function (L) {
+
+          if (!document.body.contains(cont)) {
+
+            return;
+
+          }
+
+
+          if (mapaDashActual) {
+
+            mapaDashActual.remove();
+
+            mapaDashActual = null;
+
+          }
+
+
+          var mapa =
+            L.map(cont, { scrollWheelZoom: false }).setView(MAPA_CENTRO, 11);
+
+
+          capaOSM(L).addTo(mapa);
+
+
+          var puntos = [];
+
+
+          ubicados.forEach(
+            function (c) {
+
+              var st =
+                vigenciaStatus(c.vigenciaFin);
+
+
+              var pos =
+                [c.mapa.lat, c.mapa.lng];
+
+
+              puntos.push(pos);
+
+
+              L.circleMarker(pos, {
+                radius: 9,
+                color: "#ffffff",
+                weight: 2,
+                fillColor: MAPA_COLORES[st.key] || MAPA_COLORES.indef,
+                fillOpacity: 0.95
+              })
+                .addTo(mapa)
+                .bindTooltip(c.nombre || "Sin nombre", { direction: "top", offset: [0, -8] })
+                .bindPopup(
+                  '<div class="mapa-popup">' +
+                    '<strong>' + escapeHtml(c.nombre || "Sin nombre") + '</strong>' +
+                    '<span>' + escapeHtml(grupoDe(c)) + '</span>' +
+                    '<span>' + escapeHtml(c.mapa.direccion) + '</span>' +
+                    '<span class="status-badge ' + st.key + '">' + escapeHtml(st.label) + '</span>' +
+                    '<span class="mapa-popup-acciones">' +
+                      '<button type="button" class="btn btn-primary" data-dash-client="' + escapeHtml(c.id) + '">Abrir cliente</button>' +
+                      '<a class="btn btn-ghost" target="_blank" rel="noopener" href="' + escapeHtml(linkComoLlegar(c.mapa)) + '">Cómo llegar</a>' +
+                    '</span>' +
+                  '</div>'
+                );
+
+            }
+          );
+
+
+          if (puntos.length === 1) {
+
+            mapa.setView(puntos[0], 15);
+
+          } else {
+
+            mapa.fitBounds(puntos, { padding: [30, 30], maxZoom: 15 });
+
+          }
+
+
+          mapaDashActual = mapa;
+
+
+          setTimeout(
+            function () {
+
+              mapa.invalidateSize();
+
+            },
+            50
+          );
+
+        }
+      )
+
+      .catch(
+        function () {
+
+          cont.innerHTML =
+            '<div class="dash-empty">No se pudo cargar el mapa. Revisá tu conexión.</div>';
+
+        }
+      );
+
+  }
+
+
+
+  function mapaDashCardHtml(clients) {
+
+    var ubicados =
+      clients.filter(tieneUbicacion).length;
+
+
+    return (
+      '<div class="dash-card" id="cardMapa">' +
+
+        '<div class="dash-card-head">' +
+          '<h2 class="dash-card-title">Mapa de clientes</h2>' +
+          '<span class="dash-card-hint">' +
+            ubicados + " de " + clients.length + " clientes ubicados" +
+          '</span>' +
+        '</div>' +
+
+        (
+          ubicados
+            ? (
+              '<div class="mapa-dash" id="mapaDash" role="region" aria-label="Mapa de clientes"></div>' +
+
+              '<div class="mapa-leyenda">' +
+                [
+                  ["vigente", "Vigente"],
+                  ["porvencer", "Por vencer"],
+                  ["vencido", "Vencido"],
+                  ["indef", "Sin vencimiento"]
+                ].map(
+                  function (x) {
+
+                    return '<span><i style="background:' + MAPA_COLORES[x[0]] + '"></i>' + x[1] + '</span>';
+
+                  }
+                ).join("") +
+                '<span class="mapa-leyenda-hint">Tocá un punto para ver el cliente</span>' +
+              '</div>'
+            )
+            : '<div class="dash-empty">' +
+                'Todavía no hay clientes en el mapa. ' +
+                'Se agregan editando cada cliente, en «Ubicación en el mapa».' +
+              '</div>'
+        ) +
+
+      '</div>'
+    );
+
+  }
+
+
+
+  var MAPA_COLORES = {
+    vigente: "#2f8a63",
+    porvencer: "#e0a526",
+    vencido: "#c0453a",
+    indef: "#8a7bd8"
+  };
+
+
+
   function blankClient() {
 
     return {
@@ -10590,6 +11420,11 @@ body:not(.logged-out) .login-screen {
         '</div>' +
 
 
+        mapaDashCardHtml(
+          clients
+        ) +
+
+
         '<div class="dash-grid">' +
 
           '<div class="dash-card">' +
@@ -10618,6 +11453,11 @@ body:not(.logged-out) .login-screen {
         '</div>' +
 
       '</div>';
+
+
+    mostrarMapaDashboard(
+      clients
+    );
 
   }
 
@@ -11783,6 +12623,20 @@ body:not(.logged-out) .login-screen {
       '</div>' +
 
 
+      (
+        c.mapa && c.mapa.direccion
+          ? '<div class="mapa-vista">' +
+              '<span>&#128205; ' + escapeHtml(c.mapa.direccion) + '</span>' +
+              (
+                tieneUbicacion(c)
+                  ? '<a class="btn btn-ghost" target="_blank" rel="noopener" href="' + escapeHtml(linkComoLlegar(c.mapa)) + '">Cómo llegar</a>'
+                  : ''
+              ) +
+            '</div>'
+          : ''
+      ) +
+
+
       '<div class="section-label">' +
         'Espacios acordados (' + espaciosIncluidos.length + ')' +
       '</div>' +
@@ -12479,6 +13333,42 @@ body:not(.logged-out) .login-screen {
 
 
       '<div class="section-label">' +
+        'Ubicación en el mapa' +
+      '</div>' +
+
+
+      '<div class="mapa-form">' +
+
+        '<div class="mapa-buscar">' +
+
+          '<input type="text" id="mapaDireccion" maxlength="140" autocomplete="off" ' +
+            'placeholder="Dirección (ej: Av. Italia 3230, Montevideo)" ' +
+            'value="' + escapeHtml((draft.mapa && draft.mapa.direccion) || "") + '">' +
+
+          '<button type="button" class="btn btn-ghost" id="mapaBuscarBtn">Buscar en el mapa</button>' +
+
+        '</div>' +
+
+        '<div class="mapa-estado" id="mapaEstado">' +
+          (
+            tieneUbicacion(draft)
+              ? "Ubicado. Si el punto no quedó exacto, arrastralo o hacé clic en el lugar correcto."
+              : "Escribí la dirección (con la ciudad) y tocá «Buscar en el mapa»."
+          ) +
+        '</div>' +
+
+        '<div class="mapa-mini" id="mapaForm"' + (tieneUbicacion(draft) ? "" : ' style="display:none;"') + '></div>' +
+
+        (
+          draft.mapa
+            ? '<button type="button" class="hist-more mapa-quitar" id="mapaQuitarBtn">Quitar del mapa</button>'
+            : ""
+        ) +
+
+      '</div>' +
+
+
+      '<div class="section-label">' +
         'Espacios acordados' +
       '</div>' +
 
@@ -12974,6 +13864,267 @@ body:not(.logged-out) .login-screen {
       }
 
     );
+
+
+
+    /* UBICACIÓN EN EL MAPA */
+
+    var mapaDir =
+      document.getElementById("mapaDireccion");
+
+
+    var mapaEstado =
+      document.getElementById("mapaEstado");
+
+
+    var buscarEnMapa = function () {
+
+      var dir =
+        mapaDir.value.trim();
+
+
+      if (!dir) {
+
+        mapaEstado.textContent = "Escribí la dirección primero.";
+
+        mapaDir.focus();
+
+        return;
+
+      }
+
+
+      var btn =
+        document.getElementById("mapaBuscarBtn");
+
+
+      btn.disabled = true;
+
+      btn.textContent = "Buscando…";
+
+      mapaEstado.textContent = "Buscando la dirección…";
+
+
+      geocodificar(dir)
+
+        .then(
+          function (resultados) {
+
+            if (!resultados.length) {
+
+              mapaEstado.textContent =
+                "No encontramos esa dirección. Probá agregando la ciudad o el barrio (ej: «Rivera 2500, Montevideo»).";
+
+              return;
+
+            }
+
+
+            var elegir = function (res) {
+
+              draft.mapa = {
+                direccion: dir,
+                lat: res.lat,
+                lng: res.lng
+              };
+
+
+              renderForm(
+                draft,
+                isNew
+              );
+
+
+              var est =
+                document.getElementById("mapaEstado");
+
+
+              if (est) {
+
+                est.innerHTML =
+                  "Encontrado: <strong>" + escapeHtml(res.nombre) + "</strong>. " +
+                  "Si el punto no quedó exacto, arrastralo o hacé clic en el lugar correcto.";
+
+              }
+
+            };
+
+
+            elegir(resultados[0]);
+
+
+            /* si hay más de un resultado, se puede elegir otro */
+            if (resultados.length > 1) {
+
+              var est2 =
+                document.getElementById("mapaEstado");
+
+
+              var otros =
+                document.createElement("div");
+
+
+              otros.className =
+                "mapa-otros";
+
+
+              otros.innerHTML =
+                "<span>¿No es ese? Elegí otro:</span>" +
+                resultados.slice(1).map(
+                  function (res, i) {
+
+                    return '<button type="button" class="mapa-opcion" data-i="' + (i + 1) + '">' +
+                      escapeHtml(res.nombre) +
+                    '</button>';
+
+                  }
+                ).join("");
+
+
+              otros.addEventListener(
+                "click",
+                function (e) {
+
+                  var b =
+                    e.target.closest(".mapa-opcion");
+
+
+                  if (b) {
+
+                    elegir(resultados[Number(b.getAttribute("data-i"))]);
+
+                  }
+
+                }
+              );
+
+
+              est2.insertAdjacentElement("afterend", otros);
+
+            }
+
+          }
+        )
+
+        .catch(
+          function (err) {
+
+            console.error(err);
+
+
+            mapaEstado.textContent =
+              "No se pudo buscar la dirección. Revisá tu conexión e intentá de nuevo.";
+
+          }
+        )
+
+        .then(
+          function () {
+
+            var b =
+              document.getElementById("mapaBuscarBtn");
+
+
+            if (b) {
+
+              b.disabled = false;
+
+              b.textContent = "Buscar en el mapa";
+
+            }
+
+          }
+        );
+
+    };
+
+
+    document
+      .getElementById("mapaBuscarBtn")
+      .addEventListener("click", buscarEnMapa);
+
+
+    mapaDir.addEventListener(
+      "keydown",
+      function (e) {
+
+        if (e.key === "Enter") {
+
+          e.preventDefault();
+
+          buscarEnMapa();
+
+        }
+
+      }
+    );
+
+
+    mapaDir.addEventListener(
+      "input",
+      function () {
+
+        var dir =
+          mapaDir.value;
+
+
+        if (!draft.mapa) {
+
+          draft.mapa = { direccion: dir, lat: null, lng: null };
+
+        } else {
+
+          var cambio =
+            dir.trim() !== (draft.mapa.direccion || "").trim();
+
+
+          draft.mapa.direccion = dir;
+
+
+          if (cambio && tieneUbicacion(draft)) {
+
+            mapaEstado.textContent =
+              "La dirección cambió: tocá «Buscar en el mapa» para actualizar el punto.";
+
+            draft.mapa._desactualizado = true;
+
+          }
+
+        }
+
+      }
+    );
+
+
+    var mapaQuitar =
+      document.getElementById("mapaQuitarBtn");
+
+
+    if (mapaQuitar) {
+
+      mapaQuitar.addEventListener(
+        "click",
+        function () {
+
+          draft.mapa = null;
+
+
+          renderForm(
+            draft,
+            isNew
+          );
+
+        }
+      );
+
+    }
+
+
+    if (tieneUbicacion(draft)) {
+
+      mostrarMapaForm(draft);
+
+    }
 
 
 
@@ -13974,6 +15125,33 @@ body:not(.logged-out) .login-screen {
       }
 
 
+      var dirAntes =
+        (original.mapa && original.mapa.direccion) || "";
+
+
+      var dirAhora =
+        (nuevo.mapa && nuevo.mapa.direccion) || "";
+
+
+      if (dirAntes !== dirAhora) {
+
+        cambios.push(
+          "Ubicación en el mapa: " +
+          (dirAntes || "sin ubicar") + " → " + (dirAhora || "sin ubicar")
+        );
+
+      } else if (
+        dirAhora &&
+        (original.mapa.lat !== nuevo.mapa.lat || original.mapa.lng !== nuevo.mapa.lng)
+      ) {
+
+        cambios.push(
+          "Se ajustó el punto en el mapa de " + dirAhora
+        );
+
+      }
+
+
       if ((original.vigenciaInicio || "") !== nuevo.vigenciaInicio) {
 
         cambios.push(
@@ -14364,6 +15542,38 @@ body:not(.logged-out) .login-screen {
 
 
 
+    /* Mapa: si hay dirección, tiene que estar ubicada */
+
+    if (
+      draft.mapa &&
+      (draft.mapa.direccion || "").trim() &&
+      (!tieneUbicacion(draft) || draft.mapa._desactualizado)
+    ) {
+
+      showToast(
+        "Tocá «Buscar en el mapa» para ubicar la dirección (o borrala)."
+      );
+
+
+      var md =
+        document.getElementById("mapaDireccion");
+
+
+      if (md) {
+
+        md.scrollIntoView({ block: "center" });
+
+        md.focus();
+
+      }
+
+
+      return;
+
+    }
+
+
+
     /* Si lo escribieron a mano pero ya existe en la lista
        (ej: "san roque"), se usa el nombre de la lista */
 
@@ -14485,6 +15695,15 @@ body:not(.logged-out) .login-screen {
 
           espacios:
             draft.espacios,
+
+          mapa:
+            draft.mapa && (draft.mapa.direccion || "").trim() && tieneUbicacion(draft)
+              ? {
+                direccion: draft.mapa.direccion.trim(),
+                lat: draft.mapa.lat,
+                lng: draft.mapa.lng
+              }
+              : null,
 
           notas:
             draft.notas ||
@@ -16333,6 +17552,9 @@ body:not(.logged-out) .login-screen {
 
     delete copia._renovacion;
 
+    /* cada sucursal tiene su propia dirección */
+    copia.mapa = null;
+
     copia.email = "";
 
     copia.telefono = "";
@@ -16413,7 +17635,7 @@ body:not(.logged-out) .login-screen {
           '<strong>Copia de ' + escapeHtml(draft._clonDe) + '.</strong> ' +
           'Tiene los mismos datos, espacios, notas y contrato. ' +
           'Cambiá el nombre y lo que haga falta, y tocá <strong>Guardar</strong> para crear el cliente nuevo. ' +
-          'El email y WhatsApp del cliente no se copian.' +
+          'El email, el WhatsApp y la ubicación en el mapa no se copian (cada sucursal tiene la suya).' +
         '</span>' +
       '</div>'
     );
@@ -20883,6 +22105,15 @@ body:not(.logged-out) .login-screen {
 
                 acuerdosFirmados:
                   leerAcuerdosFirmados(data),
+
+                mapa:
+                  data.mapa && data.mapa.direccion
+                    ? {
+                      direccion: data.mapa.direccion,
+                      lat: isFinite(data.mapa.lat) && data.mapa.lat !== null ? Number(data.mapa.lat) : null,
+                      lng: isFinite(data.mapa.lng) && data.mapa.lng !== null ? Number(data.mapa.lng) : null
+                    }
+                    : null,
 
                 productos:
                   Array.isArray(data.productos)
