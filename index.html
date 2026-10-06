@@ -1008,9 +1008,26 @@ button {
 
   display: flex;
 
+  flex-wrap: wrap;
+
+  justify-content: flex-end;
+
   gap: 8px;
 
-  flex-shrink: 0;
+  flex-shrink: 1;
+
+  max-width: 62%;
+
+}
+
+
+
+/* el título no se aplasta cuando hay muchos botones */
+.detail-head > div:first-child {
+
+  min-width: 0;
+
+  flex: 1;
 
 }
 
@@ -2071,6 +2088,10 @@ button {
   .head-actions {
 
     flex-wrap: wrap;
+
+    max-width: none;
+
+    justify-content: flex-start;
 
   }
 
@@ -9958,6 +9979,16 @@ body:not(.logged-out) .login-screen {
                 'Renovar' +
               '</button>' +
 
+              '<button class="btn btn-ghost" id="cloneViewBtn" ' +
+                'title="Crear un cliente nuevo con los mismos datos, espacios y contrato">' +
+                '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
+                  'stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">' +
+                  '<rect x="9" y="9" width="13" height="13" rx="2"/>' +
+                  '<path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>' +
+                '</svg>' +
+                'Clonar' +
+              '</button>' +
+
               '<button class="btn btn-ghost" id="editBtn">' +
                 'Editar' +
               '</button>' +
@@ -10370,6 +10401,46 @@ body:not(.logged-out) .login-screen {
 
             openRenovarModal(
               c
+            );
+
+          }
+        );
+
+
+
+      /* Clonar desde la ficha (copia lo guardado del cliente) */
+
+      document
+        .getElementById(
+          "cloneViewBtn"
+        )
+        .addEventListener(
+          "click",
+          function () {
+
+            resetPendingPhotos();
+
+
+            var copia =
+              JSON.parse(
+                JSON.stringify(c)
+              );
+
+
+            ESPACIOS.forEach(
+              function (e) {
+
+                ensureEspacioShape(
+                  copia,
+                  e.key
+                );
+
+              }
+            );
+
+
+            clonarCliente(
+              copia
             );
 
           }
