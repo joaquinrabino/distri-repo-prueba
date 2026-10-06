@@ -109,6 +109,9 @@ que Vercel publica sola junto con la página.
    (o "Cualquier reponedor") y los **días de entrega**. Para la ruta, el
    cliente tiene que estar ubicado en el mapa.
 3. Cada día:
+   - Todos los usuarios ven los clientes (como el vendedor). Arriba hay
+     **pestañas** para pasar a lo de cada rol: el camionero y el reponedor
+     tienen *Mi ruta* y *Clientes*; el administrador *Clientes* y *Operaciones*.
    - El **camionero** entra y ve *Mi ruta de entregas*: el próximo destino,
      los siguientes en orden y el mapa. Toca **Marcar como entregado**.
    - El local pasa a *Mercadería entregada · pendiente de reposición* y

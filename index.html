@@ -6251,13 +6251,170 @@ body:not(.logged-out) .login-screen {
    OPERACIONES: CAMIONEROS / REPONEDORES
 ========================================================== */
 
-/* camionero y reponedor: solo su ruta (sin lista de clientes ni avisos) */
-body[data-rol="camionero"] .sidebar,
-body[data-rol="reponedor"] .sidebar,
-body[data-rol="camionero"] #avisoBar,
-body[data-rol="reponedor"] #avisoBar {
+/* pestaña "Mi ruta": pantalla completa (sin lista de clientes ni avisos) */
+body[data-vista="ruta"] .sidebar,
+body[data-vista="ruta"] #avisoBar {
 
   display: none !important;
+
+}
+
+
+/* ---------- pestañas ---------- */
+
+.pestanas {
+
+  flex: none;
+
+  display: flex;
+
+  gap: 4px;
+
+  padding: 0 24px;
+
+  background: var(--surface);
+
+  border-bottom: 1px solid var(--border);
+
+  overflow-x: auto;
+
+  scrollbar-width: none;
+
+}
+
+
+.pestanas::-webkit-scrollbar {
+
+  display: none;
+
+}
+
+
+.pestana {
+
+  position: relative;
+
+  flex: none;
+
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 7px;
+
+  border: none;
+
+  background: none;
+
+  font: inherit;
+
+  font-size: 14.5px;
+
+  font-weight: 600;
+
+  color: var(--ink-soft);
+
+  padding: 13px 14px 12px;
+
+  cursor: pointer;
+
+  white-space: nowrap;
+
+}
+
+
+.pestana:hover {
+
+  color: var(--ink);
+
+}
+
+
+.pestana.activa {
+
+  color: var(--accent);
+
+}
+
+
+.pestana.activa::after {
+
+  content: "";
+
+  position: absolute;
+
+  left: 10px;
+
+  right: 10px;
+
+  bottom: -1px;
+
+  height: 3px;
+
+  border-radius: 3px 3px 0 0;
+
+  background: var(--accent);
+
+}
+
+
+.pestana:focus-visible {
+
+  outline: 2px solid var(--accent);
+
+  outline-offset: -4px;
+
+  border-radius: 8px;
+
+}
+
+
+.pestana-num {
+
+  min-width: 20px;
+
+  height: 20px;
+
+  padding: 0 6px;
+
+  border-radius: 99px;
+
+  background: var(--accent);
+
+  color: var(--accent-ink);
+
+  font-size: 11.5px;
+
+  font-weight: 700;
+
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+}
+
+
+@media (max-width: 620px) {
+
+  .pestanas {
+
+    padding: 0 8px;
+
+  }
+
+  .pestana {
+
+    flex: 1;
+
+    justify-content: center;
+
+    padding: 14px 8px 13px;
+
+    font-size: 14px;
+
+  }
 
 }
 
@@ -7761,17 +7918,6 @@ body[data-rol="reponedor"] #avisoBar {
 
 
         <button
-          id="opsBtn"
-          type="button"
-          class="btn btn-ghost logout-btn"
-          title="Entregas de camioneros y reposiciones del día"
-          style="display:none;"
-        >
-          Operaciones
-        </button>
-
-
-        <button
           id="usersBtn"
           type="button"
           class="btn btn-ghost logout-btn"
@@ -7794,6 +7940,17 @@ body[data-rol="reponedor"] #avisoBar {
       </div>
 
     </div>
+
+
+
+    <!-- pestañas según el rol (Clientes / Mi ruta / Operaciones) -->
+    <nav
+      id="pestanas"
+      class="pestanas"
+      role="tablist"
+      aria-label="Secciones"
+      style="display:none;"
+    ></nav>
 
 
 
@@ -8478,11 +8635,11 @@ body[data-rol="reponedor"] #avisoBar {
     loginSubmit:
       document.getElementById("loginSubmit"),
 
-    opsBtn:
-      document.getElementById("opsBtn"),
-
     usersBtn:
       document.getElementById("usersBtn"),
+
+    pestanas:
+      document.getElementById("pestanas"),
 
     logoutBtn:
       document.getElementById("logoutBtn"),
@@ -9437,8 +9594,7 @@ body[data-rol="reponedor"] #avisoBar {
       !state.loaded ||
       document.body.classList.contains("logged-out") ||
       document.body.classList.contains("booting") ||
-      rolActual() === "camionero" ||
-      rolActual() === "reponedor" ||
+      enPestanaRuta() ||
       safeSession("get", "alertaProductos") === "1" ||
       document.querySelector(".prod-alerta-modal")
     ) {
@@ -11687,32 +11843,37 @@ body[data-rol="reponedor"] #avisoBar {
     );
 
 
-    /* camionero y reponedor solo ven su ruta del día */
-    if (
-      (rolActual() === "camionero" || rolActual() === "reponedor") &&
-      !state.loaded
-    ) {
-
-      els.mainInner.innerHTML =
-        '<div class="ruta-vacia"><strong>Cargando tu ruta…</strong></div>';
-
-      return;
-
-    }
+    /* pestañas de arriba (cada rol ve las suyas) */
+    renderPestanas();
 
 
-    if (rolActual() === "camionero") {
-
-      renderRutaCamionero();
-
-      return;
-
-    }
+    /* aviso al reponedor cuando se libera un local, esté en la pestaña que esté */
+    avisarNuevosDisponibles();
 
 
-    if (rolActual() === "reponedor") {
+    /* camionero y reponedor: pestaña "Mi ruta" */
+    if (enPestanaRuta()) {
 
-      renderRutaReponedor();
+      if (!state.loaded) {
+
+        els.mainInner.innerHTML =
+          '<div class="ruta-vacia"><strong>Cargando tu ruta…</strong></div>';
+
+        return;
+
+      }
+
+
+      if (rolActual() === "camionero") {
+
+        renderRutaCamionero();
+
+      } else {
+
+        renderRutaReponedor();
+
+      }
+
 
       return;
 
@@ -22484,9 +22645,6 @@ body[data-rol="reponedor"] #avisoBar {
           : (state.rol === "camionero" ? "Camionero" : "Reponedor") + (nombreVendedor ? " · " + nombreVendedor : "");
 
 
-    /* solo el administrador ve las operaciones del día */
-    els.opsBtn.style.display =
-      canEdit ? "" : "none";
 
 
     if (state.rol !== "camionero" && state.rol !== "reponedor") {
@@ -22664,6 +22822,10 @@ body[data-rol="reponedor"] #avisoBar {
 
 
     state.opsView = false;
+
+    safeSession("remove", "pestana");
+
+    state.pestana = "ruta";
 
     state.vistaRuta = "lista";
 
@@ -23079,6 +23241,10 @@ body[data-rol="reponedor"] #avisoBar {
 
 
       state.opsView = false;
+
+      safeSession("remove", "pestana");
+
+      state.pestana = "ruta";
 
 
       setRole(false);
@@ -25035,6 +25201,192 @@ body[data-rol="reponedor"] #avisoBar {
 
 
 
+  /* ========================================================
+     PESTAÑAS
+     Todos ven los clientes; además cada rol tiene su pestaña:
+       administrador → Clientes | Operaciones
+       camionero     → Mi ruta de entregas | Clientes
+       reponedor     → Mi ruta de reposición | Clientes
+       vendedor      → (solo clientes, sin pestañas)
+  ======================================================== */
+
+  state.pestana =
+    safeSession("get", "pestana") || "ruta";
+
+
+
+  function enPestanaRuta() {
+
+    var rol = rolActual();
+
+
+    return (
+      (rol === "camionero" || rol === "reponedor") &&
+      state.pestana !== "clientes"
+    );
+
+  }
+
+
+
+  function renderPestanas() {
+
+    var bar =
+      els.pestanas;
+
+
+    var rol =
+      rolActual();
+
+
+    var yo =
+      miUsuarioId();
+
+
+    var lista =
+      rol === "admin"
+        ? [["clientes", "Clientes"], ["operaciones", "Operaciones"]]
+        : rol === "camionero"
+          ? [["ruta", "Mi ruta de entregas"], ["clientes", "Clientes"]]
+          : rol === "reponedor"
+            ? [["ruta", "Mi ruta de reposición"], ["clientes", "Clientes"]]
+            : [];
+
+
+    document.body.setAttribute(
+      "data-vista",
+      enPestanaRuta() ? "ruta" : "clientes"
+    );
+
+
+    if (!lista.length) {
+
+      bar.style.display = "none";
+
+      bar.innerHTML = "";
+
+      return;
+
+    }
+
+
+    var activa =
+      rol === "admin"
+        ? (state.opsView ? "operaciones" : "clientes")
+        : (enPestanaRuta() ? "ruta" : "clientes");
+
+
+    /* cuántos le quedan pendientes hoy (se ve aunque esté en Clientes) */
+    var pendientes = 0;
+
+
+    if (state.loaded && rol === "camionero") {
+
+      pendientes =
+        rutaDeCamionero(yo, null).ruta.length;
+
+    } else if (state.loaded && rol === "reponedor") {
+
+      pendientes =
+        localesReponedor(yo).disponibles.length;
+
+    } else if (state.loaded && rol === "admin") {
+
+      pendientes =
+        operacionesDeFecha(hoyIso()).filter(
+          function (f) {
+
+            return !f.reposicion;
+
+          }
+        ).length;
+
+    }
+
+
+    bar.style.display = "";
+
+
+    bar.innerHTML =
+      lista.map(
+        function (p) {
+
+          var conContador =
+            p[0] === "ruta" || p[0] === "operaciones";
+
+
+          return (
+            '<button type="button" role="tab" class="pestana' + (p[0] === activa ? " activa" : "") + '" ' +
+              'aria-selected="' + (p[0] === activa) + '" data-pestana="' + p[0] + '">' +
+              escapeHtml(p[1]) +
+              (
+                conContador && pendientes
+                  ? ' <span class="pestana-num" title="Pendientes de hoy">' + pendientes + '</span>'
+                  : ""
+              ) +
+            '</button>'
+          );
+
+        }
+      ).join("");
+
+  }
+
+
+
+  function cambiarPestana(p) {
+
+    if (rolActual() === "admin") {
+
+      if (p === "operaciones") {
+
+        abrirOperaciones();
+
+        return;
+
+      }
+
+
+      if (!state.opsView) {
+
+        return;
+
+      }
+
+
+      resetPendingPhotos();
+
+      render();
+
+      els.mainInner.parentNode.scrollTop = 0;
+
+      return;
+
+    }
+
+
+    if (p === state.pestana) {
+
+      return;
+
+    }
+
+
+    state.pestana = p;
+
+    safeSession("set", "pestana", p);
+
+
+    render();
+
+    els.mainInner.parentNode.scrollTop = 0;
+
+    window.scrollTo(0, 0);
+
+  }
+
+
+
   function cabeceraRuta(titulo, hechos, total, textoHechos) {
 
     var pct =
@@ -25338,15 +25690,9 @@ body[data-rol="reponedor"] #avisoBar {
 
   /* ---------- Reponedor ---------- */
 
-  function renderRutaReponedor() {
+  /* Locales del día del reponedor, separados por estado */
 
-    iniciarGeolocalizacion();
-
-
-    var yo = miUsuarioId();
-
-    var j = jornadaHoy();
-
+  function localesReponedor(yo) {
 
     /* clientes de hoy asignados a mí (o sin reponedor asignado) */
     var mios =
@@ -25362,45 +25708,55 @@ body[data-rol="reponedor"] #avisoBar {
       );
 
 
-    var disponibles =
-      mios.filter(
+    var porEstado = function (clave) {
+
+      return mios.filter(
         function (c) {
 
-          return estadoHoy(c).clave === "pendiente_reposicion";
+          return estadoHoy(c).clave === clave;
 
         }
       );
 
-
-    var noDisponibles =
-      mios.filter(
-        function (c) {
-
-          return estadoHoy(c).clave === "pendiente_entrega";
-
-        }
-      );
+    };
 
 
-    var completados =
-      mios
-        .filter(
-          function (c) {
-
-            return estadoHoy(c).clave === "completado";
-
-          }
-        )
-        .sort(
+    return {
+      mios: mios,
+      disponibles: porEstado("pendiente_reposicion"),
+      noDisponibles: porEstado("pendiente_entrega"),
+      completados:
+        porEstado("completado").sort(
           function (a, b) {
 
             return estadoHoy(b).reposicion.at - estadoHoy(a).reposicion.at;
 
           }
-        );
+        )
+    };
+
+  }
 
 
-    /* aviso cuando el camionero libera un local nuevo */
+
+  /* Aviso (con vibración) cuando el camionero libera un local nuevo.
+     Funciona en cualquier pestaña. */
+
+  function avisarNuevosDisponibles() {
+
+    if (rolActual() !== "reponedor" || !state.loaded) {
+
+      disponiblesAntes = null;
+
+      return;
+
+    }
+
+
+    var disponibles =
+      localesReponedor(miUsuarioId()).disponibles;
+
+
     var idsDisp =
       disponibles.map(
         function (c) {
@@ -25449,6 +25805,42 @@ body[data-rol="reponedor"] #avisoBar {
 
 
     disponiblesAntes = idsDisp;
+
+  }
+
+
+
+  function renderRutaReponedor() {
+
+    iniciarGeolocalizacion();
+
+
+    var yo = miUsuarioId();
+
+    var j = jornadaHoy();
+
+
+    var locales =
+      localesReponedor(yo);
+
+
+    var mios = locales.mios;
+
+    var disponibles = locales.disponibles;
+
+    var noDisponibles = locales.noDisponibles;
+
+    var completados = locales.completados;
+
+
+    var idsDisp =
+      disponibles.map(
+        function (c) {
+
+          return c.id;
+
+        }
+      );
 
 
     /* origen: mi posición o el último local repuesto */
@@ -26813,12 +27205,23 @@ body[data-rol="reponedor"] #avisoBar {
       );
 
 
-    els.opsBtn
+    els.pestanas
       .addEventListener(
         "click",
-        abrirOperaciones
-      );
+        function (e) {
 
+          var b =
+            e.target.closest("[data-pestana]");
+
+
+          if (b) {
+
+            cambiarPestana(b.getAttribute("data-pestana"));
+
+          }
+
+        }
+      );
 
 
     els.logoutBtn
