@@ -4041,6 +4041,32 @@ button.dash-tile:focus-visible {
 
 
 
+.mapa-aviso {
+
+  margin-bottom: 10px;
+
+  padding: 9px 12px;
+
+  border-radius: 8px;
+
+  background: var(--accent-soft);
+
+  color: var(--ink-soft);
+
+  font-size: 12.8px;
+
+}
+
+
+
+.mapa-mini {
+
+  cursor: crosshair;
+
+}
+
+
+
 .mapa-quitar {
 
   color: var(--vencido);
@@ -7357,7 +7383,8 @@ body:not(.logged-out) .login-screen {
 
   /* ========================================================
      PRODUCTOS POR VENCER (en cada cliente)
-     { id, codigo, ubicacion, vence (AAAA-MM-DD), agregadoPor, agregadoEn }
+     { id, nombre, ubicacion, cantidad, vence (AAAA-MM-DD), agregadoPor, agregadoEn }
+     (los primeros se guardaban con "codigo": se lee como nombre)
      - Lo pueden agregar administradores y vendedores.
      - Solo el administrador puede eliminar.
      - A los 20 días de vencido se elimina solo.
@@ -7520,9 +7547,15 @@ body:not(.logged-out) .login-screen {
                   : ""
               ) +
 
-              '<span class="prod-codigo">' + escapeHtml(p.codigo) + '</span>' +
+              '<span class="prod-codigo">' + escapeHtml(p.nombre) + '</span>' +
 
               '<span class="prod-ubicacion">&#128205; ' + escapeHtml(p.ubicacion || "Sin ubicación") + '</span>' +
+
+              (
+                p.cantidad !== null && p.cantidad !== undefined
+                  ? '<span class="prod-ubicacion">&#128230; Cantidad: ' + escapeHtml(String(p.cantidad)) + '</span>'
+                  : ""
+              ) +
 
               '<span class="prod-fecha">&#128197; ' + escapeHtml(p.vence ? fmtDate(p.vence) : "-") + '</span>' +
 
@@ -7547,12 +7580,16 @@ body:not(.logged-out) .login-screen {
 
         '<span class="prod-nuevo-titulo">+ Agregar producto</span>' +
 
-        '<label>N° de producto' +
-          '<input type="text" name="codigo" maxlength="40" placeholder="Ej: 7790580" autocomplete="off">' +
+        '<label>Nombre del producto' +
+          '<input type="text" name="nombre" maxlength="60" placeholder="Ej: Oreo 118 g" autocomplete="off">' +
         '</label>' +
 
         '<label>Ubicación' +
           '<input type="text" name="ubicacion" maxlength="60" placeholder="Ej: Góndola 3, estante 2" autocomplete="off">' +
+        '</label>' +
+
+        '<label>Cantidad' +
+          '<input type="number" name="cantidad" min="1" step="1" inputmode="numeric" placeholder="Ej: 12">' +
         '</label>' +
 
         '<label>Vence' +
@@ -7607,23 +7644,45 @@ body:not(.logged-out) .login-screen {
     }
 
 
-    var codigo =
-      form.elements.codigo.value.trim();
+    var nombre =
+      form.elements.nombre.value.trim();
 
 
     var ubicacion =
       form.elements.ubicacion.value.trim();
 
 
+    var cantidadTxt =
+      form.elements.cantidad.value.trim();
+
+
+    var cantidad =
+      cantidadTxt === "" ? null : Number(cantidadTxt);
+
+
     var vence =
       form.elements.vence.value;
 
 
-    if (!codigo) {
+    if (!nombre) {
 
-      showToast("Poné el número de producto.");
+      showToast("Poné el nombre del producto.");
 
-      form.elements.codigo.focus();
+      form.elements.nombre.focus();
+
+      return;
+
+    }
+
+
+    if (
+      cantidad !== null &&
+      !(Number.isInteger(cantidad) && cantidad > 0)
+    ) {
+
+      showToast("La cantidad tiene que ser un número entero mayor a 0.");
+
+      form.elements.cantidad.focus();
 
       return;
 
@@ -7656,8 +7715,9 @@ body:not(.logged-out) .login-screen {
 
     var producto = {
       id: "p" + Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
-      codigo: codigo,
+      nombre: nombre,
       ubicacion: ubicacion,
+      cantidad: cantidad,
       vence: vence,
       agregadoPor: quienSoy(),
       agregadoEn: Date.now()
@@ -7681,7 +7741,8 @@ body:not(.logged-out) .login-screen {
           fecha: Date.now(),
           usuario: quienSoy(),
           cambios: [
-            "Producto por vencer agregado: " + codigo +
+            "Producto por vencer agregado: " + nombre +
+            (cantidad !== null ? " x" + cantidad : "") +
             (ubicacion ? " (" + ubicacion + ")" : "") +
             ", vence el " + fmtDate(vence)
           ]
@@ -7693,7 +7754,7 @@ body:not(.logged-out) .login-screen {
       .then(
         function () {
 
-          showToast("Producto " + codigo + " agregado.");
+          showToast("Producto " + nombre + " agregado.");
 
         }
       )
@@ -7755,7 +7816,7 @@ body:not(.logged-out) .login-screen {
     }
 
 
-    if (!confirm('¿Eliminar el producto ' + p.codigo + ' (vence el ' + fmtDate(p.vence) + ')?')) {
+    if (!confirm('¿Eliminar el producto ' + p.nombre + ' (vence el ' + fmtDate(p.vence) + ')?')) {
 
       return;
 
@@ -7775,7 +7836,7 @@ body:not(.logged-out) .login-screen {
         historial: [{
           fecha: Date.now(),
           usuario: quienSoy(),
-          cambios: ["Producto por vencer eliminado: " + p.codigo + (p.ubicacion ? " (" + p.ubicacion + ")" : "")]
+          cambios: ["Producto por vencer eliminado: " + p.nombre + (p.ubicacion ? " (" + p.ubicacion + ")" : "")]
         }]
           .concat(c.historial || [])
           .slice(0, HISTORIAL_MAX)
@@ -7865,7 +7926,7 @@ body:not(.logged-out) .login-screen {
                 viejos.map(
                   function (p) {
 
-                    return p.codigo;
+                    return p.nombre;
 
                   }
                 ).join(", ")
@@ -7947,7 +8008,10 @@ body:not(.logged-out) .login-screen {
         'title="' + escapeHtml("Abrir " + (it.c.nombre || "cliente")) + '">' +
 
         '<span class="prod-fila-info">' +
-          '<strong>' + escapeHtml(it.p.codigo) + '</strong>' +
+          '<strong>' +
+            escapeHtml(it.p.nombre) +
+            (it.p.cantidad !== null && it.p.cantidad !== undefined ? ' <small>x' + escapeHtml(String(it.p.cantidad)) + '</small>' : '') +
+          '</strong>' +
           '<span>' + escapeHtml((it.c.nombre || "Sin nombre") + (it.p.ubicacion ? " · " + it.p.ubicacion : "")) + '</span>' +
         '</span>' +
 
@@ -8329,9 +8393,63 @@ body:not(.logged-out) .login-screen {
 
   }
 
+  /* Dirección a partir de un punto del mapa (para cuando se marca con un clic) */
+
+  function direccionDePunto(lat, lng) {
+
+    var url =
+      "https://nominatim.openstreetmap.org/reverse?format=jsonv2&zoom=18&accept-language=es" +
+      "&lat=" + encodeURIComponent(lat) + "&lon=" + encodeURIComponent(lng);
 
 
-  /* Mapa chico del formulario: el punto se puede arrastrar o mover con un clic */
+    return fetch(url, { headers: { "Accept": "application/json" } })
+      .then(
+        function (r) {
+
+          if (!r.ok) {
+
+            throw new Error("Búsqueda " + r.status);
+
+          }
+
+
+          return r.json();
+
+        }
+      )
+      .then(
+        function (x) {
+
+          var a =
+            (x && x.address) || {};
+
+
+          var calle =
+            [a.road || a.pedestrian || a.footway || "", a.house_number || ""]
+              .join(" ")
+              .trim();
+
+
+          var lugar =
+            a.city || a.town || a.village || a.suburb || a.state || "";
+
+
+          var corta =
+            [calle, lugar].filter(Boolean).join(", ");
+
+
+          return corta || (x && x.display_name) || "";
+
+        }
+      );
+
+  }
+
+
+
+  /* Mapa chico del formulario: siempre visible. Con un clic se marca
+     el punto (y si no hay dirección escrita, se completa sola);
+     el punto también se puede arrastrar. */
 
   function mostrarMapaForm(draft) {
 
@@ -8344,9 +8462,6 @@ body:not(.logged-out) .login-screen {
       return;
 
     }
-
-
-    cont.style.display = "";
 
 
     cargarLeaflet()
@@ -8371,22 +8486,50 @@ body:not(.logged-out) .login-screen {
           }
 
 
-          var pos =
-            [draft.mapa.lat, draft.mapa.lng];
+          var ubicado =
+            tieneUbicacion(draft);
 
 
           var mapa =
-            L.map(cont, { scrollWheelZoom: false }).setView(pos, 16);
+            L.map(cont, { scrollWheelZoom: false })
+              .setView(
+                ubicado ? [draft.mapa.lat, draft.mapa.lng] : MAPA_CENTRO,
+                ubicado ? 16 : 12
+              );
 
 
           capaOSM(L).addTo(mapa);
 
 
           var marcador =
-            L.marker(pos, { draggable: true }).addTo(mapa);
+            ubicado
+              ? L.marker([draft.mapa.lat, draft.mapa.lng], { draggable: true }).addTo(mapa)
+              : null;
+
+
+          var estado = function (html) {
+
+            var est =
+              document.getElementById("mapaEstado");
+
+
+            if (est) {
+
+              est.innerHTML = html;
+
+            }
+
+          };
 
 
           var mover = function (latlng) {
+
+            if (!draft.mapa) {
+
+              draft.mapa = { direccion: "", lat: null, lng: null };
+
+            }
+
 
             draft.mapa.lat = Number(latlng.lat.toFixed(6));
 
@@ -8395,36 +8538,103 @@ body:not(.logged-out) .login-screen {
             delete draft.mapa._desactualizado;
 
 
-            var est =
-              document.getElementById("mapaEstado");
+            var input =
+              document.getElementById("mapaDireccion");
 
 
-            if (est) {
+            /* sin dirección escrita: se completa a partir del punto */
+            if (input && !input.value.trim()) {
 
-              est.textContent = "Punto ajustado a mano. Se guarda al tocar Guardar.";
+              estado("Punto marcado. Buscando la dirección…");
+
+
+              direccionDePunto(draft.mapa.lat, draft.mapa.lng)
+
+                .then(
+                  function (dir) {
+
+                    if (dir && !input.value.trim()) {
+
+                      input.value = dir;
+
+                      draft.mapa.direccion = dir;
+
+                    }
+
+
+                    estado(
+                      "Punto marcado" + (dir ? ": <strong>" + escapeHtml(dir) + "</strong>" : "") +
+                      ". Podés corregir la dirección o mover el punto. Se guarda al tocar Guardar."
+                    );
+
+                  }
+                )
+
+                .catch(
+                  function () {
+
+                    estado("Punto marcado. Escribí la dirección (no se pudo completar sola).");
+
+                  }
+                );
+
+            } else {
+
+              estado("Punto marcado. Se guarda al tocar Guardar.");
 
             }
 
           };
 
 
-          marcador.on(
-            "dragend",
-            function () {
+          var ponerMarcador = function (latlng) {
 
-              mover(marcador.getLatLng());
+            if (marcador) {
+
+              marcador.setLatLng(latlng);
+
+            } else {
+
+              marcador =
+                L.marker(latlng, { draggable: true }).addTo(mapa);
+
+
+              marcador.on(
+                "dragend",
+                function () {
+
+                  mover(marcador.getLatLng());
+
+                }
+              );
 
             }
-          );
+
+
+            mover(latlng);
+
+          };
+
+
+          if (marcador) {
+
+            marcador.on(
+              "dragend",
+              function () {
+
+                mover(marcador.getLatLng());
+
+              }
+            );
+
+          }
 
 
           mapa.on(
             "click",
             function (e) {
 
-              marcador.setLatLng(e.latlng);
-
-              mover(e.latlng);
+              ponerMarcador(e.latlng);
 
             }
           );
@@ -8458,6 +8668,7 @@ body:not(.logged-out) .login-screen {
 
 
 
+
   /* Mapa del panel con todos los clientes ubicados */
 
   function mostrarMapaDashboard(clients) {
@@ -8477,13 +8688,7 @@ body:not(.logged-out) .login-screen {
       clients.filter(tieneUbicacion);
 
 
-    if (!ubicados.length) {
-
-      return;
-
-    }
-
-
+    /* aunque no haya clientes ubicados, el mapa se muestra (centrado en Montevideo) */
     cargarLeaflet()
 
       .then(
@@ -8559,7 +8764,7 @@ body:not(.logged-out) .login-screen {
 
             mapa.setView(puntos[0], 15);
 
-          } else {
+          } else if (puntos.length > 1) {
 
             mapa.fitBounds(puntos, { padding: [30, 30], maxZoom: 15 });
 
@@ -8611,9 +8816,19 @@ body:not(.logged-out) .login-screen {
         '</div>' +
 
         (
+          !ubicados
+            ? '<div class="mapa-aviso">' +
+                'Todavía no hay clientes en el mapa. Se marcan editando cada cliente, en «Ubicación en el mapa» ' +
+                '(buscando la dirección o con un clic en el mapa).' +
+              '</div>'
+            : ""
+        ) +
+
+        '<div class="mapa-dash" id="mapaDash" role="region" aria-label="Mapa de clientes"></div>' +
+
+        (
           ubicados
             ? (
-              '<div class="mapa-dash" id="mapaDash" role="region" aria-label="Mapa de clientes"></div>' +
 
               '<div class="mapa-leyenda">' +
                 [
@@ -8631,10 +8846,7 @@ body:not(.logged-out) .login-screen {
                 '<span class="mapa-leyenda-hint">Tocá un punto para ver el cliente</span>' +
               '</div>'
             )
-            : '<div class="dash-empty">' +
-                'Todavía no hay clientes en el mapa. ' +
-                'Se agregan editando cada cliente, en «Ubicación en el mapa».' +
-              '</div>'
+            : ""
         ) +
 
       '</div>'
@@ -13353,14 +13565,14 @@ body:not(.logged-out) .login-screen {
           (
             tieneUbicacion(draft)
               ? "Ubicado. Si el punto no quedó exacto, arrastralo o hacé clic en el lugar correcto."
-              : "Escribí la dirección (con la ciudad) y tocá «Buscar en el mapa»."
+              : "Buscá la dirección o <strong>hacé clic en el mapa</strong> para marcar el punto."
           ) +
         '</div>' +
 
-        '<div class="mapa-mini" id="mapaForm"' + (tieneUbicacion(draft) ? "" : ' style="display:none;"') + '></div>' +
+        '<div class="mapa-mini" id="mapaForm"></div>' +
 
         (
-          draft.mapa
+          tieneUbicacion(draft)
             ? '<button type="button" class="hist-more mapa-quitar" id="mapaQuitarBtn">Quitar del mapa</button>'
             : ""
         ) +
@@ -14120,11 +14332,8 @@ body:not(.logged-out) .login-screen {
     }
 
 
-    if (tieneUbicacion(draft)) {
-
-      mostrarMapaForm(draft);
-
-    }
+    /* el mapa del formulario se ve siempre (para marcar con un clic) */
+    mostrarMapaForm(draft);
 
 
 
@@ -15697,9 +15906,9 @@ body:not(.logged-out) .login-screen {
             draft.espacios,
 
           mapa:
-            draft.mapa && (draft.mapa.direccion || "").trim() && tieneUbicacion(draft)
+            tieneUbicacion(draft)
               ? {
-                direccion: draft.mapa.direccion.trim(),
+                direccion: (draft.mapa.direccion || "").trim() || "Punto marcado en el mapa",
                 lat: draft.mapa.lat,
                 lng: draft.mapa.lng
               }
@@ -22121,7 +22330,7 @@ body:not(.logged-out) .login-screen {
                       .filter(
                         function (p) {
 
-                          return p && p.id && p.codigo;
+                          return p && p.id && (p.nombre || p.codigo);
 
                         }
                       )
@@ -22130,7 +22339,8 @@ body:not(.logged-out) .login-screen {
 
                           return {
                             id: p.id,
-                            codigo: String(p.codigo),
+                            nombre: String(p.nombre || p.codigo),
+                            cantidad: isFinite(p.cantidad) && p.cantidad !== null && p.cantidad !== "" ? Number(p.cantidad) : null,
                             ubicacion: p.ubicacion || "",
                             vence: p.vence || "",
                             agregadoPor: p.agregadoPor || "",
