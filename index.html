@@ -8881,6 +8881,664 @@ body[data-vista="ruta"] #avisoBar {
 
 }
 
+
+
+/* ---------- cuenta regresiva del promotor ---------- */
+
+.cuenta {
+
+  margin-top: 14px;
+
+  border-radius: 14px;
+
+  padding: 14px 16px;
+
+  background: var(--vigente-bg);
+
+  border: 2px solid var(--vigente);
+
+  color: var(--ink);
+
+}
+
+
+.cuenta.poco {
+
+  background: var(--porvencer-bg);
+
+  border-color: var(--porvencer);
+
+}
+
+
+.cuenta.excedida {
+
+  background: var(--vencido-bg);
+
+  border-color: var(--vencido);
+
+  animation: cuentaLatido 1.2s ease-in-out infinite;
+
+}
+
+
+@keyframes cuentaLatido {
+
+  50% { box-shadow: 0 0 0 6px rgba(192, 69, 58, 0.18); }
+
+}
+
+
+@media (prefers-reduced-motion: reduce) {
+
+  .cuenta.excedida {
+
+    animation: none;
+
+  }
+
+}
+
+
+.cuenta-tiempo {
+
+  display: flex;
+
+  align-items: baseline;
+
+  gap: 10px;
+
+}
+
+
+.cuenta-num {
+
+  font-size: 44px;
+
+  font-weight: 800;
+
+  line-height: 1;
+
+  font-variant-numeric: tabular-nums;
+
+  color: var(--vigente);
+
+}
+
+
+.cuenta.poco .cuenta-num {
+
+  color: var(--porvencer);
+
+}
+
+
+.cuenta.excedida .cuenta-num {
+
+  color: var(--vencido);
+
+}
+
+
+.cuenta-label {
+
+  font-size: 14px;
+
+  font-weight: 600;
+
+  color: var(--ink-soft);
+
+}
+
+
+.cuenta-barra {
+
+  height: 8px;
+
+  border-radius: 99px;
+
+  background: rgba(0, 0, 0, 0.08);
+
+  overflow: hidden;
+
+  margin: 10px 0;
+
+}
+
+
+.cuenta-barra span {
+
+  display: block;
+
+  height: 100%;
+
+  width: 0;
+
+  background: var(--vigente);
+
+  border-radius: 99px;
+
+  transition: width 1s linear;
+
+}
+
+
+.cuenta.poco .cuenta-barra span {
+
+  background: var(--porvencer);
+
+}
+
+
+.cuenta.excedida .cuenta-barra span {
+
+  background: var(--vencido);
+
+}
+
+
+.cuenta-info {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 3px;
+
+  font-size: 14px;
+
+  color: var(--ink-soft);
+
+}
+
+
+.cuenta-info strong {
+
+  color: var(--ink);
+
+}
+
+
+.cuenta-mini {
+
+  font-weight: 700;
+
+  font-variant-numeric: tabular-nums;
+
+  color: var(--vigente);
+
+}
+
+
+.cuenta-mini.poco {
+
+  color: var(--porvencer);
+
+}
+
+
+.cuenta-mini.excedida {
+
+  color: var(--vencido);
+
+}
+
+
+/* ---------- rendimiento y movimientos (admin) ---------- */
+
+.rend-grid {
+
+  display: grid;
+
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+
+  gap: 12px;
+
+}
+
+
+.rend-card {
+
+  border: 1px solid var(--border);
+
+  border-radius: 12px;
+
+  padding: 12px 14px;
+
+  background: var(--surface);
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 8px;
+
+}
+
+
+.rend-head {
+
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  gap: 8px;
+
+}
+
+
+.rend-prod {
+
+  font-size: 12.5px;
+
+  font-weight: 700;
+
+  padding: 2px 9px;
+
+  border-radius: 99px;
+
+  background: var(--vigente-bg);
+
+  color: var(--vigente);
+
+  white-space: nowrap;
+
+}
+
+
+.rend-prod.bajo {
+
+  background: var(--vencido-bg);
+
+  color: var(--vencido);
+
+}
+
+
+.rend-ahora {
+
+  font-size: 13px;
+
+  color: var(--ink-soft);
+
+  background: var(--surface-2);
+
+  border-radius: 8px;
+
+  padding: 6px 9px;
+
+}
+
+
+.rend-barra {
+
+  display: flex;
+
+  height: 10px;
+
+  border-radius: 99px;
+
+  overflow: hidden;
+
+  background: var(--surface-2);
+
+  border: 1px solid var(--border);
+
+}
+
+
+.rend-barra span {
+
+  display: block;
+
+  height: 100%;
+
+}
+
+
+.rb-cli {
+
+  background: #2f8a63;
+
+}
+
+
+.rb-tras {
+
+  background: #e0a526;
+
+}
+
+
+.rend-datos {
+
+  display: grid;
+
+  grid-template-columns: 1fr 1fr;
+
+  gap: 4px 12px;
+
+  font-size: 12.5px;
+
+  color: var(--ink-soft);
+
+}
+
+
+.rend-datos strong {
+
+  color: var(--ink);
+
+}
+
+
+.rend-datos i {
+
+  display: inline-block;
+
+  width: 9px;
+
+  height: 9px;
+
+  border-radius: 3px;
+
+  margin-right: 5px;
+
+  background: var(--border-strong);
+
+}
+
+
+.rend-alertas {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 2px;
+
+  font-size: 12.5px;
+
+  color: var(--vencido);
+
+  font-weight: 600;
+
+}
+
+
+.mov-sel {
+
+  font: inherit;
+
+  font-size: 13px;
+
+  padding: 6px 8px;
+
+  border: 1px solid var(--border-strong);
+
+  border-radius: 7px;
+
+  background: var(--surface);
+
+}
+
+
+.mov-lista {
+
+  max-height: 460px;
+
+  overflow-y: auto;
+
+  display: flex;
+
+  flex-direction: column;
+
+}
+
+
+.mov-item {
+
+  display: flex;
+
+  align-items: flex-start;
+
+  gap: 10px;
+
+  padding: 7px 4px;
+
+  border-bottom: 1px solid var(--border);
+
+  font-size: 13.5px;
+
+}
+
+
+.mov-item.alerta {
+
+  background: var(--vencido-bg);
+
+}
+
+
+.mov-item.mov-tras {
+
+  font-size: 12.5px;
+
+  color: var(--ink-soft);
+
+}
+
+
+.mov-item.mov-tras.alerta {
+
+  color: var(--vencido);
+
+}
+
+
+.mov-hora {
+
+  flex: none;
+
+  width: 44px;
+
+  font-variant-numeric: tabular-nums;
+
+  color: var(--ink-faint);
+
+}
+
+
+.mov-ico {
+
+  flex: none;
+
+  width: 20px;
+
+  text-align: center;
+
+}
+
+
+.mov-txt {
+
+  flex: 1;
+
+  min-width: 0;
+
+}
+
+
+/* ---------- ruta desde archivo ---------- */
+
+.plan-columnas {
+
+  display: grid;
+
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+
+  gap: 8px 12px;
+
+}
+
+
+.plan-columnas .ac-field span {
+
+  font-size: 12px;
+
+  color: var(--ink-soft);
+
+}
+
+
+.plan-revisar {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 8px;
+
+  max-height: 420px;
+
+  overflow-y: auto;
+
+}
+
+
+.plan-fila {
+
+  display: grid;
+
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1.2fr) minmax(0, 1.2fr) auto;
+
+  gap: 8px;
+
+  align-items: center;
+
+  padding: 8px 10px;
+
+  border-radius: 8px;
+
+  font-size: 13px;
+
+}
+
+
+.plan-fila.falta {
+
+  background: var(--vencido-bg);
+
+}
+
+
+.plan-fila.dudosa {
+
+  background: var(--porvencer-bg);
+
+}
+
+
+.plan-fila input {
+
+  font: inherit;
+
+  font-size: 13px;
+
+  padding: 6px 8px;
+
+  border: 1px solid var(--border-strong);
+
+  border-radius: 7px;
+
+  min-width: 0;
+
+}
+
+
+.plan-opciones {
+
+  display: flex;
+
+  flex-wrap: wrap;
+
+  align-items: center;
+
+  gap: 8px 16px;
+
+  margin-bottom: 10px;
+
+  font-size: 13.5px;
+
+}
+
+
+.plan-opciones select {
+
+  font: inherit;
+
+  font-size: 13.5px;
+
+  padding: 6px 8px;
+
+  border: 1px solid var(--border-strong);
+
+  border-radius: 7px;
+
+}
+
+
+.plan-tarde td {
+
+  background: var(--vencido-bg);
+
+}
+
+
+.plan-mover {
+
+  white-space: nowrap;
+
+}
+
+
+.plan-sin-camion select {
+
+  font: inherit;
+
+  padding: 7px 9px;
+
+  border: 1px solid var(--border-strong);
+
+  border-radius: 7px;
+
+}
+
+
+@media (max-width: 620px) {
+
+  .cuenta-num {
+
+    font-size: 38px;
+
+  }
+
+  .plan-fila {
+
+    grid-template-columns: 1fr;
+
+  }
+
+  .rend-datos {
+
+    grid-template-columns: 1fr;
+
+  }
+
+}
+
 </style>
 </head>
 
@@ -9937,6 +10595,8 @@ body[data-vista="ruta"] #avisoBar {
     state.opsVerRuta = null;
 
     state.asignacionView = false;
+
+    state.planView = false;
 
     state.tarjeteroView = false;
 
@@ -13027,6 +13687,10 @@ body[data-vista="ruta"] #avisoBar {
     avisarNuevosDisponibles();
 
 
+    /* al administrador: cuando un promotor pide más tiempo */
+    avisarExtensiones();
+
+
     /* camionero y promotor comparten su ubicación mientras usan la web */
     if (compartoUbicacion() && document.body.classList.contains("logged-out") === false) {
 
@@ -14854,6 +15518,13 @@ body[data-vista="ruta"] #avisoBar {
 
 
         if (cambioOperaciones(e.target)) {
+
+          return;
+
+        }
+
+
+        if (state.planView && e.target.closest(".plan-view") && cambioPlan(e.target)) {
 
           return;
 
@@ -25463,14 +26134,14 @@ body[data-vista="ruta"] #avisoBar {
 
     if (accion === "entregar") {
 
-      return rol === "admin" || (rol === "camionero" && !!l && l.camioneroId === yo);
+      return rol === "admin" || (rol === "camionero" && !!c && camioneroHoy(c) === yo);
 
     }
 
 
     if (accion === "reponer") {
 
-      return rol === "admin" || (rol === "reponedor" && !!l && (!l.reponedorId || l.reponedorId === yo));
+      return rol === "admin" || (rol === "reponedor" && !!c && (!reponedorHoy(c) || reponedorHoy(c) === yo));
 
     }
 
@@ -25629,7 +26300,20 @@ body[data-vista="ruta"] #avisoBar {
 
 
 
-  function horarioDe(c) {
+  function horarioDe(c, propio) {
+
+    /* el horario del plan del día (si vino en el archivo) manda */
+    var pl = c && c.id && !propio ? enPlanHoy(c) : null;
+
+    var hp = pl && pl.entrada.horarios ? pl.entrada.horarios[c.id] : null;
+
+
+    if (hp && (hp.desde || hp.hasta)) {
+
+      return { texto: hp.texto || "", desde: hp.desde || "", hasta: hp.hasta || "" };
+
+    }
+
 
     var h =
       (c && c.horario) || {};
@@ -25645,9 +26329,9 @@ body[data-vista="ruta"] #avisoBar {
 
 
 
-  function horarioTexto(c) {
+  function horarioTexto(c, propio) {
 
-    var h = horarioDe(c);
+    var h = horarioDe(c, propio);
 
 
     if (h.desde && h.hasta) {
@@ -25832,6 +26516,139 @@ body[data-vista="ruta"] #avisoBar {
 
   /* ¿Hoy hay entrega para este cliente? */
 
+  /* ---------- plan del día (ruta cargada desde un archivo) ----------
+     clientes/_planes = { dias: { "AAAA-MM-DD": { camioneros: { uid: {
+       clientes: [ids en orden], horarios: { id: { desde, hasta } },
+       importes: { id: n }, reponedorId, conReposicion, etas: { id: min },
+       etasPromotor: { id: min } } } } }, deposito, horaSalida }
+     Si un camionero tiene plan para hoy, ese día entrega exactamente
+     esos clientes (en ese orden); si no, se usan sus días de entrega. */
+
+  state.planes = {};
+
+
+
+  function planDelDia(fecha) {
+
+    var p = (state.planes.dias || {})[fecha || hoyIso()];
+
+
+    return p && p.camioneros ? p : null;
+
+  }
+
+
+
+  /* { uid, entrada } del camionero que tiene a este cliente en el plan de hoy */
+
+  function enPlanHoy(c) {
+
+    var p = planDelDia();
+
+
+    if (!p) {
+
+      return null;
+
+    }
+
+
+    var uids = Object.keys(p.camioneros);
+
+
+    for (var i = 0; i < uids.length; i++) {
+
+      var ent = p.camioneros[uids[i]];
+
+
+      if ((ent.clientes || []).indexOf(c.id) !== -1) {
+
+        return { uid: uids[i], entrada: ent };
+
+      }
+
+    }
+
+
+    return null;
+
+  }
+
+
+
+  function camioneroConPlanHoy(uid) {
+
+    var p = planDelDia();
+
+    return !!(p && uid && p.camioneros[uid]);
+
+  }
+
+
+
+  /* Camionero que atiende hoy a este cliente */
+
+  function camioneroHoy(c) {
+
+    var pl = enPlanHoy(c);
+
+
+    if (pl) {
+
+      return pl.uid;
+
+    }
+
+
+    var e = estadoGuardado(c);
+
+    var hecho = e.entrega || e.noEntrega || e.llegada;
+
+
+    return hecho && hecho.porId && hecho.porId !== ADMIN_FIJO_ID
+      ? (logisticaDe(c).camioneroId || hecho.porId)
+      : logisticaDe(c).camioneroId;
+
+  }
+
+
+
+  /* Importe a entregar hoy: el cargado en Operaciones o el que vino en el plan */
+
+  function importeHoy(c) {
+
+    var e = estadoGuardado(c);
+
+
+    if (Number(e.importe)) {
+
+      return Number(e.importe);
+
+    }
+
+
+    var pl = enPlanHoy(c);
+
+
+    return pl && pl.entrada.importes ? Number(pl.entrada.importes[c.id]) || 0 : 0;
+
+  }
+
+
+
+  /* Promotor que repone hoy este cliente ("" = cualquiera) */
+
+  function reponedorHoy(c) {
+
+    var pl = enPlanHoy(c);
+
+
+    return (pl && pl.entrada.reponedorId) || logisticaDe(c).reponedorId;
+
+  }
+
+
+
   function tieneEntregaHoy(c) {
 
     var l = logisticaDe(c);
@@ -25840,7 +26657,12 @@ body[data-vista="ruta"] #avisoBar {
 
 
     return (
-      (!!l.camioneroId && l.dias.indexOf(diaSemanaHoy()) !== -1) ||
+      !!enPlanHoy(c) ||
+      (
+        !!l.camioneroId &&
+        !camioneroConPlanHoy(l.camioneroId) &&
+        l.dias.indexOf(diaSemanaHoy()) !== -1
+      ) ||
       !!(e.entrega || e.noEntrega || e.llegada || e.postergado)
     );
 
@@ -25854,9 +26676,21 @@ body[data-vista="ruta"] #avisoBar {
 
     var l = logisticaDe(c);
 
+    var pl = enPlanHoy(c);
+
+
+    if (pl) {
+
+      return pl.entrada.conReposicion !== false || !!estadoGuardado(c).reposicion;
+
+    }
+
 
     return (
-      diasReposicionDe(l).indexOf(diaSemanaHoy()) !== -1 ||
+      (
+        diasReposicionDe(l).indexOf(diaSemanaHoy()) !== -1 &&
+        !(l.camioneroId && camioneroConPlanHoy(l.camioneroId) && !l.diasReposicion.length)
+      ) ||
       !!estadoGuardado(c).reposicion
     );
 
@@ -25996,7 +26830,7 @@ body[data-vista="ruta"] #avisoBar {
       llegada: e.llegada || null,
       postergado: e.postergado || null,
       reposicion: e.reposicion || null,
-      importe: Number(e.importe) || 0,
+      importe: importeHoy(c),
       tieneEntrega: ent,
       tieneReposicion: rep
     };
@@ -26393,6 +27227,12 @@ body[data-vista="ruta"] #avisoBar {
 
 
 
+  /* hora de salida y horarios que usa el motor en este momento
+     (al planificar otro día o con los horarios de un archivo) */
+  var contextoPuntos = { inicio: undefined, horarios: null, planificado: false };
+
+
+
   function puntoDe(c, servicio) {
 
     if (!tieneUbicacion(c)) {
@@ -26402,12 +27242,16 @@ body[data-vista="ruta"] #avisoBar {
     }
 
 
-    var h = horarioDe(c);
+    var h =
+      (contextoPuntos.horarios && contextoPuntos.horarios[c.id]) || horarioDe(c);
 
 
-    /* si el horario de recepción de hoy ya pasó, no se tiene en cuenta
-       para ordenar (ya no se llega a tiempo de todos modos) */
-    var pasado = horarioPasado(c);
+    /* si el horario de recepción ya pasó (a la hora de salida), no se tiene
+       en cuenta para ordenar (ya no se llega a tiempo de todos modos) */
+    var pasado =
+      contextoPuntos.planificado
+        ? aMinutos(h.hasta) !== null && aMinutos(h.hasta) < contextoPuntos.inicio
+        : horarioPasado(c);
 
 
     return {
@@ -26446,7 +27290,7 @@ body[data-vista="ruta"] #avisoBar {
 
 
     var inicio =
-      Math.floor(minutosAhora() / 5) * 5;
+      opciones.inicio !== undefined ? opciones.inicio : Math.floor(minutosAhora() / 5) * 5;
 
 
     var clave =
@@ -26464,6 +27308,7 @@ body[data-vista="ruta"] #avisoBar {
         opciones.servicio,
         !!opciones.usarTiempoAsignado,
         (opciones.postergados || []).join(","),
+        opciones.horarios || null,
         inicio
       ]);
 
@@ -26501,6 +27346,17 @@ body[data-vista="ruta"] #avisoBar {
       };
 
     }
+    /* contexto para puntoDe / el motor: hora de salida y horarios del plan */
+    var contextoAnterior = contextoPuntos;
+
+
+    contextoPuntos = {
+      inicio: inicio,
+      horarios: opciones.horarios || null,
+      planificado: opciones.inicio !== undefined
+    };
+
+
 
 
     var servicioDe = function (c) {
@@ -26654,6 +27510,9 @@ body[data-vista="ruta"] #avisoBar {
     );
 
 
+    contextoPuntos = contextoAnterior;
+
+
     var resultado = {
       orden: ordenados,
       llegadas: llegadas,
@@ -26722,7 +27581,7 @@ body[data-vista="ruta"] #avisoBar {
 
 
     var ordenados =
-      MOTOR_RUTAS.ordenar(conPunto, { origen: origen || null, fijo: fijoId })
+      MOTOR_RUTAS.ordenar(conPunto, { origen: origen || null, fijo: fijoId, inicio: contextoPuntos.inicio })
         .map(
           function (p) {
 
@@ -27528,6 +28387,26 @@ body[data-vista="ruta"] #avisoBar {
     f.resultado = resultado;
 
 
+    /* cuánto tardó en el local contra el tiempo asignado */
+    var tiempos =
+      tiemposVisita(c, f.at);
+
+
+    if (tiempos) {
+
+      f.llegadaAt = tiempos.llegadaAt;
+
+      f.duracion = tiempos.duracion;
+
+      f.plazo = tiempos.plazo;
+
+      f.excedido = tiempos.excedido;
+
+      f.extensiones = tiempos.extensiones;
+
+    }
+
+
     if (nota) {
 
       f.nota = String(nota).slice(0, 200);
@@ -27601,7 +28480,11 @@ body[data-vista="ruta"] #avisoBar {
         detalle: resultado,
         at: f.at,
         porId: f.porId,
-        porNombre: f.porNombre
+        porNombre: f.porNombre,
+        duracion: tiempos ? tiempos.duracion : null,
+        plazo: tiempos ? tiempos.plazo : null,
+        excedido: tiempos ? tiempos.excedido : null,
+        extensiones: tiempos ? tiempos.extensiones : 0
       }
     )
 
@@ -27687,6 +28570,17 @@ body[data-vista="ruta"] #avisoBar {
         } else if (tipo === "postergado") {
 
           delete e.postergado;
+
+        } else if (tipo === "visita") {
+
+          if (e.reposicion) {
+
+            throw errorDeValidacion("Primero anulá la reposición.");
+
+          }
+
+
+          delete e.visitaRep;
 
         }
 
@@ -28556,6 +29450,17 @@ body[data-vista="ruta"] #avisoBar {
       filasTarjetero(mes);
 
 
+    /* movimientos de cada día (para el tiempo en locales y traslados) */
+    var cacheEventos = {};
+
+
+    var eventosDe = function (fecha) {
+
+      return cacheEventos[fecha] || (cacheEventos[fecha] = movimientosDelDia(fecha));
+
+    };
+
+
     /* totales por persona */
     var totales = {};
 
@@ -28636,7 +29541,7 @@ body[data-vista="ruta"] #avisoBar {
           (
             filas.length
               ? '<div class="op-tabla-wrap"><table class="op-tabla">' +
-                  '<thead><tr><th>Fecha</th><th>Promotor</th><th>Inicio</th><th>Fin</th><th>Descanso</th><th>Horas trabajadas</th><th>Estado</th></tr></thead>' +
+                  '<thead><tr><th>Fecha</th><th>Promotor</th><th>Inicio</th><th>Fin</th><th>Descanso</th><th>Horas trabajadas</th><th>En locales</th><th>Traslados</th><th>Estado</th></tr></thead>' +
                   '<tbody>' +
                     filas.map(
                       function (f) {
@@ -28644,6 +29549,8 @@ body[data-vista="ruta"] #avisoBar {
                         var clave = f.uid + "|" + f.fecha;
 
                         var abierto = state.tarjeteroAbierto === clave;
+
+                        var rend = rendimientoPromotor(f.uid, f.fecha, eventosDe(f.fecha));
 
 
                         return (
@@ -28654,11 +29561,13 @@ body[data-vista="ruta"] #avisoBar {
                             '<td>' + (f.horas.fin ? horaDe(f.horas.fin) : (f.horas.abierto ? '<small>sin marcar</small>' : '—')) + '</td>' +
                             '<td>' + (f.horas.descansos ? duracionTexto(f.horas.descansoMin) + ' <small>(' + f.horas.descansos + ')</small>' : '—') + '</td>' +
                             '<td><strong>' + duracionTexto(f.horas.trabajadoMin) + '</strong>' + (f.horas.abierto && f.fecha === hoyIso() ? ' <small>hasta ahora</small>' : '') + '</td>' +
+                            '<td>' + duracionTexto(rend.enClientes) + ' <small>(' + rend.productividad + '%)</small>' + (rend.excedidos ? '<br><small class="op-rojo">' + plural(rend.excedidos, "local excedido", "locales excedidos") + '</small>' : '') + '</td>' +
+                            '<td>' + duracionTexto(rend.traslados) + (rend.lentos ? '<br><small class="op-rojo">' + plural(rend.lentos, "demorado", "demorados") + '</small>' : '') + '</td>' +
                             '<td>' + escapeHtml({ sin_iniciar: "—", activo: "Trabajando", descanso: "En descanso", terminado: "Terminado" }[f.estado]) + '</td>' +
                           '</tr>' +
                           (
                             abierto
-                              ? '<tr class="tarj-detalle"><td colspan="7">' +
+                              ? '<tr class="tarj-detalle"><td colspan="9">' +
                                   f.marcas.map(
                                     function (m) {
 
@@ -28778,13 +29687,30 @@ body[data-vista="ruta"] #avisoBar {
       filasTarjetero(mes).slice().reverse();
 
 
+    /* rendimiento de cada día (tiempo en locales, traslados…) */
+    var cacheEventos = {};
+
+
+    filas.forEach(
+      function (f) {
+
+        var ev =
+          cacheEventos[f.fecha] || (cacheEventos[f.fecha] = movimientosDelDia(f.fecha));
+
+
+        f.rend = rendimientoPromotor(f.uid, f.fecha, ev);
+
+      }
+    );
+
+
     loadScript(XLSX_URL)
 
       .then(
         function () {
 
           var datos = [
-            ["Fecha", "Promotor", "Inicio", "Fin", "Descansos", "Minutos de descanso", "Horas trabajadas", "Minutos trabajados"]
+            ["Fecha", "Promotor", "Inicio", "Fin", "Descansos", "Minutos de descanso", "Horas trabajadas", "Minutos trabajados", "Minutos en locales", "Minutos en traslados", "% en locales", "Locales repuestos", "Locales excedidos", "Pedidos de +10 min"]
           ].concat(
             filas.map(
               function (f) {
@@ -28797,7 +29723,13 @@ body[data-vista="ruta"] #avisoBar {
                   f.horas.descansos,
                   Math.round(f.horas.descansoMin),
                   duracionTexto(f.horas.trabajadoMin),
-                  Math.round(f.horas.trabajadoMin)
+                  Math.round(f.horas.trabajadoMin),
+                  Math.round(f.rend.enClientes),
+                  Math.round(f.rend.traslados),
+                  f.rend.productividad,
+                  f.rend.repuestos,
+                  f.rend.excedidos,
+                  f.rend.extensiones
                 ];
 
               }
@@ -30134,7 +31066,7 @@ body[data-vista="ruta"] #avisoBar {
       state.clients.filter(
         function (c) {
 
-          return logisticaDe(c).camioneroId === uid && tieneEntregaHoy(c);
+          return camioneroHoy(c) === uid && tieneEntregaHoy(c);
 
         }
       );
@@ -30206,16 +31138,25 @@ body[data-vista="ruta"] #avisoBar {
       );
 
 
+    /* si está parado en uno de sus clientes, ese va primero */
+    var aca =
+      enCliente ? null : localCercano(pendientes, posicion);
+
+
     var fijo =
       enCliente
         ? enCliente.id
-        : j.destinos[uid] && pendientes.some(function (c) { return c.id === j.destinos[uid]; })
-          ? j.destinos[uid]
-          : null;
+        : aca
+          ? aca.id
+          : j.destinos[uid] && pendientes.some(function (c) { return c.id === j.destinos[uid]; })
+            ? j.destinos[uid]
+            : null;
 
 
     var manual =
-      j.ordenes[uid] && j.ordenes[uid].length ? j.ordenes[uid] : null;
+      j.ordenes[uid] && j.ordenes[uid].length
+        ? j.ordenes[uid]
+        : (camioneroConPlanHoy(uid) ? (planDelDia().camioneros[uid].clientes || null) : null);
 
 
     var postergados =
@@ -30249,14 +31190,17 @@ body[data-vista="ruta"] #avisoBar {
     var ruta = plan.orden.slice();
 
 
-    if (enCliente && ruta[0] !== enCliente) {
+    var primero = enCliente || aca;
+
+
+    if (primero && ruta[0] !== primero) {
 
       ruta =
-        [enCliente].concat(
+        [primero].concat(
           ruta.filter(
             function (c) {
 
-              return c !== enCliente;
+              return c !== primero;
 
             }
           )
@@ -30271,7 +31215,8 @@ body[data-vista="ruta"] #avisoBar {
       noEntregados: noEntregados,
       origen: origen,
       fijo: fijo,
-      manual: !!manual,
+      manual: !!(j.ordenes[uid] && j.ordenes[uid].length),
+      conPlan: camioneroConPlanHoy(uid),
       plan: plan,
       ruta: ruta,
       postergados: postergados
@@ -30321,12 +31266,12 @@ body[data-vista="ruta"] #avisoBar {
         var est = estadoGuardado(c);
 
 
-        total += Number(est.importe) || 0;
+        total += importeHoy(c);
 
 
         if (est.entrega) {
 
-          entregadoPlata += Number(est.importe) || 0;
+          entregadoPlata += importeHoy(c);
 
         }
 
@@ -30399,7 +31344,7 @@ body[data-vista="ruta"] #avisoBar {
 
         navegarRutaHtml(ruta) +
 
-        avisoOrdenManualHtml(r.manual) +
+        avisoOrdenManualHtml(r.manual, r.conPlan) +
 
         seccionRuta(
           "Siguientes (" + siguientes.length + ")",
@@ -30410,7 +31355,7 @@ body[data-vista="ruta"] #avisoBar {
                 reordenar: true,
                 eta: r.plan.llegadas[c.id],
                 tarde: r.plan.tarde[c.id],
-                importe: estadoGuardado(c).importe
+                importe: importeHoy(c)
               });
 
             }
@@ -30428,7 +31373,7 @@ body[data-vista="ruta"] #avisoBar {
               return filaRutaHtml(c, ruta.indexOf(c) + 1, {
                 reordenar: true,
                 detalle: "Postergado a las " + horaDe(p.at) + (p.veces > 1 ? " (" + p.veces + " veces)" : ""),
-                importe: estadoGuardado(c).importe
+                importe: importeHoy(c)
               });
 
             }
@@ -30465,7 +31410,7 @@ body[data-vista="ruta"] #avisoBar {
                 detalle:
                   "Entregado a las " + horaDe(e.entrega.at) +
                   (e.entrega.llegadaAt && e.entrega.llegadaAt !== e.entrega.at ? " (llegó " + horaDe(e.entrega.llegadaAt) + ")" : "") +
-                  (e.importe ? " · " + plata(e.importe) : "")
+                  (importeHoy(c) ? " · " + plata(importeHoy(c)) : "")
               });
 
             }
@@ -30520,7 +31465,7 @@ body[data-vista="ruta"] #avisoBar {
       distancia: e.llegada ? "" : tramo(r.origen, c),
       eta: e.llegada ? null : r.plan.llegadas[c.id],
       tarde: e.llegada ? 0 : r.plan.tarde[c.id],
-      importe: e.importe,
+      importe: importeHoy(c),
       acciones: acciones
     });
 
@@ -30531,6 +31476,50 @@ body[data-vista="ruta"] #avisoBar {
   /* ========================================================
      RUTA DEL PROMOTOR / REPONEDOR
   ======================================================== */
+
+  /* El local (de la lista) donde está parado ahora, a 2 cuadras como mucho */
+
+  function localCercano(lista, pos) {
+
+    if (!pos) {
+
+      return null;
+
+    }
+
+
+    var mejor = null;
+
+    var dist = RADIO_LOCAL_M;
+
+
+    lista.forEach(
+      function (c) {
+
+        if (tieneUbicacion(c)) {
+
+          var d = distanciaMetros(pos, { lat: c.mapa.lat, lng: c.mapa.lng });
+
+
+          if (d <= dist) {
+
+            dist = d;
+
+            mejor = c;
+
+          }
+
+        }
+
+      }
+    );
+
+
+    return mejor;
+
+  }
+
+
 
   /* Locales del día del promotor, separados por estado */
 
@@ -30544,7 +31533,9 @@ body[data-vista="ruta"] #avisoBar {
           var l = logisticaDe(c);
 
 
-          return tieneReposicionHoy(c) && (!l.reponedorId || l.reponedorId === uid);
+          var rep = reponedorHoy(c);
+
+          return tieneReposicionHoy(c) && (!rep || rep === uid);
 
         }
       );
@@ -30610,10 +31601,21 @@ body[data-vista="ruta"] #avisoBar {
 
     /* el destino actual se mantiene mientras siga disponible:
        solo se reoptimizan los siguientes */
+    /* si está trabajando en un local, ese va primero; si está parado en
+       un local disponible, ese; si no, el destino fijado */
+    var activa = visitaActivaDe(uid);
+
+    var aca = localCercano(loc.disponibles, posicion);
+
+
     var fijo =
-      j.destinos[uid] && ids.indexOf(j.destinos[uid]) !== -1
-        ? j.destinos[uid]
-        : null;
+      activa && ids.indexOf(activa.id) !== -1
+        ? activa.id
+        : aca
+          ? aca.id
+          : j.destinos[uid] && ids.indexOf(j.destinos[uid]) !== -1
+            ? j.destinos[uid]
+            : null;
 
 
     var manual =
@@ -30630,12 +31632,31 @@ body[data-vista="ruta"] #avisoBar {
       });
 
 
+    /* el local donde está trabajando siempre va primero (aunque haya orden a mano) */
+    var ruta = plan.orden.slice();
+
+
+    if (activa && ruta.indexOf(activa) > 0) {
+
+      ruta = [activa].concat(
+        ruta.filter(
+          function (x) {
+
+            return x !== activa;
+
+          }
+        )
+      );
+
+    }
+
+
     return Object.assign(loc, {
       origen: origen,
       fijo: fijo,
       manual: !!manual,
       plan: plan,
-      ruta: plan.orden
+      ruta: ruta
     });
 
   }
@@ -30723,7 +31744,7 @@ body[data-vista="ruta"] #avisoBar {
     locales.forEach(
       function (c) {
 
-        var cid = logisticaDe(c).camioneroId;
+        var cid = camioneroHoy(c);
 
 
         if (cid && !vistos[cid]) {
@@ -30905,14 +31926,15 @@ body[data-vista="ruta"] #avisoBar {
                   detalle:
                     e.noEntrega
                       ? "No se pudo entregar: " + (RESULTADOS_ENTREGA[e.noEntrega.motivo] || {}).label
-                      : "Camionero: " + escapeHtml(nombreUsuario(logisticaDe(c).camioneroId) || "sin asignar") +
+                      : "Camionero: " + escapeHtml(nombreUsuario(camioneroHoy(c)) || "sin asignar") +
                         (
                           pos === 1
                             ? " · es su próxima entrega"
                             : pos
                               ? " · antes tiene " + plural(pos - 1, "entrega", "entregas")
                               : ""
-                        )
+                        ) +
+                        etaCamionPlanTexto(c)
                 });
 
               }
@@ -30965,24 +31987,39 @@ body[data-vista="ruta"] #avisoBar {
 
     var editable = uid === miUsuarioId() || rolActual() === "admin";
 
+    var v = visitaDe(c);
+
+    var cid = escapeHtml(c.id);
+
+
+    /* en el local: cuenta regresiva, +10 min y terminar */
+    var acciones =
+      v
+        ? '<div class="ruta-resultados">' +
+            '<button type="button" class="btn op-btn-grande op-btn-ok" data-op="reponer" data-cliente="' + cid + '">✓ Terminar reposición</button>' +
+            '<button type="button" class="btn op-btn-grande btn-ghost" data-op="extender" data-cliente="' + cid + '">&#9203; +' + MINUTOS_EXTENSION + ' min</button>' +
+          '</div>'
+        : '<button type="button" class="btn op-btn-grande op-btn-ok op-btn-ancho" data-op="llegada-rep" data-cliente="' + cid + '">' +
+            '&#128205; Llegué al local' +
+          '</button>';
+
 
     return tarjetaDestinoHtml(c, {
-      etiqueta: "Próximo destino",
+      etiqueta: v ? "Estás reponiendo en este local" : "Próximo destino",
       estado: est,
-      distancia: tramo(r.origen, c),
-      eta: r.plan.llegadas[c.id],
-      tarde: r.plan.tarde[c.id],
+      distancia: v ? "" : tramo(r.origen, c),
+      eta: v ? null : r.plan.llegadas[c.id],
+      tarde: v ? 0 : r.plan.tarde[c.id],
       extra:
         (e.entrega
           ? '<span class="ruta-hora">Entregado a las ' + horaDe(e.entrega.at) + ' por ' + escapeHtml(e.entrega.porNombre) + '</span>'
           : '') +
-        '<span class="op-chip op-sin">&#9201; ' + tiempoAsignadoDe(c, 20) + ' min asignados</span>' +
+        (v ? '' : '<span class="op-chip op-sin">&#9201; ' + tiempoAsignadoDe(c, 20) + ' min asignados</span>') +
         productosChip(c),
-      despues: tareasHtml(c, uid, editable),
-      acciones:
-        '<button type="button" class="btn op-btn-grande op-btn-ok op-btn-ancho" data-op="reponer" data-cliente="' + escapeHtml(c.id) + '">' +
-          '✓ Terminar reposición' +
-        '</button>'
+      despues:
+        (v ? cuentaRegresivaHtml(c, r.ruta[1] || null) : '') +
+        tareasHtml(c, uid, editable),
+      acciones: acciones
     });
 
   }
@@ -31021,7 +32058,7 @@ body[data-vista="ruta"] #avisoBar {
             state.clients.forEach(
               function (c) {
 
-                if (tieneUbicacion(c) && logisticaDe(c).camioneroId === x.uid && tieneEntregaHoy(c)) {
+                if (tieneUbicacion(c) && camioneroHoy(c) === x.uid && tieneEntregaHoy(c)) {
 
                   var d = distanciaMetros(x.pos, { lat: c.mapa.lat, lng: c.mapa.lng });
 
@@ -31252,12 +32289,21 @@ body[data-vista="ruta"] #avisoBar {
 
 
 
-  function avisoOrdenManualHtml(manual) {
+  function avisoOrdenManualHtml(manual, conPlan) {
 
-    return manual
-      ? '<div class="ruta-manual">Orden cambiado a mano · ' +
-          '<button type="button" class="hist-more" data-orden-auto="1">Volver al orden automático</button>' +
-        '</div>'
+    if (manual) {
+
+      return '<div class="ruta-manual">Orden cambiado a mano · ' +
+          '<button type="button" class="hist-more" data-orden-auto="1">' +
+            (conPlan ? "Volver al orden del plan" : "Volver al orden automático") +
+          '</button>' +
+        '</div>';
+
+    }
+
+
+    return conPlan
+      ? '<div class="ruta-manual">&#128203; Ruta del plan cargado por el administrador</div>'
       : "";
 
   }
@@ -31631,7 +32677,7 @@ body[data-vista="ruta"] #avisoBar {
       var id = el.getAttribute("data-fijar");
 
 
-      if (jornadaHoy().ordenes[uid]) {
+      if (jornadaHoy().ordenes[uid] || camioneroConPlanHoy(uid)) {
 
         var orden =
           ordenVisible(uid).filter(function (x) { return x !== id; });
@@ -31861,6 +32907,30 @@ body[data-vista="ruta"] #avisoBar {
 
       iniciarReposicion(el, c, propio);
 
+    } else if (op === "llegada-rep") {
+
+      marcarLlegadaPromotor(el, c);
+
+    } else if (op === "extender") {
+
+      confirmarAccion(
+        "¿Sumar " + MINUTOS_EXTENSION + " minutos en " + (c.nombre || "este local") + "?",
+        "El administrador ve cada vez que se pide más tiempo.",
+        "Sí, sumar " + MINUTOS_EXTENSION + " min"
+      ).then(
+        function (ok) {
+
+          if (ok) {
+
+            el.disabled = true;
+
+            extenderVisita(c.id).then(reactivar);
+
+          }
+
+        }
+      );
+
     } else if (op === "deshacer") {
 
       var que = el.getAttribute("data-que");
@@ -31892,9 +32962,116 @@ body[data-vista="ruta"] #avisoBar {
 
 
 
+  /* El promotor marca que llegó al local: tiene que tener la actividad
+     iniciada y estar a 2 cuadras como mucho. Arranca la cuenta regresiva. */
+
+  function marcarLlegadaPromotor(el, c) {
+
+    var esAdmin = rolActual() === "admin";
+
+
+    if (!esAdmin) {
+
+      var est = estadoTarjetero(marcasDe(miUsuarioId(), hoyIso()));
+
+
+      if (est !== "activo") {
+
+        showToast(
+          est === "sin_iniciar"
+            ? "Primero marcá «Iniciar actividad» en el tarjetero (arriba)."
+            : est === "descanso"
+              ? "Estás en descanso: marcá «Terminar descanso» primero."
+              : "Ya terminaste la actividad de hoy."
+        );
+
+        return;
+
+      }
+
+    }
+
+
+    el.disabled = true;
+
+
+    var hecho = function (ok) {
+
+      if (!ok) {
+
+        el.disabled = false;
+
+      }
+
+    };
+
+
+    if (esAdmin) {
+
+      marcarLlegadaRep(c.id, null).then(hecho);
+
+      return;
+
+    }
+
+
+    showToast("Verificando tu ubicación…");
+
+
+    verificarEnLocal(c)
+
+      .then(
+        function (lugar) {
+
+          if (!lugar.ok) {
+
+            throw errorDeValidacion(
+              "Estás a " + metrosTexto(lugar.distancia) + " de " + c.nombre +
+              ". Para marcar la llegada tenés que estar en el local (máximo 2 cuadras)."
+            );
+
+          }
+
+
+          return marcarLlegadaRep(c.id, lugar);
+
+        },
+        function (err) {
+
+          throw errorDeValidacion(err.message);
+
+        }
+      )
+
+      .then(hecho)
+
+      .catch(
+        function (err) {
+
+          el.disabled = false;
+
+          avisarError(err, "No se pudo verificar tu ubicación.");
+
+        }
+      );
+
+  }
+
+
+
   function iniciarReposicion(el, c, propio) {
 
     var esAdmin = rolActual() === "admin";
+
+
+    /* el promotor tiene que haber marcado la llegada (así se mide el tiempo) */
+    if (!esAdmin && !visitaDe(c)) {
+
+      showToast("Primero marcá «Llegué al local» para que empiece a contar tu tiempo.");
+
+      return;
+
+    }
 
 
     /* el promotor tiene que tener la actividad iniciada */
@@ -31921,7 +33098,7 @@ body[data-vista="ruta"] #avisoBar {
 
 
     var pendientesTareas =
-      tareasDeHoy(c, propio ? miUsuarioId() : (logisticaDe(c).reponedorId || "")).filter(
+      tareasDeHoy(c, propio ? miUsuarioId() : (reponedorHoy(c) || "")).filter(
         function (x) {
 
           return !x.hecha;
@@ -32080,6 +33257,27 @@ body[data-vista="ruta"] #avisoBar {
     }
 
 
+    /* filtros de la lista de movimientos (Operaciones) */
+    if (target.matches("[data-mov-filtro]") || target.matches("[data-mov-alertas]")) {
+
+      if (target.matches("[data-mov-filtro]")) {
+
+        state.movFiltro = target.value;
+
+      } else {
+
+        state.movSoloAlertas = target.checked;
+
+      }
+
+
+      renderOperaciones();
+
+      return true;
+
+    }
+
+
     return false;
 
   }
@@ -32189,6 +33387,15 @@ body[data-vista="ruta"] #avisoBar {
     }
 
 
+    if (state.planView) {
+
+      renderPlan();
+
+      return;
+
+    }
+
+
     renderOperaciones();
 
   }
@@ -32233,7 +33440,9 @@ body[data-vista="ruta"] #avisoBar {
               postergado: est.postergado,
               reposicion: est.reposicion,
               importe: est.importe,
-              tieneEntrega: est.tieneEntrega
+              tieneEntrega: est.tieneEntrega,
+              cam: camioneroHoy(c),
+              rep: reponedorHoy(c)
             };
 
           }
@@ -32325,6 +33534,12 @@ body[data-vista="ruta"] #avisoBar {
           );
 
 
+          /* quién lo hizo ese día (o los asignados) */
+          f.cam = (f.entrega || f.noEntrega || f.llegada || {}).porId || l.camioneroId;
+
+          f.rep = (f.reposicion || {}).porId || l.reponedorId;
+
+
           f.clave =
             f.reposicion
               ? "completado"
@@ -32399,7 +33614,7 @@ body[data-vista="ruta"] #avisoBar {
 
 
               return (
-                (rol === "camionero" ? f.l.camioneroId === u.id && f.tieneEntrega : f.l.reponedorId === u.id) ||
+                (rol === "camionero" ? f.cam === u.id && f.tieneEntrega : f.rep === u.id) ||
                 (!!hecho && hecho.porId === u.id)
               );
 
@@ -32485,6 +33700,11 @@ body[data-vista="ruta"] #avisoBar {
       operacionesDeFecha(fecha);
 
 
+    /* todo lo que hizo el equipo ese día (para el admin) */
+    var eventos =
+      movimientosDelDia(fecha);
+
+
     var personas =
       esHoy
         ? usuariosConRol("camionero").concat(usuariosConRol("reponedor"))
@@ -32502,10 +33722,15 @@ body[data-vista="ruta"] #avisoBar {
     var firmaDatos =
       JSON.stringify([
         fecha,
-        filas.map(function (f) { return [f.c.id, f.clave, f.importe, !!f.llegada, f.l.camioneroId, f.l.reponedorId]; }),
+        filas.map(function (f) { return [f.c.id, f.clave, f.importe, !!f.llegada, f.cam, f.rep]; }),
         state.vendedores.length,
         personas.map(function (p) { return p.uid + (p.pos ? "1" : "0"); }),
-        state.tarjetero[hoyIso().slice(0, 7)] ? state.tarjetero[hoyIso().slice(0, 7)].length : 0
+        state.tarjetero[hoyIso().slice(0, 7)] ? state.tarjetero[hoyIso().slice(0, 7)].length : 0,
+        eventos.length,
+        JSON.stringify(jornadaHoy().estados).length,
+        state.movFiltro,
+        state.movSoloAlertas,
+        JSON.stringify(state.planes.dias || {}).length
       ]);
 
 
@@ -32603,6 +33828,13 @@ body[data-vista="ruta"] #avisoBar {
                     }
 
 
+                    if (!f.reposicion && visitaDe(f.c)) {
+
+                      acciones += '<button type="button" class="btn btn-ghost op-mini" data-op="deshacer" data-que="visita" data-cliente="' + cid + '">Anular llegada del promotor</button>';
+
+                    }
+
+
                     if (!f.reposicion && disponibleParaReponer(f.c)) {
 
                       acciones += '<button type="button" class="btn btn-ghost op-mini" data-op="reponer" data-cliente="' + cid + '">Marcar repuesto</button>';
@@ -32642,7 +33874,7 @@ body[data-vista="ruta"] #avisoBar {
                         (horarioTexto(f.c) ? '<br><small>Recibe ' + escapeHtml(horarioTexto(f.c)) + '</small>' : '') +
                       '</td>' +
                       '<td><span class="op-chip ' + f.info.clase + '">' + escapeHtml(f.info.label) + '</span></td>' +
-                      '<td>' + escapeHtml(nombreUsuario(f.l.camioneroId) || "—") + '</td>' +
+                      '<td>' + escapeHtml(nombreUsuario(f.cam) || "—") + '</td>' +
                       '<td>' + (f.llegada ? horaDe(f.llegada.at) : (f.entrega && f.entrega.llegadaAt ? horaDe(f.entrega.llegadaAt) : '—')) + '</td>' +
                       '<td>' + entregaTxt + '</td>' +
                       (
@@ -32651,7 +33883,7 @@ body[data-vista="ruta"] #avisoBar {
                               'value="' + (f.importe || "") + '" placeholder="$" aria-label="Importe a entregar en ' + escapeHtml(f.c.nombre) + '"></td>'
                           : ''
                       ) +
-                      '<td>' + escapeHtml(nombreUsuario(f.l.reponedorId) || "Cualquiera") + '</td>' +
+                      '<td>' + escapeHtml(nombreUsuario(f.rep) || "Cualquiera") + '</td>' +
                       '<td>' +
                         (
                           f.reposicion
@@ -32707,6 +33939,9 @@ body[data-vista="ruta"] #avisoBar {
           (esHoy ? dashTile({ label: "Pendientes de reposición", dot: "#e0a526", value: cuenta(["pendiente_reposicion"]), sub: "listos para el promotor" }) : "") +
           dashTile({ label: "Reposiciones hechas", dot: "#6f5bd3", value: cuenta(["completado"]), sub: "por los promotores" }) +
         '</div>' +
+        /* rutas cargadas desde archivo (hoy y próximos días) */
+        (esHoy ? planesCargadosHtml() : '') +
+
 
         (
           esHoy
@@ -32728,6 +33963,12 @@ body[data-vista="ruta"] #avisoBar {
                 '<div class="dash-card"><div class="dash-card-head"><h2 class="dash-card-title">Promotores</h2></div><div class="op-personas">' + personalOpsHtml("reponedor", filas, esHoy) + '</div></div>' +
               '</div>'
         ) +
+
+        /* rendimiento de los promotores y todo lo que hizo el equipo */
+        rendimientoHtml(fecha, eventos) +
+
+        movimientosHtml(fecha, eventos) +
+
 
         '<div class="dash-card">' +
           '<div class="dash-card-head">' +
@@ -33610,7 +34851,7 @@ body[data-vista="ruta"] #avisoBar {
       ["Frecuencia de visita", c.frecuencia],
       ["Días de visita", diasTexto(c.diasVisita)],
       ["Tiempo asignado", c.tiempoAsignado ? c.tiempoAsignado + " min" : ""],
-      ["Horario de recepción", horarioTexto(c) + (horarioDe(c).texto && horarioDe(c).texto !== horarioTexto(c) ? " (" + horarioDe(c).texto + ")" : "")],
+      ["Horario de recepción", horarioTexto(c, true) + (horarioDe(c, true).texto && horarioDe(c, true).texto !== horarioTexto(c, true) ? " (" + horarioDe(c, true).texto + ")" : "")],
       ["Teléfono", c.telefono],
       ["Contacto", c.contacto],
       ["Email", c.email],
@@ -33787,12 +35028,27 @@ body[data-vista="ruta"] #avisoBar {
 
     if (o.tipo === "reposicion") {
 
-      return (RESULTADOS_REPO[o.detalle] || RESULTADOS_REPO.terminado).label;
+      return (RESULTADOS_REPO[o.detalle] || RESULTADOS_REPO.terminado).label +
+        (o.duracion !== undefined && o.duracion !== null ? " (" + duracionTexto(o.duracion) + " de " + o.plazo + " min)" : "");
 
     }
 
 
-    return "Anulada: " + ({ entrega: "entrega", reposicion: "reposición", llegada: "llegada", postergado: "«más tarde»" }[o.detalle] || o.detalle || "");
+    if (o.tipo === "llegada_rep") {
+
+      return "Llegó el promotor";
+
+    }
+
+
+    if (o.tipo === "extension") {
+
+      return "El promotor pidió +" + (o.detalle || MINUTOS_EXTENSION) + " min";
+
+    }
+
+
+    return "Anulada: " + ({ entrega: "entrega", reposicion: "reposición", llegada: "llegada", postergado: "«más tarde»", visita: "llegada del promotor" }[o.detalle] || o.detalle || "");
 
   }
 
@@ -33904,7 +35160,7 @@ body[data-vista="ruta"] #avisoBar {
     }
 
 
-    var h = horarioDe(draft);
+    var h = horarioDe(draft, true);
 
 
     var vendedores =
@@ -34111,7 +35367,7 @@ body[data-vista="ruta"] #avisoBar {
 
 
       var h = {
-        texto: horarioDe(draft).texto,
+        texto: horarioDe(draft, true).texto,
         desde: document.getElementById("dvDesde").value,
         hasta: document.getElementById("dvHasta").value
       };
@@ -34194,7 +35450,23 @@ body[data-vista="ruta"] #avisoBar {
 
     comparar("Tiempo asignado (min)", original.tiempoAsignado, nuevo.tiempoAsignado);
 
-    comparar("Horario de recepción", horarioTexto(original), horarioTexto(nuevo));
+    /* horario propio del cliente (sin el del plan del día) */
+    var hTexto = function (c) {
+
+      var h = horarioDe(c, true);
+
+
+      return h.desde && h.hasta
+        ? h.desde + " a " + h.hasta
+        : h.hasta
+          ? "hasta " + h.hasta
+          : h.desde
+            ? "desde " + h.desde
+            : h.texto;
+
+    };
+
+    comparar("Horario de recepción", hTexto(original), hTexto(nuevo));
 
     comparar("Días de visita", diasTexto(original.diasVisita), diasTexto(nuevo.diasVisita));
 
@@ -34396,6 +35668,34 @@ body[data-vista="ruta"] #avisoBar {
     if (e.target.closest("[data-tarj-excel]")) {
 
       excelTarjetero();
+
+      return true;
+
+    }
+
+
+    /* ruta desde archivo (plan del día) */
+    if (e.target.closest("[data-plan-abrir]")) {
+
+      abrirPlan();
+
+      return true;
+
+    }
+
+
+    if ((el = e.target.closest("[data-plan-borrar]"))) {
+
+      borrarPlan(el.getAttribute("data-plan-borrar"));
+
+      return true;
+
+    }
+
+
+    if ((el = e.target.closest("[data-plan-volver], [data-plan-nuevo], [data-plan-deposito], [data-plan-ok], [data-plan-quitar], [data-plan-auto], [data-plan-mover], [data-plan-publicar]"))) {
+
+      accionPlan(el);
 
       return true;
 
@@ -35061,7 +36361,7 @@ body[data-vista="ruta"] #avisoBar {
 
     completar("frecuencia", x.frecuencia, !c.frecuencia);
 
-    completar("horario", x.horario, !horarioTexto(c));
+    completar("horario", x.horario, !horarioTexto(c, true));
 
 
     /* la ubicación se completa si no tenía (no se pisa un punto corregido a mano) */
@@ -35577,6 +36877,7 @@ body[data-vista="ruta"] #avisoBar {
       state.acuerdoEditor ||
       state.usuariosView ||
       state.asignacionView ||
+      state.planView ||
       state.importView ||
       (state.tareasView && state.tareaForm)
     );
@@ -36249,6 +37550,2708 @@ body[data-vista="ruta"] #avisoBar {
 
 
   /* ========================================================
+     VISITA DEL PROMOTOR CON CUENTA REGRESIVA
+     Al llegar al local (a 2 cuadras como mucho) marca "Llegué":
+     arranca el tiempo asignado del cliente. Ve cuánto le queda,
+     a qué hora tiene que salir y cuándo llega al próximo. Puede
+     sumar de a 10 minutos (queda registrado). Todo se guarda en
+     la jornada (estados[id].visitaRep) y en el historial del cliente.
+  ======================================================== */
+
+  var MINUTOS_EXTENSION = 10;
+
+
+
+  function visitaDe(c) {
+
+    var v = estadoGuardado(c).visitaRep;
+
+    return v && v.llegada ? v : null;
+
+  }
+
+
+
+  function plazoVisitaMin(v) {
+
+    return (Number(v.plazoMin) || 20) + MINUTOS_EXTENSION * ((v.extensiones || []).length);
+
+  }
+
+
+
+  function finVisitaMs(v) {
+
+    return v.llegada.at + plazoVisitaMin(v) * 60000;
+
+  }
+
+
+
+  /* Local donde está trabajando ahora el promotor (llegó y no terminó) */
+
+  function visitaActivaDe(uid) {
+
+    var estados = jornadaHoy().estados;
+
+    var ids = Object.keys(estados);
+
+
+    for (var i = 0; i < ids.length; i++) {
+
+      var e = estados[ids[i]];
+
+
+      if (e && e.visitaRep && e.visitaRep.llegada && e.visitaRep.llegada.porId === uid && !e.reposicion) {
+
+        return clientePorId(ids[i]) || null;
+
+      }
+
+    }
+
+
+    return null;
+
+  }
+
+
+
+  function marcarLlegadaRep(clientId, lugar) {
+
+    var c = clientePorId(clientId);
+
+
+    if (!c || !puede("reponer", c)) {
+
+      showToast("No tenés permiso para marcar en este local.");
+
+      return Promise.resolve(false);
+
+    }
+
+
+    if (!disponibleParaReponer(c)) {
+
+      showToast("Este local todavía no está disponible para reponer.");
+
+      return Promise.resolve(false);
+
+    }
+
+
+    var f = firma();
+
+
+    if (lugar && lugar.pos) {
+
+      f.lat = Number(lugar.pos.lat.toFixed(6));
+
+      f.lng = Number(lugar.pos.lng.toFixed(6));
+
+    }
+
+
+    if (lugar && lugar.distancia !== null && lugar.distancia !== undefined) {
+
+      f.distancia = Math.round(lugar.distancia);
+
+    }
+
+
+    var plazo = tiempoAsignadoDe(c, 20);
+
+
+    return modificarJornada(
+      clientId,
+      function (data) {
+
+        /* no puede estar en dos locales a la vez */
+        Object.keys(data.estados).forEach(
+          function (id) {
+
+            var o = data.estados[id];
+
+
+            if (
+              id !== clientId && o && o.visitaRep && o.visitaRep.llegada &&
+              o.visitaRep.llegada.porId === f.porId && !o.reposicion
+            ) {
+
+              var otro = clientePorId(id);
+
+
+              throw errorDeValidacion(
+                "Todavía estás en " + (otro ? otro.nombre : "otro local") + ": terminá esa reposición primero."
+              );
+
+            }
+
+          }
+        );
+
+
+        var e = data.estados[clientId] || {};
+
+
+        if (e.reposicion) {
+
+          throw errorDeValidacion("Este local ya está repuesto.");
+
+        }
+
+
+        if (e.visitaRep && e.visitaRep.llegada) {
+
+          throw errorDeValidacion("La llegada ya estaba marcada a las " + horaDe(e.visitaRep.llegada.at) + ".");
+
+        }
+
+
+        e.visitaRep = { llegada: f, plazoMin: plazo, extensiones: [] };
+
+        data.estados[clientId] = e;
+
+        data.destinos[f.porId] = clientId;
+
+      },
+      {
+        fecha: hoyIso(), tipo: "llegada_rep", at: f.at, porId: f.porId, porNombre: f.porNombre,
+        plazo: plazo, distancia: f.distancia !== undefined ? f.distancia : null
+      }
+    )
+
+      .then(
+        function () {
+
+          showToast("Llegada marcada. Tenés " + plazo + " minutos para reponer.");
+
+          return true;
+
+        }
+      )
+
+      .catch(
+        function (err) {
+
+          return avisarError(err, "No se pudo marcar la llegada. Revisá tu conexión.");
+
+        }
+      );
+
+  }
+
+
+
+  function extenderVisita(clientId) {
+
+    var c = clientePorId(clientId);
+
+
+    if (!c || !puede("reponer", c)) {
+
+      return Promise.resolve(false);
+
+    }
+
+
+    var f = firma();
+
+
+    return modificarJornada(
+      clientId,
+      function (data) {
+
+        var e = data.estados[clientId] || {};
+
+
+        if (!e.visitaRep || !e.visitaRep.llegada || e.reposicion) {
+
+          throw errorDeValidacion("No hay una reposición en curso en este local.");
+
+        }
+
+
+        e.visitaRep.extensiones = (e.visitaRep.extensiones || []).concat([f]);
+
+        data.estados[clientId] = e;
+
+      },
+      { fecha: hoyIso(), tipo: "extension", detalle: String(MINUTOS_EXTENSION), at: f.at, porId: f.porId, porNombre: f.porNombre }
+    )
+
+      .then(
+        function () {
+
+          showToast("Sumaste " + MINUTOS_EXTENSION + " minutos. El administrador lo ve en Operaciones.");
+
+          return true;
+
+        }
+      )
+
+      .catch(
+        function (err) {
+
+          return avisarError(err, "No se pudo sumar tiempo. Revisá tu conexión.");
+
+        }
+      );
+
+  }
+
+
+
+  /* Datos de tiempo de la visita al terminar (para guardar con la reposición) */
+
+  function tiemposVisita(c, ahora) {
+
+    var v = visitaDe(c);
+
+
+    if (!v) {
+
+      return null;
+
+    }
+
+
+    var duracion = (ahora - v.llegada.at) / 60000;
+
+    var plazo = plazoVisitaMin(v);
+
+
+    return {
+      llegadaAt: v.llegada.at,
+      duracion: Math.round(duracion * 10) / 10,
+      plazo: plazo,
+      excedido: Math.max(0, Math.round((duracion - plazo) * 10) / 10),
+      extensiones: (v.extensiones || []).length
+    };
+
+  }
+
+
+
+  /* Bloque de la cuenta regresiva en la tarjeta del local */
+
+  function cuentaRegresivaHtml(c, siguiente, desdePos) {
+
+    var v = visitaDe(c);
+
+    var fin = finVisitaMs(v);
+
+    var plazo = plazoVisitaMin(v);
+
+    var ext = (v.extensiones || []).length;
+
+
+    var viaje =
+      siguiente && tieneUbicacion(c) && tieneUbicacion(siguiente)
+        ? Math.round(MOTOR_RUTAS.minutosViaje({ lat: c.mapa.lat, lng: c.mapa.lng }, { lat: siguiente.mapa.lat, lng: siguiente.mapa.lng }))
+        : null;
+
+
+    return (
+      '<div class="cuenta" data-cuenta-fin="' + fin + '" data-cuenta-inicio="' + v.llegada.at + '" ' +
+        'data-cuenta-cliente="' + escapeHtml(c.id) + '" data-cuenta-nombre="' + escapeHtml(c.nombre || "") + '">' +
+
+        '<div class="cuenta-tiempo">' +
+          '<span class="cuenta-num" data-cuenta-texto>--:--</span>' +
+          '<span class="cuenta-label" data-cuenta-label>para terminar</span>' +
+        '</div>' +
+
+        '<div class="cuenta-barra"><span data-cuenta-barra></span></div>' +
+
+        '<div class="cuenta-info">' +
+          '<span>Llegaste ' + horaDe(v.llegada.at) + ' · ' + plazo + ' min' +
+            (ext ? ' (incluye +' + (ext * MINUTOS_EXTENSION) + ' min pedidos)' : '') + '</span>' +
+          '<strong>Terminá antes de las ' + horaDe(fin) + '</strong>' +
+          (
+            siguiente
+              ? '<span>Próximo: <strong>' + escapeHtml(siguiente.nombre) + '</strong>' +
+                  (viaje !== null
+                    ? ' · salí a las ' + horaDe(fin) + ' y llegás ≈ ' + horaDe(fin + viaje * 60000) + ' (' + viaje + ' min de viaje)'
+                    : '') +
+                '</span>'
+              : '<span>Es tu último local disponible por ahora.</span>'
+          ) +
+        '</div>' +
+
+      '</div>'
+    );
+
+  }
+
+
+
+  /* Actualiza las cuentas regresivas cada segundo (sin redibujar la pantalla) */
+
+  var cuentasAvisadas = {};
+
+
+
+  function tickCuentas() {
+
+    var ahora = Date.now();
+
+
+    Array.prototype.forEach.call(
+      document.querySelectorAll("[data-cuenta-fin]"),
+      function (el) {
+
+        var fin = Number(el.getAttribute("data-cuenta-fin"));
+
+        var ini = Number(el.getAttribute("data-cuenta-inicio"));
+
+        var resta = fin - ahora;
+
+        var abs = Math.abs(resta);
+
+        var min = Math.floor(abs / 60000);
+
+        var seg = Math.floor((abs % 60000) / 1000);
+
+        var txt = (resta < 0 ? "+" : "") + (min < 10 ? "0" : "") + min + ":" + (seg < 10 ? "0" : "") + seg;
+
+
+        var t = el.querySelector("[data-cuenta-texto]");
+
+        var l = el.querySelector("[data-cuenta-label]");
+
+        var b = el.querySelector("[data-cuenta-barra]");
+
+
+        if (t) {
+
+          t.textContent = txt;
+
+        }
+
+
+        if (l) {
+
+          l.textContent = resta < 0 ? "de tiempo excedido" : "para terminar";
+
+        }
+
+
+        if (b) {
+
+          b.style.width = Math.max(0, Math.min(100, (ahora - ini) / Math.max(1, fin - ini) * 100)) + "%";
+
+        }
+
+
+        el.classList.toggle("excedida", resta < 0);
+
+        el.classList.toggle("poco", resta >= 0 && resta < 5 * 60000);
+
+
+        /* aviso al terminar el tiempo (una sola vez por plazo) */
+        var clave = el.getAttribute("data-cuenta-cliente") + "|" + fin;
+
+
+        if (resta < 0 && !cuentasAvisadas[clave] && rolActual() === "reponedor") {
+
+          cuentasAvisadas[clave] = true;
+
+          showToast("⏰ Se terminó el tiempo en " + el.getAttribute("data-cuenta-nombre") + ". Si necesitás más, tocá «+10 min».");
+
+
+          if (navigator.vibrate) {
+
+            navigator.vibrate([300, 120, 300, 120, 300]);
+
+          }
+
+        }
+
+      }
+    );
+
+
+    avisosAdminTiempo(ahora);
+
+  }
+
+
+
+  /* Administrador: avisos cuando un promotor se pasa del tiempo */
+
+  var adminAvisados = {};
+
+  var ultimoChequeoAdmin = 0;
+
+
+
+  function avisosAdminTiempo(ahora) {
+
+    if (rolActual() !== "admin" || !state.loaded || ahora - ultimoChequeoAdmin < 15000) {
+
+      return;
+
+    }
+
+
+    ultimoChequeoAdmin = ahora;
+
+
+    var estados = jornadaHoy().estados;
+
+
+    Object.keys(estados).forEach(
+      function (id) {
+
+        var e = estados[id];
+
+        var v = e && e.visitaRep;
+
+
+        if (!v || !v.llegada || e.reposicion) {
+
+          return;
+
+        }
+
+
+        var fin = finVisitaMs(v);
+
+        var clave = id + "|" + fin;
+
+
+        if (ahora > fin && !adminAvisados[clave]) {
+
+          adminAvisados[clave] = true;
+
+
+          var c = clientePorId(id);
+
+
+          showToast("⏰ " + v.llegada.porNombre + " se pasó del tiempo en " + (c ? c.nombre : "un local") + ".");
+
+        }
+
+      }
+    );
+
+  }
+
+
+
+  setInterval(tickCuentas, 1000);
+
+
+
+  /* Administrador: aviso cuando un promotor pide más tiempo */
+
+  var extensionesVistas = null;
+
+
+
+  function avisarExtensiones() {
+
+    if (rolActual() !== "admin" || !state.loaded) {
+
+      extensionesVistas = null;
+
+      return;
+
+    }
+
+
+    var estados = jornadaHoy().estados;
+
+    var actuales = {};
+
+
+    Object.keys(estados).forEach(
+      function (id) {
+
+        var v = estados[id] && estados[id].visitaRep;
+
+
+        if (v && v.extensiones && v.extensiones.length) {
+
+          actuales[id] = v.extensiones.length;
+
+
+          if (extensionesVistas && v.extensiones.length > (extensionesVistas[id] || 0)) {
+
+            var c = clientePorId(id);
+
+            var ult = v.extensiones[v.extensiones.length - 1];
+
+
+            showToast("⏱ " + ult.porNombre + " pidió +" + MINUTOS_EXTENSION + " min en " + (c ? c.nombre : "un local") + ".");
+
+          }
+
+        }
+
+      }
+    );
+
+
+    extensionesVistas = actuales;
+
+  }
+
+
+
+  /* ========================================================
+     MOVIMIENTOS DEL EQUIPO (todo lo que hacen, para el admin)
+     Se arma con el historial de cada cliente, el tarjetero y
+     las tareas: sirve para hoy y para cualquier día anterior.
+  ======================================================== */
+
+  function movimientosDelDia(fecha) {
+
+    var ev = [];
+
+
+    state.clients.forEach(
+      function (c) {
+
+        (c.operaciones || []).forEach(
+          function (o) {
+
+            if (o.fecha !== fecha) {
+
+              return;
+
+            }
+
+
+            ev.push({ at: o.at, uid: o.porId, nombre: o.porNombre, tipo: o.tipo, o: o, c: c });
+
+          }
+        );
+
+
+        (c.tareasHechas || []).forEach(
+          function (h) {
+
+            if (h.fecha === fecha) {
+
+              ev.push({ at: h.at, uid: h.porId, nombre: h.porNombre, tipo: "tarea", o: h, c: c });
+
+            }
+
+          }
+        );
+
+      }
+    );
+
+
+    (state.tarjetero[fecha.slice(0, 7)] || []).forEach(
+      function (m) {
+
+        if (m.fecha === fecha) {
+
+          ev.push({ at: m.at, uid: m.uid, nombre: m.nombre, tipo: "tarj_" + m.tipo, o: m, c: m.clienteId ? clientePorId(m.clienteId) : null });
+
+        }
+
+      }
+    );
+
+
+    ev.sort(
+      function (a, b) {
+
+        return a.at - b.at;
+
+      }
+    );
+
+
+    /* traslados del promotor: de que termina un local hasta que llega al siguiente */
+    var ultimoFin = {};
+
+    var descansoDesde = {};
+
+    var descansoAcum = {};
+
+
+    ev.forEach(
+      function (e) {
+
+        var u = e.uid;
+
+
+        if (e.tipo === "tarj_descanso_inicio") {
+
+          descansoDesde[u] = e.at;
+
+        } else if (e.tipo === "tarj_descanso_fin" && descansoDesde[u]) {
+
+          descansoAcum[u] = (descansoAcum[u] || 0) + (e.at - descansoDesde[u]);
+
+          descansoDesde[u] = null;
+
+        } else if (e.tipo === "tarj_inicio") {
+
+          ultimoFin[u] = { at: e.at, c: e.c, inicio: true };
+
+          descansoAcum[u] = 0;
+
+        } else if (e.tipo === "llegada_rep") {
+
+          var prev = ultimoFin[u];
+
+
+          /* desde el inicio de actividad solo cuenta si tardó en llegar al primer local */
+          if (prev && !(prev.inicio && (e.at - prev.at) / 60000 < 5)) {
+
+            var min = (e.at - prev.at - (descansoAcum[u] || 0)) / 60000;
+
+            var est = null;
+
+
+            if (prev.c && e.c && tieneUbicacion(prev.c) && tieneUbicacion(e.c)) {
+
+              est = MOTOR_RUTAS.minutosViaje(
+                { lat: prev.c.mapa.lat, lng: prev.c.mapa.lng },
+                { lat: e.c.mapa.lat, lng: e.c.mapa.lng }
+              );
+
+            }
+
+
+            e.traslado = {
+              min: Math.max(0, min),
+              estimado: est,
+              desde: prev.c,
+              lento: est !== null ? min > est * 1.5 + 10 : min > 30
+            };
+
+          }
+
+
+          descansoAcum[u] = 0;
+
+        } else if (e.tipo === "reposicion") {
+
+          ultimoFin[u] = { at: e.at, c: e.c };
+
+          descansoAcum[u] = 0;
+
+        }
+
+      }
+    );
+
+
+    return ev;
+
+  }
+
+
+
+  function textoMovimiento(e) {
+
+    var o = e.o || {};
+
+    var cli = e.c ? e.c.nombre : "";
+
+
+    var t = {
+      llegada: { i: "&#128666;", txt: "Llegó a " + cli },
+      entrega: { i: "&#9989;", txt: "Entregó en " + cli },
+      no_entrega: { i: "&#10060;", txt: "No entregó en " + cli + ": " + ((RESULTADOS_ENTREGA[o.detalle] || {}).label || ""), alerta: true },
+      postergado: { i: "&#9201;", txt: "Dejó para más tarde " + cli },
+      llegada_rep: {
+        i: "&#128205;",
+        txt: "Llegó a " + cli + (o.plazo ? " (" + o.plazo + " min asignados)" : "") +
+          (o.distancia !== null && o.distancia !== undefined ? " · a " + metrosTexto(o.distancia) : "")
+      },
+      extension: { i: "&#9203;", txt: "Pidió +" + (o.detalle || MINUTOS_EXTENSION) + " min en " + cli, alerta: true },
+      reposicion: {
+        i: "&#128230;",
+        txt:
+          (RESULTADOS_REPO[o.detalle] || RESULTADOS_REPO.terminado).label + " en " + cli +
+          (o.duracion !== undefined && o.duracion !== null ? " · " + duracionTexto(o.duracion) + " de " + o.plazo + " min" : "") +
+          (o.excedido ? " · se pasó " + duracionTexto(o.excedido) : ""),
+        alerta: !!o.excedido || o.detalle === "sin_reponer"
+      },
+      anulacion: { i: "&#8617;", txt: "Anulación (" + (o.detalle || "") + ") en " + cli },
+      tarea: { i: "&#128247;", txt: "Tarea «" + (o.titulo || "") + "» en " + cli },
+      tarj_inicio: { i: "&#9654;", txt: "Inició la actividad" + (cli ? " en " + cli : "") },
+      tarj_descanso_inicio: { i: "&#9749;", txt: "Empezó el descanso" },
+      tarj_descanso_fin: { i: "&#9654;", txt: "Terminó el descanso" },
+      tarj_fin: { i: "&#9632;", txt: "Terminó la actividad del día" }
+    }[e.tipo] || { i: "·", txt: e.tipo };
+
+
+    return t;
+
+  }
+
+
+
+  /* Resumen de rendimiento de un promotor en una fecha */
+
+  function rendimientoPromotor(uid, fecha, eventos) {
+
+    var mios =
+      eventos.filter(
+        function (e) {
+
+          return e.uid === uid;
+
+        }
+      );
+
+
+    var horas =
+      calcularHoras(marcasDe(uid, fecha), fecha === hoyIso());
+
+
+    var enClientes = 0;
+
+    var traslados = 0;
+
+    var excedidos = 0;
+
+    var excedidoMin = 0;
+
+    var extensiones = 0;
+
+    var lentos = 0;
+
+    var repuestos = 0;
+
+
+    mios.forEach(
+      function (e) {
+
+        if (e.tipo === "reposicion") {
+
+          repuestos++;
+
+
+          if (e.o.duracion) {
+
+            enClientes += e.o.duracion;
+
+          }
+
+
+          if (e.o.excedido) {
+
+            excedidos++;
+
+            excedidoMin += e.o.excedido;
+
+          }
+
+        } else if (e.tipo === "extension") {
+
+          extensiones++;
+
+        } else if (e.tipo === "llegada_rep" && e.traslado) {
+
+          traslados += e.traslado.min;
+
+
+          if (e.traslado.lento) {
+
+            lentos++;
+
+          }
+
+        }
+
+      }
+    );
+
+
+    /* si está en un local ahora, ese tiempo también cuenta */
+    if (fecha === hoyIso()) {
+
+      var act = visitaActivaDe(uid);
+
+
+      if (act) {
+
+        enClientes += (Date.now() - visitaDe(act).llegada.at) / 60000;
+
+      }
+
+    }
+
+
+    var trabajado = horas.trabajadoMin;
+
+
+    return {
+      trabajado: trabajado,
+      descanso: horas.descansoMin,
+      enClientes: enClientes,
+      traslados: traslados,
+      sinActividad: Math.max(0, trabajado - enClientes - traslados),
+      productividad: trabajado > 0 ? Math.min(100, Math.round(enClientes / trabajado * 100)) : 0,
+      repuestos: repuestos,
+      excedidos: excedidos,
+      excedidoMin: excedidoMin,
+      extensiones: extensiones,
+      lentos: lentos,
+      activa: fecha === hoyIso() ? visitaActivaDe(uid) : null
+    };
+
+  }
+
+
+
+  function rendimientoHtml(fecha, eventos) {
+
+    var promotores = usuariosConRol("reponedor");
+
+
+    if (!promotores.length) {
+
+      return "";
+
+    }
+
+
+    return (
+      '<div class="dash-card">' +
+        '<div class="dash-card-head">' +
+          '<h2 class="dash-card-title">Rendimiento de los promotores</h2>' +
+          '<span class="dash-card-hint">Tiempo en locales contra el asignado, traslados y tiempo sin actividad</span>' +
+        '</div>' +
+        '<div class="rend-grid">' +
+          promotores.map(
+            function (u) {
+
+              var r = rendimientoPromotor(u.id, fecha, eventos);
+
+              var v = r.activa ? visitaDe(r.activa) : null;
+
+
+              var ahora =
+                v
+                  ? '<div class="rend-ahora">En <strong>' + escapeHtml(r.activa.nombre) + '</strong> desde las ' + horaDe(v.llegada.at) +
+                      ' · <span class="cuenta-mini" data-cuenta-fin="' + finVisitaMs(v) + '" data-cuenta-inicio="' + v.llegada.at + '" ' +
+                        'data-cuenta-cliente="' + escapeHtml(r.activa.id) + '" data-cuenta-nombre="' + escapeHtml(r.activa.nombre) + '">' +
+                        '<span data-cuenta-texto>--:--</span> <span data-cuenta-label></span></span>' +
+                    '</div>'
+                  : '';
+
+
+              return (
+                '<div class="rend-card">' +
+                  '<div class="rend-head"><strong>&#129523; ' + escapeHtml(u.nombre || u.usuario) + '</strong>' +
+                    '<span class="rend-prod' + (r.productividad < 60 && r.trabajado > 60 ? ' bajo' : '') + '">' + r.productividad + '% en locales</span></div>' +
+                  ahora +
+                  '<div class="rend-barra">' +
+                    '<span class="rb-cli" style="width:' + (r.trabajado ? r.enClientes / r.trabajado * 100 : 0) + '%"></span>' +
+                    '<span class="rb-tras" style="width:' + (r.trabajado ? r.traslados / r.trabajado * 100 : 0) + '%"></span>' +
+                  '</div>' +
+                  '<div class="rend-datos">' +
+                    '<span>Trabajado <strong>' + duracionTexto(r.trabajado) + '</strong></span>' +
+                    '<span><i class="rb-cli"></i>En locales <strong>' + duracionTexto(r.enClientes) + '</strong></span>' +
+                    '<span><i class="rb-tras"></i>Traslados <strong>' + duracionTexto(r.traslados) + '</strong></span>' +
+                    '<span><i></i>Sin actividad <strong>' + duracionTexto(r.sinActividad) + '</strong></span>' +
+                    '<span>Descanso <strong>' + duracionTexto(r.descanso) + '</strong></span>' +
+                    '<span>Locales repuestos <strong>' + r.repuestos + '</strong></span>' +
+                  '</div>' +
+                  (
+                    r.excedidos || r.extensiones || r.lentos
+                      ? '<div class="rend-alertas">' +
+                          (r.excedidos ? '<span>&#9888; ' + plural(r.excedidos, "local excedido", "locales excedidos") + ' (' + duracionTexto(r.excedidoMin) + ')</span>' : '') +
+                          (r.extensiones ? '<span>&#9203; ' + plural(r.extensiones, "pedido", "pedidos") + ' de +' + MINUTOS_EXTENSION + ' min</span>' : '') +
+                          (r.lentos ? '<span>&#128663; ' + plural(r.lentos, "traslado demorado", "traslados demorados") + '</span>' : '') +
+                        '</div>'
+                      : ''
+                  ) +
+                '</div>'
+              );
+
+            }
+          ).join("") +
+        '</div>' +
+      '</div>'
+    );
+
+  }
+
+
+
+  state.movFiltro = "";
+
+  state.movSoloAlertas = false;
+
+
+
+  function movimientosHtml(fecha, eventos) {
+
+    var lista =
+      eventos
+        .filter(
+          function (e) {
+
+            var t = textoMovimiento(e);
+
+
+            return (
+              (!state.movFiltro || e.uid === state.movFiltro) &&
+              (!state.movSoloAlertas || t.alerta || (e.traslado && e.traslado.lento))
+            );
+
+          }
+        )
+        .slice()
+        .reverse();
+
+
+    var personas = {};
+
+
+    eventos.forEach(
+      function (e) {
+
+        if (e.uid) {
+
+          personas[e.uid] = nombreUsuario(e.uid) === "Usuario eliminado" ? e.nombre : nombreUsuario(e.uid);
+
+        }
+
+      }
+    );
+
+
+    return (
+      '<div class="dash-card">' +
+        '<div class="dash-card-head">' +
+          '<h2 class="dash-card-title">Movimientos del equipo (' + lista.length + ')</h2>' +
+          '<div class="ops-head-acciones">' +
+            '<select class="mov-sel" data-mov-filtro="1"><option value="">Todos</option>' +
+              Object.keys(personas).map(
+                function (u) {
+
+                  return '<option value="' + escapeHtml(u) + '"' + (u === state.movFiltro ? " selected" : "") + '>' + escapeHtml(personas[u]) + '</option>';
+
+                }
+              ).join("") +
+            '</select>' +
+            '<label class="tarea-check"><input type="checkbox" data-mov-alertas="1"' + (state.movSoloAlertas ? " checked" : "") + '> Solo alertas</label>' +
+          '</div>' +
+        '</div>' +
+        (
+          lista.length
+            ? '<div class="mov-lista">' +
+                lista.map(
+                  function (e) {
+
+                    var t = textoMovimiento(e);
+
+
+                    var tras =
+                      e.traslado
+                        ? '<div class="mov-item mov-tras' + (e.traslado.lento ? ' alerta' : '') + '">' +
+                            '<span class="mov-hora"></span>' +
+                            '<span class="mov-ico">&#128663;</span>' +
+                            '<span class="mov-txt">' +
+                              '<strong>' + escapeHtml(e.nombre || "") + '</strong> · Traslado' +
+                              (e.traslado.desde ? ' desde ' + escapeHtml(e.traslado.desde.nombre) : '') + ': ' +
+                              duracionTexto(e.traslado.min) +
+                              (e.traslado.estimado !== null ? ' (estimado ' + Math.round(e.traslado.estimado) + ' min)' : '') +
+                              (e.traslado.lento ? ' · demorado' : '') +
+                            '</span>' +
+                          '</div>'
+                        : '';
+
+
+                    /* la lista va de lo más nuevo a lo más viejo: el traslado queda debajo de la llegada */
+                    return (
+                      '<div class="mov-item' + (t.alerta ? ' alerta' : '') + '">' +
+                        '<span class="mov-hora">' + horaDe(e.at) + '</span>' +
+                        '<span class="mov-ico">' + t.i + '</span>' +
+                        '<span class="mov-txt"><strong>' + escapeHtml(e.nombre || "") + '</strong> · ' + escapeHtml(t.txt) + '</span>' +
+                      '</div>' +
+                      tras
+                    );
+
+                  }
+                ).join("") +
+              '</div>'
+            : '<div class="dash-empty">No hay movimientos' + (state.movSoloAlertas ? " con alertas" : "") + ' ese día.</div>'
+        ) +
+      '</div>'
+    );
+
+  }
+
+
+
+  /* ========================================================
+     RUTA DESDE ARCHIVO (plan del día, coordinado)
+     El administrador carga un Excel o CSV con los clientes del
+     día (y si hay: horario, camionero, promotor, importe). El
+     formato puede cambiar: se reconocen las columnas por el título.
+     Se arma la mejor ruta de cada camionero desde el depósito y la
+     hora de salida, se calcula a qué hora llega el promotor a cada
+     local detrás del camión, y se publica para ese día.
+     Se guarda en clientes/_planes (se borran solos los de hace más
+     de 7 días).
+  ======================================================== */
+
+  var PLANES_DOC_ID = "_planes";
+
+  state.planView = false;
+
+  state.plan = null;
+
+
+
+  var SINONIMOS_PLAN = {
+    codigo: ["codigo", "cod", "id", "id cliente", "nro cliente", "numero cliente", "n cliente", "cliente id", "nro", "numero", "num"],
+    nombre: ["cliente", "nombre", "nombre cliente", "razon social", "local", "comercio"],
+    horario: ["horario", "horario de recepcion", "horario recepcion", "recepcion", "franja", "franja horaria"],
+    desde: ["desde", "hora desde", "inicio", "hora inicio", "abre", "apertura"],
+    hasta: ["hasta", "hora hasta", "fin", "hora fin", "cierra", "cierre", "limite", "hora limite"],
+    camionero: ["camionero", "camion", "repartidor", "chofer", "entregador", "vehiculo", "movil", "reparto"],
+    reponedor: ["reponedor", "promotor", "repositor"],
+    importe: ["importe", "total", "monto", "valor", "importe total", "total pedido", "a cobrar", "cobrar"],
+    direccion: ["direccion", "lugar entrega", "lugar de entrega", "domicilio"],
+    orden: ["orden", "secuencia", "n orden", "nro orden", "parada"]
+  };
+
+
+  var CAMPOS_PLAN = [
+    ["codigo", "Número de cliente"], ["nombre", "Nombre"], ["horario", "Horario"], ["desde", "Recibe desde"],
+    ["hasta", "Recibe hasta"], ["camionero", "Camionero"], ["reponedor", "Promotor"], ["importe", "Importe"],
+    ["direccion", "Dirección"], ["orden", "Orden"]
+  ];
+
+
+
+  function abrirPlan() {
+
+    if (!puede("ver_operaciones")) {
+
+      return;
+
+    }
+
+
+    state.planView = true;
+
+    state.asignacionView = false;
+
+    state.opsVerRuta = null;
+
+
+    if (!state.plan) {
+
+      var manana = new Date();
+
+      manana.setDate(manana.getDate() + 1);
+
+
+      state.plan = {
+        fecha: isoDia(manana),
+        horaSalida: state.planes.horaSalida || "07:30",
+        deposito: state.planes.deposito || null,
+        filas: null,
+        columnas: null,
+        titulos: null,
+        datos: null,
+        archivo: "",
+        grupos: {},
+        camionPorDefecto: "",
+        ordenes: {}
+      };
+
+    }
+
+
+    render();
+
+    els.mainInner.parentNode.scrollTop = 0;
+
+  }
+
+
+
+  /* Excel: las horas vienen como fracción del día (0,3333 = 08:00) */
+
+  function horaDeCelda(v) {
+
+    if (typeof v === "number" && v >= 0 && v < 1) {
+
+      return deMinutos(Math.round(v * 24 * 60));
+
+    }
+
+
+    var h = interpretarHorario(String(v || ""));
+
+    return h.desde || h.hasta || "";
+
+  }
+
+
+
+  function leerArchivoPlan(file) {
+
+    return loadScript(XLSX_URL)
+
+      .then(
+        function () {
+
+          return file.arrayBuffer();
+
+        }
+      )
+
+      .then(
+        function (buf) {
+
+          var libro = XLSX.read(buf, { type: "array" });
+
+          var hoja = libro.Sheets[libro.SheetNames[0]];
+
+
+          var filas =
+            XLSX.utils.sheet_to_json(hoja, { header: 1, raw: true, defval: "" })
+              .filter(
+                function (f) {
+
+                  return f.some(function (x) { return String(x).trim() !== ""; });
+
+                }
+              );
+
+
+          if (!filas.length) {
+
+            throw errorDeValidacion("El archivo está vacío.");
+
+          }
+
+
+          /* fila de títulos: la primera (de las 10 primeras) con 2 o más títulos conocidos */
+          var hIdx = -1;
+
+          var mejor = 0;
+
+
+          filas.slice(0, 10).forEach(
+            function (f, i) {
+
+              var n =
+                f.filter(
+                  function (x) {
+
+                    return !!campoDeTitulo(x);
+
+                  }
+                ).length;
+
+
+              if (n > mejor) {
+
+                mejor = n;
+
+                hIdx = i;
+
+              }
+
+            }
+          );
+
+
+          var titulos =
+            hIdx !== -1 && mejor >= 1
+              ? filas[hIdx].map(function (x) { return String(x).trim(); })
+              : filas[0].map(function (x, i) { return "Columna " + (i + 1); });
+
+
+          var datos =
+            hIdx !== -1 && mejor >= 1 ? filas.slice(hIdx + 1) : filas;
+
+
+          /* qué columna es cada cosa */
+          var columnas = {};
+
+
+          titulos.forEach(
+            function (t, i) {
+
+              var campo = campoDeTitulo(t);
+
+
+              if (campo && columnas[campo] === undefined) {
+
+                columnas[campo] = i;
+
+              }
+
+            }
+          );
+
+
+          /* sin títulos: la primera columna es el número o el nombre del cliente */
+          if (columnas.codigo === undefined && columnas.nombre === undefined) {
+
+            var numeros =
+              datos.filter(function (f) { return /^\d+$/.test(String(f[0]).trim()); }).length;
+
+
+            columnas[numeros > datos.length / 2 ? "codigo" : "nombre"] = 0;
+
+          }
+
+
+          return { titulos: titulos, datos: datos, columnas: columnas, archivo: file.name };
+
+        }
+      );
+
+  }
+
+
+
+  function campoDeTitulo(t) {
+
+    var n = normalizarTexto(t);
+
+
+    if (!n) {
+
+      return null;
+
+    }
+
+
+    var campos = Object.keys(SINONIMOS_PLAN);
+
+
+    for (var i = 0; i < campos.length; i++) {
+
+      if (SINONIMOS_PLAN[campos[i]].indexOf(n) !== -1) {
+
+        return campos[i];
+
+      }
+
+    }
+
+
+    for (var k = 0; k < campos.length; k++) {
+
+      var lista = SINONIMOS_PLAN[campos[k]];
+
+
+      for (var j = 0; j < lista.length; j++) {
+
+        if (lista[j].length > 3 && (n.indexOf(lista[j]) === 0 || n.indexOf(" " + lista[j]) !== -1)) {
+
+          return campos[k];
+
+        }
+
+      }
+
+    }
+
+
+    return null;
+
+  }
+
+
+
+  /* Busca el cliente de una fila: por número, por nombre exacto o el más parecido */
+
+  function clienteDeFila(valores) {
+
+    var cod = String(valores.codigo || "").trim().replace(/^#/, "");
+
+
+    if (cod) {
+
+      var porCod =
+        state.clients.find(
+          function (c) {
+
+            return String(c.codigo || "") === cod;
+
+          }
+        );
+
+
+      if (porCod) {
+
+        return { c: porCod, seguro: true };
+
+      }
+
+    }
+
+
+    var nom = normalizarTexto(valores.nombre);
+
+
+    if (!nom) {
+
+      return null;
+
+    }
+
+
+    var exacto =
+      state.clients.find(
+        function (c) {
+
+          return normalizarTexto(c.nombre) === nom || normalizarTexto(c.razonSocial) === nom;
+
+        }
+      );
+
+
+    if (exacto) {
+
+      return { c: exacto, seguro: true };
+
+    }
+
+
+    var falso = { nombre: valores.nombre, razonSocial: "" };
+
+    var mejor = null;
+
+    var puntos = 0;
+
+
+    state.clients.forEach(
+      function (c) {
+
+        var p = parecidoClientes(falso, c);
+
+
+        if (p > puntos) {
+
+          puntos = p;
+
+          mejor = c;
+
+        }
+
+      }
+    );
+
+
+    return mejor && puntos >= 1.2 ? { c: mejor, seguro: false } : null;
+
+  }
+
+
+
+  /* Persona (camionero / promotor) por el texto del archivo */
+
+  function usuarioDeTexto(texto, rol) {
+
+    var t = normalizarTexto(texto);
+
+
+    if (!t) {
+
+      return "";
+
+    }
+
+
+    var u =
+      usuariosConRol(rol).find(
+        function (x) {
+
+          var n = normalizarTexto(x.nombre || "");
+
+          var us = normalizarTexto(x.usuario || "");
+
+
+          return n === t || us === t || (n && (n.indexOf(t) !== -1 || t.indexOf(n) !== -1)) ||
+            (n && n.split(" ")[0] === t.split(" ")[0]);
+
+        }
+      );
+
+
+    return u ? u.id : "";
+
+  }
+
+
+
+  /* Arma las filas del plan a partir del archivo y las columnas elegidas */
+
+  function armarFilasPlan() {
+
+    var p = state.plan;
+
+    var col = p.columnas;
+
+
+    var val = function (f, campo) {
+
+      return col[campo] === undefined || col[campo] === "" ? "" : f[col[campo]];
+
+    };
+
+
+    p.filas =
+      p.datos.map(
+        function (f, i) {
+
+          var valores = {
+            codigo: val(f, "codigo"),
+            nombre: val(f, "nombre")
+          };
+
+
+          if (!String(valores.codigo).trim() && !String(valores.nombre).trim()) {
+
+            return null;
+
+          }
+
+
+          var desde = horaDeCelda(val(f, "desde"));
+
+          var hasta = horaDeCelda(val(f, "hasta"));
+
+          var texto = val(f, "horario");
+
+
+          if (texto && !desde && !hasta) {
+
+            var h = interpretarHorario(String(texto));
+
+            desde = h.desde;
+
+            hasta = h.hasta;
+
+          }
+
+
+          var m = clienteDeFila(valores);
+
+          var importe = val(f, "importe");
+
+
+          return {
+            n: i + 1,
+            texto: [valores.codigo ? "#" + valores.codigo : "", valores.nombre].filter(Boolean).join(" "),
+            direccion: String(val(f, "direccion") || ""),
+            cid: m ? m.c.id : "",
+            seguro: m ? m.seguro : false,
+            horario: desde || hasta ? { desde: desde || "", hasta: hasta || "", texto: String(texto || "") } : null,
+            importe: typeof importe === "number" ? importe : Number(String(importe).replace(/[^\d,.-]/g, "").replace(/\./g, "").replace(",", ".")) || 0,
+            camionero: usuarioDeTexto(val(f, "camionero"), "camionero") || "",
+            camioneroTexto: String(val(f, "camionero") || ""),
+            reponedor: usuarioDeTexto(val(f, "reponedor"), "reponedor") || "",
+            orden: Number(val(f, "orden")) || null
+          };
+
+        }
+      ).filter(Boolean);
+
+
+    p.ordenes = {};
+
+  }
+
+
+
+  /* Grupos por camionero con su ruta optimizada y los horarios estimados */
+
+  function gruposPlan() {
+
+    var p = state.plan;
+
+    var grupos = {};
+
+
+    (p.filas || []).forEach(
+      function (f) {
+
+        if (!f.cid) {
+
+          return;
+
+        }
+
+
+        var cam = f.camionero || p.camionPorDefecto || "";
+
+
+        var g =
+          grupos[cam] = grupos[cam] || { uid: cam, filas: [], reponedor: "" };
+
+
+        if (!g.filas.some(function (x) { return x.cid === f.cid; })) {
+
+          g.filas.push(f);
+
+        }
+
+
+        if (f.reponedor && !g.reponedor) {
+
+          g.reponedor = f.reponedor;
+
+        }
+
+      }
+    );
+
+
+    var inicio = aMinutos(p.horaSalida) || 450;
+
+
+    Object.keys(grupos).forEach(
+      function (cam) {
+
+        var g = grupos[cam];
+
+        var conf = p.grupos[cam] || {};
+
+
+        g.reponedor = conf.reponedor !== undefined ? conf.reponedor : g.reponedor;
+
+        g.conReposicion = conf.conReposicion !== false;
+
+
+        var clientes =
+          g.filas.map(function (f) { return clientePorId(f.cid); }).filter(Boolean);
+
+
+        var horarios = {};
+
+
+        g.filas.forEach(
+          function (f) {
+
+            if (f.horario) {
+
+              horarios[f.cid] = f.horario;
+
+            }
+
+          }
+        );
+
+
+        /* orden: el elegido a mano, el del archivo (si trae "orden") o el óptimo */
+        var manual = p.ordenes[cam] || null;
+
+
+        if (!manual && g.filas.every(function (f) { return f.orden; })) {
+
+          manual =
+            g.filas.slice()
+              .sort(function (a, b) { return a.orden - b.orden; })
+              .map(function (f) { return f.cid; });
+
+        }
+
+
+        var r =
+          planificarRuta(clientes, {
+            origen: p.deposito && p.deposito.lat !== null ? p.deposito : null,
+            inicio: inicio,
+            horarios: horarios,
+            manual: manual,
+            servicio: 5
+          });
+
+
+        g.orden = r.orden;
+
+        g.etas = r.llegadas;
+
+        g.tarde = r.tarde;
+
+        g.horarios = horarios;
+
+        g.manual = !!p.ordenes[cam];
+
+        g.etasPromotor = horariosPromotor(r.orden, r.llegadas);
+
+      }
+    );
+
+
+    return grupos;
+
+  }
+
+
+
+  /* A qué hora llegaría el promotor a cada local, yendo detrás del camión */
+
+  function horariosPromotor(orden, etasCamion) {
+
+    var res = {};
+
+    var libre = null;
+
+    var prev = null;
+
+
+    orden.forEach(
+      function (c) {
+
+        var disponible =
+          etasCamion[c.id] !== undefined ? etasCamion[c.id] + 5 : null;
+
+
+        if (disponible === null) {
+
+          return;
+
+        }
+
+
+        var viaje =
+          prev && tieneUbicacion(prev) && tieneUbicacion(c)
+            ? MOTOR_RUTAS.minutosViaje({ lat: prev.mapa.lat, lng: prev.mapa.lng }, { lat: c.mapa.lat, lng: c.mapa.lng })
+            : 0;
+
+
+        var llegada =
+          libre === null ? disponible : Math.max(disponible, libre + viaje);
+
+
+        var fin = llegada + tiempoAsignadoDe(c, 20);
+
+
+        res[c.id] = { llegada: Math.round(llegada), fin: Math.round(fin) };
+
+        libre = fin;
+
+        prev = c;
+
+      }
+    );
+
+
+    return res;
+
+  }
+
+
+
+  function renderPlan() {
+
+    var p = state.plan;
+
+
+    els.mainInner.classList.add("wide");
+
+
+    var camioneros = usuariosConRol("camionero");
+
+    var promotores = usuariosConRol("reponedor");
+
+
+    var opcionesPersona = function (lista, actual, vacio) {
+
+      return '<option value="">' + vacio + '</option>' +
+        lista.map(
+          function (u) {
+
+            return '<option value="' + escapeHtml(u.id) + '"' + (u.id === actual ? " selected" : "") + '>' + escapeHtml(u.nombre || u.usuario) + '</option>';
+
+          }
+        ).join("");
+
+    };
+
+
+    var cabecera =
+      '<button type="button" class="back-link" data-plan-volver="1">&larr; Operaciones</button>' +
+
+      '<div class="dash-head"><div>' +
+        '<h1 class="dash-title">Cargar ruta desde archivo</h1>' +
+        '<p class="dash-sub">Subí el Excel o CSV con los clientes del día. Armo la mejor ruta de cada camionero ' +
+          '(distancia, horario de recepción y prioridad) y los horarios del promotor detrás del camión.</p>' +
+      '</div></div>' +
+
+      '<div class="dash-card">' +
+        '<div class="ac-grid">' +
+          '<div class="ac-field"><label>Día de la ruta</label><input type="date" data-plan-campo="fecha" value="' + escapeHtml(p.fecha) + '" min="' + hoyIso() + '"></div>' +
+          '<div class="ac-field"><label>Hora de salida</label><input type="time" data-plan-campo="horaSalida" value="' + escapeHtml(p.horaSalida) + '"></div>' +
+          '<div class="ac-field"><label>Salen desde (depósito)</label>' +
+            '<div class="user-pass">' +
+              '<input type="text" id="planDeposito" placeholder="Dirección del depósito" value="' + escapeHtml(p.deposito ? p.deposito.direccion : "") + '">' +
+              '<button type="button" class="btn btn-ghost" data-plan-deposito="1">Buscar</button>' +
+            '</div>' +
+            '<small class="custom-hint">' + (p.deposito && p.deposito.lat !== null ? "&#10003; Ubicado en el mapa" : "Sin depósito: la ruta arranca en el primer cliente") + '</small>' +
+          '</div>' +
+          '<div class="ac-field"><label>Archivo (Excel o CSV)</label>' +
+            '<label class="btn btn-primary import-elegir">' + (p.archivo ? "Cambiar archivo" : "Elegir archivo") +
+              '<input type="file" accept=".xlsx,.xls,.csv" id="planArchivo" hidden>' +
+            '</label>' +
+            (p.archivo ? '<small class="custom-hint">' + escapeHtml(p.archivo) + '</small>' : '') +
+          '</div>' +
+        '</div>' +
+        '<div id="planEstado" class="custom-hint"></div>' +
+      '</div>';
+
+
+    if (!p.filas) {
+
+      els.mainInner.innerHTML =
+        '<div class="ops-view plan-view">' + cabecera +
+          '<div class="dash-card"><p class="dash-sub">El archivo puede tener cualquier formato: reconozco columnas como ' +
+            '<strong>número de cliente</strong> o <strong>nombre</strong>, <strong>horario</strong> (o desde / hasta), ' +
+            '<strong>camionero</strong>, <strong>promotor</strong>, <strong>importe</strong> y <strong>orden</strong>. ' +
+            'Si algo no lo reconozco, lo elegís a mano.</p></div>' +
+        '</div>';
+
+
+      engancharPlanArchivo();
+
+      return;
+
+    }
+
+
+    var sinCliente = p.filas.filter(function (f) { return !f.cid; });
+
+    var dudosos = p.filas.filter(function (f) { return f.cid && !f.seguro; });
+
+    var grupos = gruposPlan();
+
+    var sinCamion = grupos[""];
+
+
+    /* columnas reconocidas (se pueden cambiar) */
+    var columnasHtml =
+      '<div class="dash-card">' +
+        '<div class="dash-card-head"><h2 class="dash-card-title">Columnas del archivo</h2>' +
+          '<span class="dash-card-hint">' + p.filas.length + ' filas · cambiá lo que no esté bien</span></div>' +
+        '<div class="plan-columnas">' +
+          CAMPOS_PLAN.map(
+            function (c) {
+
+              return (
+                '<label class="ac-field"><span>' + c[1] + '</span>' +
+                  '<select data-plan-columna="' + c[0] + '"><option value="">— no tiene —</option>' +
+                    p.titulos.map(
+                      function (t, i) {
+
+                        return '<option value="' + i + '"' + (p.columnas[c[0]] === i ? " selected" : "") + '>' + escapeHtml(t || "Columna " + (i + 1)) + '</option>';
+
+                      }
+                    ).join("") +
+                  '</select>' +
+                '</label>'
+              );
+
+            }
+          ).join("") +
+        '</div>' +
+      '</div>';
+
+
+    /* filas a revisar: sin cliente o parecidas */
+    var revisar = sinCliente.concat(dudosos);
+
+
+    var datalist =
+      '<datalist id="planClientes">' +
+        state.clients.map(
+          function (c) {
+
+            return '<option value="' + escapeHtml((c.codigo ? "#" + c.codigo + " " : "") + c.nombre) + '">';
+
+          }
+        ).join("") +
+      '</datalist>';
+
+
+    var revisarHtml =
+      revisar.length
+        ? '<div class="dash-card">' +
+            '<div class="dash-card-head"><h2 class="dash-card-title">Para revisar (' + revisar.length + ')</h2>' +
+              '<span class="dash-card-hint">' + sinCliente.length + ' sin encontrar · ' + dudosos.length + ' parecidos</span></div>' +
+            datalist +
+            '<div class="plan-revisar">' +
+              revisar.map(
+                function (f) {
+
+                  var c = f.cid ? clientePorId(f.cid) : null;
+
+
+                  return (
+                    '<div class="plan-fila' + (c ? ' dudosa' : ' falta') + '">' +
+                      '<span><strong>Fila ' + f.n + ':</strong> ' + escapeHtml(f.texto) + (f.direccion ? ' <small>' + escapeHtml(f.direccion) + '</small>' : '') + '</span>' +
+                      '<span>' + (c ? 'Parece: <strong>' + escapeHtml((c.codigo ? "#" + c.codigo + " " : "") + c.nombre) + '</strong> ' +
+                        '<button type="button" class="hist-more" data-plan-ok="' + f.n + '">Es este</button>' : '<span class="op-rojo">No lo encontré</span>') + '</span>' +
+                      '<input type="text" list="planClientes" placeholder="Buscar el cliente correcto…" data-plan-cliente="' + f.n + '">' +
+                      '<button type="button" class="hist-more" data-plan-quitar="' + f.n + '">Quitar fila</button>' +
+                    '</div>'
+                  );
+
+                }
+              ).join("") +
+            '</div>' +
+          '</div>'
+        : '';
+
+
+    var gruposHtml =
+      Object.keys(grupos)
+        .filter(function (k) { return k; })
+        .map(
+          function (cam) {
+
+            var g = grupos[cam];
+
+            var fin = 0;
+
+
+            var filasHtml =
+              g.orden.map(
+                function (c, i) {
+
+                  var eta = g.etas[c.id];
+
+                  var ep = g.etasPromotor[c.id];
+
+                  var h = g.horarios[c.id] || horarioDe(c, true);
+
+                  var tarde = g.tarde[c.id] > 0;
+
+
+                  if (ep) {
+
+                    fin = Math.max(fin, ep.fin);
+
+                  }
+
+
+                  return (
+                    '<tr class="' + (tarde ? 'plan-tarde' : '') + '">' +
+                      '<td><span class="ruta-num">' + (i + 1) + '</span></td>' +
+                      '<td><strong>' + escapeHtml((c.codigo ? "#" + c.codigo + " " : "") + c.nombre) + '</strong>' +
+                        '<br><small>' + escapeHtml(c.mapa && c.mapa.direccion ? c.mapa.direccion : "Sin dirección") + (tieneUbicacion(c) ? '' : ' · sin ubicación (va al final)') + '</small></td>' +
+                      '<td>' + escapeHtml(h.desde || h.hasta ? (h.desde || "…") + " a " + (h.hasta || "…") : "—") + '</td>' +
+                      '<td>' + (eta !== undefined ? '<strong>' + deMinutos(eta) + '</strong>' + (tarde ? '<br><small class="op-rojo">llega tarde</small>' : '') : '—') + '</td>' +
+                      '<td>' + (ep ? deMinutos(ep.llegada) + ' – ' + deMinutos(ep.fin) : '—') + '</td>' +
+                      '<td>' + (importeDeFila(c.id) ? plata(importeDeFila(c.id)) : '') + '</td>' +
+                      '<td class="plan-mover">' +
+                        '<button type="button" class="btn btn-ghost ruta-mover" data-plan-mover="arriba" data-cam="' + escapeHtml(cam) + '" data-cliente="' + escapeHtml(c.id) + '" aria-label="Subir">&#9650;</button>' +
+                        '<button type="button" class="btn btn-ghost ruta-mover" data-plan-mover="abajo" data-cam="' + escapeHtml(cam) + '" data-cliente="' + escapeHtml(c.id) + '" aria-label="Bajar">&#9660;</button>' +
+                      '</td>' +
+                    '</tr>'
+                  );
+
+                }
+              ).join("");
+
+
+            var ultimaEta = 0;
+
+
+            Object.keys(g.etas).forEach(function (k) { ultimaEta = Math.max(ultimaEta, g.etas[k]); });
+
+
+            return (
+              '<div class="dash-card plan-grupo">' +
+                '<div class="dash-card-head">' +
+                  '<h2 class="dash-card-title">&#128666; ' + escapeHtml(nombreUsuario(cam)) + ' · ' + plural(g.orden.length, "cliente", "clientes") + '</h2>' +
+                  '<span class="dash-card-hint">Sale ' + escapeHtml(p.horaSalida) + ' · última entrega ≈ ' + deMinutos(ultimaEta) +
+                    (fin ? ' · el promotor termina ≈ ' + deMinutos(fin) : '') + '</span>' +
+                '</div>' +
+                '<div class="plan-opciones">' +
+                  '<label>Promotor: <select data-plan-promotor="' + escapeHtml(cam) + '">' + opcionesPersona(promotores, g.reponedor, "Cualquier promotor") + '</select></label>' +
+                  '<label class="tarea-check"><input type="checkbox" data-plan-repo="' + escapeHtml(cam) + '"' + (g.conReposicion ? " checked" : "") + '> El promotor repone estos locales</label>' +
+                  (g.manual ? '<button type="button" class="hist-more" data-plan-auto="' + escapeHtml(cam) + '">Volver al orden óptimo</button>' : '') +
+                '</div>' +
+                '<div class="op-tabla-wrap"><table class="op-tabla">' +
+                  '<thead><tr><th></th><th>Cliente</th><th>Recibe</th><th>Camión llega</th><th>Promotor</th><th>Importe</th><th></th></tr></thead>' +
+                  '<tbody>' + filasHtml + '</tbody>' +
+                '</table></div>' +
+              '</div>'
+            );
+
+          }
+        ).join("");
+
+
+    var sinCamionHtml =
+      sinCamion
+        ? '<div class="dash-card plan-sin-camion">' +
+            '<div class="dash-card-head"><h2 class="dash-card-title">' + plural(sinCamion.filas.length, "cliente sin camionero", "clientes sin camionero") + '</h2></div>' +
+            '<p class="dash-sub">El archivo no dice qué camionero los lleva (o no reconocí el nombre' +
+              (sinCamion.filas[0] && sinCamion.filas[0].camioneroTexto ? ': «' + escapeHtml(sinCamion.filas[0].camioneroTexto) + '»' : '') + ').</p>' +
+            '<label>Asignarlos a: <select data-plan-camion-todos="1">' + opcionesPersona(camioneros, p.camionPorDefecto, "Elegir camionero…") + '</select></label>' +
+          '</div>'
+        : '';
+
+
+    var listos =
+      Object.keys(grupos).filter(function (k) { return k; }).length;
+
+
+    els.mainInner.innerHTML =
+      '<div class="ops-view plan-view">' +
+        cabecera +
+        columnasHtml +
+        revisarHtml +
+        sinCamionHtml +
+        gruposHtml +
+        '<div class="dash-card">' +
+          '<div class="tarea-form-botones">' +
+            '<button type="button" class="btn btn-primary" data-plan-publicar="1"' + (listos ? '' : ' disabled') + '>' +
+              'Publicar ruta del ' + escapeHtml(fmtDate(p.fecha)) +
+            '</button>' +
+            '<button type="button" class="btn btn-ghost" data-plan-nuevo="1">Empezar de nuevo</button>' +
+          '</div>' +
+          '<div class="custom-hint">Al publicar, ese día cada camionero ve esta ruta (puede cambiar el orden) y el promotor ve los locales a medida que se entregan.' +
+            (revisar.length ? ' Las filas sin cliente no se incluyen.' : '') + '</div>' +
+        '</div>' +
+      '</div>';
+
+
+    engancharPlanArchivo();
+
+  }
+
+
+
+  function importeDeFila(cid) {
+
+    var f = (state.plan.filas || []).find(function (x) { return x.cid === cid; });
+
+    return f ? f.importe : 0;
+
+  }
+
+
+
+  function engancharPlanArchivo() {
+
+    var input = document.getElementById("planArchivo");
+
+
+    if (!input) {
+
+      return;
+
+    }
+
+
+    input.addEventListener(
+      "change",
+      function () {
+
+        var file = input.files && input.files[0];
+
+        var est = document.getElementById("planEstado");
+
+
+        if (!file) {
+
+          return;
+
+        }
+
+
+        est.textContent = "Leyendo el archivo…";
+
+
+        leerArchivoPlan(file)
+
+          .then(
+            function (r) {
+
+              var p = state.plan;
+
+
+              p.titulos = r.titulos;
+
+              p.datos = r.datos;
+
+              p.columnas = r.columnas;
+
+              p.archivo = r.archivo;
+
+              p.grupos = {};
+
+
+              armarFilasPlan();
+
+              renderPlan();
+
+            }
+          )
+
+          .catch(
+            function (err) {
+
+              console.error(err);
+
+              est.textContent = err && err.validacion ? err.message : "No se pudo leer el archivo. ¿Es un Excel o CSV?";
+
+            }
+          );
+
+      }
+    );
+
+  }
+
+
+
+  /* Clics de la pantalla del plan */
+
+  function accionPlan(el) {
+
+    var p = state.plan;
+
+    var v;
+
+
+    if (el.hasAttribute("data-plan-volver")) {
+
+      state.planView = false;
+
+      mapaOpsFirma = null;
+
+      render();
+
+      return;
+
+    }
+
+
+    if (el.hasAttribute("data-plan-nuevo")) {
+
+      state.plan = null;
+
+      abrirPlan();
+
+      return;
+
+    }
+
+
+    if (el.hasAttribute("data-plan-deposito")) {
+
+      var dir = document.getElementById("planDeposito").value.trim();
+
+
+      if (!dir) {
+
+        return;
+
+      }
+
+
+      document.getElementById("planEstado").textContent = "Buscando el depósito…";
+
+
+      geocodificar(dir + ", Uruguay")
+
+        .then(
+          function (lista) {
+
+            if (!lista.length) {
+
+              throw errorDeValidacion("No encontré esa dirección. Probá con calle, número y ciudad.");
+
+            }
+
+
+            p.deposito = { direccion: dir, lat: lista[0].lat, lng: lista[0].lng };
+
+            renderPlan();
+
+          }
+        )
+
+        .catch(
+          function (err) {
+
+            document.getElementById("planEstado").textContent =
+              err && err.validacion ? err.message : "No se pudo buscar la dirección.";
+
+          }
+        );
+
+      return;
+
+    }
+
+
+    if ((v = el.getAttribute("data-plan-ok"))) {
+
+      var f = p.filas.find(function (x) { return x.n === Number(v); });
+
+
+      if (f) {
+
+        f.seguro = true;
+
+      }
+
+
+      renderPlan();
+
+      return;
+
+    }
+
+
+    if ((v = el.getAttribute("data-plan-quitar"))) {
+
+      p.filas = p.filas.filter(function (x) { return x.n !== Number(v); });
+
+      renderPlan();
+
+      return;
+
+    }
+
+
+    if ((v = el.getAttribute("data-plan-auto"))) {
+
+      delete p.ordenes[v];
+
+      renderPlan();
+
+      return;
+
+    }
+
+
+    if ((v = el.getAttribute("data-plan-mover"))) {
+
+      var cam = el.getAttribute("data-cam");
+
+      var id = el.getAttribute("data-cliente");
+
+      var g = gruposPlan()[cam];
+
+
+      if (!g) {
+
+        return;
+
+      }
+
+
+      var ids = g.orden.map(function (c) { return c.id; });
+
+      var i = ids.indexOf(id);
+
+      var j = v === "arriba" ? i - 1 : i + 1;
+
+
+      if (i === -1 || j < 0 || j >= ids.length) {
+
+        return;
+
+      }
+
+
+      ids[i] = ids[j];
+
+      ids[j] = id;
+
+
+      p.ordenes[cam] = ids;
+
+      renderPlan();
+
+      return;
+
+    }
+
+
+    if (el.hasAttribute("data-plan-publicar")) {
+
+      publicarPlan(el);
+
+    }
+
+  }
+
+
+
+  /* Cambios en los campos del plan */
+
+  function cambioPlan(target) {
+
+    var p = state.plan;
+
+    var v;
+
+
+    if (!p) {
+
+      return false;
+
+    }
+
+
+    if ((v = target.getAttribute("data-plan-campo"))) {
+
+      p[v] = target.value;
+
+      renderPlan();
+
+      return true;
+
+    }
+
+
+    if ((v = target.getAttribute("data-plan-columna"))) {
+
+      p.columnas[v] = target.value === "" ? undefined : Number(target.value);
+
+      armarFilasPlan();
+
+      renderPlan();
+
+      return true;
+
+    }
+
+
+    if ((v = target.getAttribute("data-plan-cliente"))) {
+
+      var texto = target.value.trim();
+
+
+      var c =
+        state.clients.find(
+          function (x) {
+
+            return (x.codigo ? "#" + x.codigo + " " : "") + x.nombre === texto;
+
+          }
+        );
+
+
+      if (c) {
+
+        var f = p.filas.find(function (x) { return x.n === Number(v); });
+
+
+        if (f) {
+
+          f.cid = c.id;
+
+          f.seguro = true;
+
+        }
+
+
+        renderPlan();
+
+      }
+
+
+      return true;
+
+    }
+
+
+    if ((v = target.getAttribute("data-plan-promotor")) !== null) {
+
+      p.grupos[v] = Object.assign(p.grupos[v] || {}, { reponedor: target.value });
+
+      renderPlan();
+
+      return true;
+
+    }
+
+
+    if ((v = target.getAttribute("data-plan-repo")) !== null) {
+
+      p.grupos[v] = Object.assign(p.grupos[v] || {}, { conReposicion: target.checked });
+
+      return true;
+
+    }
+
+
+    if (target.hasAttribute("data-plan-camion-todos")) {
+
+      p.camionPorDefecto = target.value;
+
+      renderPlan();
+
+      return true;
+
+    }
+
+
+    return false;
+
+  }
+
+
+
+  function publicarPlan(boton) {
+
+    var p = state.plan;
+
+    var grupos = gruposPlan();
+
+
+    var camioneros =
+      Object.keys(grupos).filter(function (k) { return k; });
+
+
+    if (!camioneros.length) {
+
+      return;
+
+    }
+
+
+    var existente = planDelDia(p.fecha);
+
+
+    var pisa =
+      existente
+        ? camioneros.filter(function (u) { return existente.camioneros[u]; })
+        : [];
+
+
+    if (
+      !confirm(
+        "¿Publicar la ruta del " + fmtDate(p.fecha) + "?\n\n" +
+        camioneros.map(function (u) { return "• " + nombreUsuario(u) + ": " + plural(grupos[u].orden.length, "cliente", "clientes"); }).join("\n") +
+        (pisa.length ? "\n\nReemplaza la ruta ya cargada de: " + pisa.map(nombreUsuario).join(", ") + "." : "")
+      )
+    ) {
+
+      return;
+
+    }
+
+
+    var dia = {};
+
+
+    camioneros.forEach(
+      function (u) {
+
+        var g = grupos[u];
+
+        var importes = {};
+
+        var horarios = {};
+
+        var etas = {};
+
+
+        g.orden.forEach(
+          function (c) {
+
+            var imp = importeDeFila(c.id);
+
+
+            if (imp) {
+
+              importes[c.id] = imp;
+
+            }
+
+
+            if (g.horarios[c.id]) {
+
+              horarios[c.id] = g.horarios[c.id];
+
+            }
+
+
+            if (g.etas[c.id] !== undefined) {
+
+              etas[c.id] = Math.round(g.etas[c.id]);
+
+            }
+
+          }
+        );
+
+
+        dia[u] = {
+          clientes: g.orden.map(function (c) { return c.id; }),
+          horarios: horarios,
+          importes: importes,
+          reponedorId: g.reponedor || "",
+          conReposicion: g.conReposicion,
+          etas: etas,
+          etasPromotor: g.etasPromotor,
+          horaSalida: p.horaSalida
+        };
+
+      }
+    );
+
+
+    boton.disabled = true;
+
+
+    var ref = state.db.doc("clientes/" + PLANES_DOC_ID);
+
+    var limite = isoDia(new Date(Date.now() - 7 * 86400000));
+
+
+    state.db.runTransaction(
+      function (tx) {
+
+        return tx.get(ref).then(
+          function (snap) {
+
+            var data = snap.exists ? snap.data() : {};
+
+            var dias = data.dias || {};
+
+
+            /* se borran los planes de hace más de 7 días */
+            Object.keys(dias).forEach(
+              function (f) {
+
+                if (f < limite) {
+
+                  delete dias[f];
+
+                }
+
+              }
+            );
+
+
+            var anterior = dias[p.fecha] || { camioneros: {} };
+
+
+            dias[p.fecha] = {
+              camioneros: Object.assign({}, anterior.camioneros || {}, dia),
+              archivo: p.archivo,
+              actualizado: Date.now(),
+              porNombre: quienSoy()
+            };
+
+
+            tx.set(ref, {
+              dias: dias,
+              deposito: p.deposito || data.deposito || null,
+              horaSalida: p.horaSalida
+            });
+
+          }
+        );
+
+      }
+    )
+
+      .then(
+        function () {
+
+          /* si la ruta es de hoy, se borra el orden a mano anterior de esos camioneros */
+          if (p.fecha === hoyIso()) {
+
+            return modificarJornada(
+              null,
+              function (data) {
+
+                camioneros.forEach(
+                  function (u) {
+
+                    delete data.ordenes[u];
+
+                    delete data.destinos[u];
+
+                  }
+                );
+
+              }
+            );
+
+          }
+
+        }
+      )
+
+      .then(
+        function () {
+
+          showToast("Ruta del " + fmtDate(p.fecha) + " publicada.");
+
+          state.plan = null;
+
+          state.planView = false;
+
+          mapaOpsFirma = null;
+
+          render();
+
+        }
+      )
+
+      .catch(
+        function (err) {
+
+          boton.disabled = false;
+
+          avisarError(err, "No se pudo publicar la ruta. Revisá tu conexión.");
+
+        }
+      );
+
+  }
+
+
+
+  /* Para el promotor: a qué hora llega el camión a este local según el plan */
+
+  function etaCamionPlanTexto(c) {
+
+    var pl = enPlanHoy(c);
+
+    var eta = pl && pl.entrada.etas ? pl.entrada.etas[c.id] : undefined;
+
+    var ep = pl && pl.entrada.etasPromotor ? pl.entrada.etasPromotor[c.id] : null;
+
+
+    return eta !== undefined
+      ? " · camión ≈ " + deMinutos(eta) + (ep ? " · vos ≈ " + deMinutos(ep.llegada) : "") + " (según la ruta cargada)"
+      : "";
+
+  }
+
+
+
+  /* Rutas cargadas (hoy y próximos días), para Operaciones */
+
+  function planesCargadosHtml() {
+
+    var dias =
+      Object.keys(state.planes.dias || {})
+        .filter(function (f) { return f >= hoyIso(); })
+        .sort();
+
+
+    return (
+      '<div class="dash-card">' +
+        '<div class="dash-card-head">' +
+          '<h2 class="dash-card-title">Rutas cargadas desde archivo</h2>' +
+          '<button type="button" class="btn btn-primary" data-plan-abrir="1">Cargar ruta (archivo)</button>' +
+        '</div>' +
+        (
+          dias.length
+            ? '<div class="user-list">' +
+                dias.map(
+                  function (f) {
+
+                    var d = state.planes.dias[f];
+
+
+                    return (
+                      '<div class="user-row">' +
+                        '<span class="user-info"><strong>' + escapeHtml(fmtDate(f)) + (f === hoyIso() ? " (hoy)" : "") + '</strong>' +
+                          '<small>' +
+                            Object.keys(d.camioneros || {}).map(
+                              function (u) {
+
+                                var e = d.camioneros[u];
+
+
+                                return escapeHtml(nombreUsuario(u)) + ": " + (e.clientes || []).length + " clientes" +
+                                  (e.reponedorId ? " · promotor " + escapeHtml(nombreUsuario(e.reponedorId)) : "");
+
+                              }
+                            ).join(" · ") +
+                            (d.archivo ? " · " + escapeHtml(d.archivo) : "") +
+                          '</small>' +
+                        '</span>' +
+                        '<span class="user-actions"><button type="button" class="btn btn-danger" data-plan-borrar="' + escapeHtml(f) + '">Borrar</button></span>' +
+                      '</div>'
+                    );
+
+                  }
+                ).join("") +
+              '</div>'
+            : '<div class="hist-empty">No hay rutas cargadas. Sin archivo, cada camionero usa los días de entrega de sus clientes.</div>'
+        ) +
+      '</div>'
+    );
+
+  }
+
+
+
+  function borrarPlan(fecha) {
+
+    if (!confirm("¿Borrar la ruta cargada del " + fmtDate(fecha) + "? Ese día se vuelve a usar la logística de cada cliente.")) {
+
+      return;
+
+    }
+
+
+    var ref = state.db.doc("clientes/" + PLANES_DOC_ID);
+
+
+    state.db.runTransaction(
+      function (tx) {
+
+        return tx.get(ref).then(
+          function (snap) {
+
+            var data = snap.exists ? snap.data() : {};
+
+
+            if (data.dias) {
+
+              delete data.dias[fecha];
+
+            }
+
+
+            tx.set(ref, data);
+
+          }
+        );
+
+      }
+    )
+      .then(
+        function () {
+
+          showToast("Ruta borrada.");
+
+        }
+      )
+      .catch(
+        function (err) {
+
+          avisarError(err, "No se pudo borrar.");
+
+        }
+      );
+
+  }
+
+
+
+  /* ========================================================
      INIT
   ======================================================== */
 
@@ -36441,6 +40444,8 @@ body[data-vista="ruta"] #avisoBar {
 
         var tareas = [];
 
+        var planes = {};
+
 
         snap.docs.forEach(
           function (doc) {
@@ -36459,6 +40464,10 @@ body[data-vista="ruta"] #avisoBar {
 
               tareas = Array.isArray((doc.data() || {}).tareas) ? doc.data().tareas : [];
 
+            } else if (doc.id === PLANES_DOC_ID) {
+
+              planes = doc.data() || {};
+
             }
 
           }
@@ -36470,6 +40479,8 @@ body[data-vista="ruta"] #avisoBar {
         state.tarjetero = tarjetero;
 
         state.tareas = tareas;
+
+        state.planes = planes;
 
 
         /* qué documentos cambiaron (para no redibujar de más: por ejemplo,
