@@ -102,32 +102,57 @@ que Vercel publica sola junto con la página.
    esté administrado el dominio. Cuando figure "Verified", cambiá
    `RESEND_FROM` a una dirección de ese dominio y hacé Redeploy.
 
-## 5. Entregas y reposición (camioneros y reponedores)
+## 5. Entregas, reposición y promotores
 
-1. En **Usuarios** creá los camioneros y reponedores (eligiendo el rol).
-2. Editá cada cliente → sección **Logística**: camionero, reponedor
-   (o "Cualquier reponedor") y los **días de entrega**. Para la ruta, el
-   cliente tiene que estar ubicado en el mapa.
-3. Cada día:
-   - Todos los usuarios ven los clientes (como el vendedor). Arriba hay
-     **pestañas** para pasar a lo de cada rol: el camionero y el reponedor
-     tienen *Mi ruta* y *Clientes*; el administrador *Clientes* y *Operaciones*.
-   - El **camionero** entra y ve *Mi ruta de entregas*: el próximo destino,
-     los siguientes en orden y el mapa. Toca **Marcar como entregado**.
-   - El local pasa a *Mercadería entregada · pendiente de reposición* y
-     aparece solo en la ruta del **reponedor**, que se reordena sin cambiarle
-     el destino actual. Toca **Marcar reposición como completada**.
-   - El **administrador** ve todo en vivo en **Operaciones** (y el historial
-     de días anteriores eligiendo la fecha); puede anular una acción marcada
-     por error. El **vendedor** ve el estado de hoy en la ficha del cliente.
+### Clientes desde el sistema (Excel)
+En el **Panel general** → **Importar clientes (Excel)**: elegí el Excel de
+clientes que exporta el sistema. Muestra un resumen y recién guarda cuando
+confirmás. Trae dirección, ubicación, horario de recepción, vendedor, rutas,
+días de visita, RUT, condición de pago y estado de cuenta. Se puede repetir
+para actualizar: no duplica (usa el código del cliente) y no pisa lo cargado
+a mano (acuerdos, espacios, logística, prioridad, ubicación corregida).
 
-Datos (no hace falta cambiar las reglas de Firestore): la jornada del día
-está en `clientes/_jornada` y se reinicia sola cada día; el historial
-permanente queda en cada cliente (`operaciones`).
+### Configuración
+1. En **Usuarios** creá los camioneros y promotores (eligiendo el rol).
+2. **Operaciones → Asignación masiva**: elegí clientes por ruta, vendedor o
+   departamento y asignales camionero, promotor, días de entrega, días de
+   reposición, prioridad (1 = máxima) y tiempo asignado. También se puede
+   cliente por cliente en el formulario («Datos de visita» y «Logística»).
+3. **Tareas**: tareas para los promotores (ej.: foto de las cabeceras). Las
+   fotos se sellan con el nombre del cliente, la fecha y la hora.
 
-Rutas: se calculan en la página con distancia geográfica (sin servicios
-externos ni claves). "Cómo llegar" y "Abrir toda la ruta" abren Google Maps
-sin necesidad de API key. El cálculo está separado en `MOTOR_RUTAS` dentro
-de `index.html`; si en el futuro se quiere usar tiempos reales de tránsito
-(Google Routes, Mapbox, OpenRouteService), se haría con una función de
-Vercel y la clave en una variable de entorno, nunca en el código.
+### Cada día
+- **Camionero / entregador** (*Mi ruta de entregas*): ruta ordenada por
+  distancia, horario de recepción y prioridad; Waze o Google Maps; puede
+  cambiar el orden (▲ ▼, «Ir ahora»). En cada cliente marca **Llegué** y
+  después el resultado: entregado, local cerrado, no recibió el pedido o
+  pasar en otro momento. Ve el importe a entregar si el administrador lo cargó.
+- **Promotor / reponedor** (*Mi ruta de reposición*): tarjetero (inicio de
+  actividad en el primer cliente, descansos y fin); solo ve los locales ya
+  entregados (o con reposición sin entrega ese día); marca la reposición
+  (terminado, parcial o sin reponer) estando en el local — máximo 2 cuadras;
+  hace las tareas con foto; ve dónde está el camionero.
+- **Administrador**: *Operaciones* (en vivo, mapa del equipo, importes, ver
+  la ruta de cada uno, anular marcas, historial por fecha), *Tarjetero*
+  (horas trabajadas y descansos por mes, con Excel) y *Tareas* (fotos hechas).
+- Todos los usuarios ven los clientes en la pestaña *Clientes*.
+
+La ubicación del equipo se comparte mientras tienen la web abierta en el
+celular (el navegador pide permiso). Es una página web: con la pantalla
+apagada el celular deja de enviar la ubicación.
+
+### Datos (no hace falta cambiar las reglas de Firestore)
+- `clientes/_jornada`: el día en curso (se reinicia solo cada día).
+- `clientes/{id}.operaciones`: historial permanente de entregas y reposiciones.
+- `clientes/_pos_{usuario}`: última ubicación de cada usuario.
+- `clientes/_tarjetero_AAAA-MM`: marcas del tarjetero de cada mes.
+- `clientes/_tareas` y `clientes/{id}.tareasHechas`: tareas y fotos
+  (las fotos van a Storage, en `clientes/{id}/tareas/`).
+
+### Rutas
+Se calculan en la página (distancia, horario de recepción y prioridad), sin
+servicios externos ni claves. Waze y Google Maps se abren sin API key. El
+cálculo está separado en `MOTOR_RUTAS` dentro de `index.html`; si en el futuro
+se quieren tiempos reales de tránsito (Google Routes, Mapbox,
+OpenRouteService), se haría con una función de Vercel y la clave en una
+variable de entorno, nunca en el código.
