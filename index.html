@@ -8790,6 +8790,97 @@ body[data-vista="ruta"] #avisoBar {
 
 }
 
+
+
+/* ---------- fusionar clientes ---------- */
+
+.fusion-modal .modal-card {
+
+  max-width: 520px;
+
+}
+
+
+.fusion-buscar {
+
+  width: 100%;
+
+  box-sizing: border-box;
+
+  font: inherit;
+
+  padding: 10px 12px;
+
+  border: 1px solid var(--border-strong);
+
+  border-radius: 8px;
+
+  margin-top: 12px;
+
+}
+
+
+.fusion-lista {
+
+  max-height: 50vh;
+
+  overflow-y: auto;
+
+  margin-top: 10px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 6px;
+
+}
+
+
+.fusion-item {
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: flex-start;
+
+  gap: 2px;
+
+  text-align: left;
+
+  font: inherit;
+
+  background: var(--surface);
+
+  border: 1px solid var(--border);
+
+  border-radius: 10px;
+
+  padding: 10px 12px;
+
+  cursor: pointer;
+
+  color: var(--ink);
+
+}
+
+
+.fusion-item:hover {
+
+  border-color: var(--accent);
+
+  background: var(--accent-soft);
+
+}
+
+
+.fusion-item small {
+
+  color: var(--ink-soft);
+
+}
+
 </style>
 </head>
 
@@ -9516,6 +9607,24 @@ body[data-vista="ruta"] #avisoBar {
       label: "Todos los clientes",
       test: function () {
         return true;
+      }
+    },
+
+    /* clientes con contrato: tienen fecha de vencimiento del acuerdo */
+    {
+      key: "contrato",
+      label: "Con contrato (con fecha de vencimiento)",
+      test: function (dias, fin) {
+        return !!fin;
+      }
+    },
+
+    /* clientes a los que les falta el punto en el mapa (lugar de entrega) */
+    {
+      key: "sinubicacion",
+      label: "Sin ubicación en el mapa",
+      test: function (dias, fin, c) {
+        return !!c && !tieneUbicacion(c);
       }
     },
 
@@ -12404,7 +12513,8 @@ body[data-vista="ruta"] #avisoBar {
               daysUntil(
                 c.vigenciaFin
               ),
-              c.vigenciaFin
+              c.vigenciaFin,
+              c
             )
           );
 
@@ -12543,7 +12653,8 @@ body[data-vista="ruta"] #avisoBar {
                   daysUntil(
                     c.vigenciaFin
                   ),
-                  c.vigenciaFin
+                  c.vigenciaFin,
+                  c
                 );
 
               }
@@ -15274,6 +15385,11 @@ body[data-vista="ruta"] #avisoBar {
 
               '<button class="btn btn-ghost" id="editBtn">' +
                 'Editar' +
+              '</button>' +
+
+              '<button class="btn btn-ghost" data-fusionar="' + escapeHtml(c.id) + '" ' +
+                'title="Unir este cliente con otro que esté duplicado (por ejemplo, el mismo local cargado a mano y desde el Excel)">' +
+                'Fusionar' +
               '</button>' +
 
               '<button class="btn btn-danger" id="deleteBtn">' +
@@ -33499,7 +33615,7 @@ body[data-vista="ruta"] #avisoBar {
       ["Contacto", c.contacto],
       ["Email", c.email],
       ["Localidad", [c.localidad, c.departamento].filter(Boolean).join(", ")],
-      ["Lugar de entrega", c.lugarEntrega],
+      ["Dirección de facturación", c.direccionFiscal && (!c.mapa || normalizarTexto(c.mapa.direccion) !== normalizarTexto(c.direccionFiscal)) ? c.direccionFiscal : ""],
       ["Rutas", (c.rutas || []).join(" · ")]
     ];
 
@@ -34286,6 +34402,15 @@ body[data-vista="ruta"] #avisoBar {
     }
 
 
+    if ((el = e.target.closest("[data-fusionar]"))) {
+
+      abrirFusion(el.getAttribute("data-fusionar"));
+
+      return true;
+
+    }
+
+
     if (e.target.closest("[data-importar]")) {
 
       abrirImportacion();
@@ -34694,8 +34819,11 @@ body[data-vista="ruta"] #avisoBar {
                 lat < -29 && lat > -36 && lng < -52 && lng > -59.5;
 
 
-              var direccion =
-                [txt("direccion"), txt("localidad")]
+              /* la ubicación del cliente es donde se entrega: el "lugar de
+                 entrega" (en las cadenas, "Dirección" es la casa central) */
+              var conLocalidad = function (calle) {
+
+                return [calle, txt("localidad")]
                   .filter(Boolean)
                   .filter(
                     function (x, i, arr) {
@@ -34705,6 +34833,16 @@ body[data-vista="ruta"] #avisoBar {
                     }
                   )
                   .join(", ");
+
+              };
+
+
+              var direccion =
+                conLocalidad(txt("lugar") || txt("direccion"));
+
+
+              var direccionFiscal =
+                conLocalidad(txt("direccion"));
 
 
               var nDias = dias.filter(function (d) { return d >= 1 && d <= 6; }).length;
@@ -34721,6 +34859,7 @@ body[data-vista="ruta"] #avisoBar {
                 departamento: txt("depto"),
                 localidad: txt("localidad"),
                 direccion: direccion,
+                direccionFiscal: direccionFiscal,
                 telefono: C.telefonos === -1 ? "" : String(f[C.telefonos] || "").replace(/\s+/g, " ").trim(),
                 contacto: txt("contacto"),
                 email: txt("email").toLowerCase(),
@@ -34853,6 +34992,7 @@ body[data-vista="ruta"] #avisoBar {
       localidad: x.localidad,
       contacto: x.contacto,
       lugarEntrega: x.lugarEntrega,
+      direccionFiscal: x.direccionFiscal,
       condicionPago: x.condicionPago,
       estadoCuenta: x.estadoCuenta,
       deuda: x.deuda,
@@ -34927,6 +35067,15 @@ body[data-vista="ruta"] #avisoBar {
     /* la ubicación se completa si no tenía (no se pisa un punto corregido a mano) */
     if (mapa && !tieneUbicacion(c) && (mapa.lat !== null || !c.mapa)) {
 
+      datos.mapa = mapa;
+
+    } else if (
+      mapa && c.mapa && c.importacion && mapa.lat !== null &&
+      c.mapa.lat === mapa.lat && c.mapa.lng === mapa.lng &&
+      c.mapa.direccion !== mapa.direccion
+    ) {
+
+      /* mismo punto del sistema: se actualiza el texto (lugar de entrega) */
       datos.mapa = mapa;
 
     }
@@ -35361,6 +35510,7 @@ body[data-vista="ruta"] #avisoBar {
       departamento: texto(data.departamento),
       localidad: texto(data.localidad),
       lugarEntrega: texto(data.lugarEntrega),
+      direccionFiscal: texto(data.direccionFiscal),
       condicionPago: texto(data.condicionPago),
       estadoCuenta: texto(data.estadoCuenta),
       deuda: Number(data.deuda) || 0,
@@ -35429,6 +35579,669 @@ body[data-vista="ruta"] #avisoBar {
       state.asignacionView ||
       state.importView ||
       (state.tareasView && state.tareaForm)
+    );
+
+  }
+
+
+
+  /* ========================================================
+     FUSIONAR CLIENTES DUPLICADOS
+     (ej: el mismo local cargado a mano y después importado del
+     Excel). Queda el cliente que se está mirando, con los datos
+     de los dos; el otro se borra. No se pierde nada:
+       - datos del sistema (código, RUT, rutas…) del importado
+       - acuerdos, espacios, fotos, notas y contrato del cargado a mano
+       - historiales, productos, entregas y tareas de los dos
+  ======================================================== */
+
+  var CAMPOS_ERP = [
+    "codigo", "razonSocial", "rut", "departamento", "localidad", "contacto",
+    "lugarEntrega", "direccionFiscal", "condicionPago", "estadoCuenta", "deuda", "creditoMaximo",
+    "rutas", "vendedoresErp", "importacion"
+  ];
+
+
+  var CAMPOS_COMPLETAR = [
+    "email", "telefono", "vendedor", "diasVisita", "frecuencia", "horario",
+    "prioridad", "tiempoAsignado", "grupoCompra", "acuerdoComercial", "acuerdoEnviado"
+  ];
+
+
+
+  function vacioFusion(v) {
+
+    return (
+      v === undefined || v === null || v === "" ||
+      (Array.isArray(v) && !v.length) ||
+      (typeof v === "object" && !Array.isArray(v) && !Object.keys(v).length)
+    );
+
+  }
+
+
+
+  function unirListas(a, b, clave) {
+
+    var vistos = {};
+
+    var res = [];
+
+
+    (a || []).concat(b || []).forEach(
+      function (x) {
+
+        if (!x) {
+
+          return;
+
+        }
+
+
+        var k = clave ? x[clave] : JSON.stringify(x);
+
+
+        if (k && vistos[k]) {
+
+          return;
+
+        }
+
+
+        if (k) {
+
+          vistos[k] = true;
+
+        }
+
+
+        res.push(x);
+
+      }
+    );
+
+
+    return res;
+
+  }
+
+
+
+  /* a = cliente que queda, b = el que se absorbe (datos crudos de Firestore) */
+
+  function combinarClientes(a, b, ahora, usuario) {
+
+    var out = {};
+
+
+    /* datos del sistema: los del importado (si el que queda no tiene código) */
+    var bEsDelSistema = !!b.codigo && !a.codigo;
+
+
+    CAMPOS_ERP.forEach(
+      function (f) {
+
+        if (b[f] !== undefined && (bEsDelSistema || vacioFusion(a[f]))) {
+
+          out[f] = b[f];
+
+        }
+
+      }
+    );
+
+
+    /* lo demás: se completa solo si el que queda no lo tiene */
+    CAMPOS_COMPLETAR.forEach(
+      function (f) {
+
+        if (vacioFusion(a[f]) && !vacioFusion(b[f])) {
+
+          out[f] = b[f];
+
+        }
+
+      }
+    );
+
+
+    /* contrato: si el que queda no tiene fechas, se toman las del otro */
+    if (!a.vigenciaFin && !a.vigenciaInicio && (b.vigenciaFin || b.vigenciaInicio)) {
+
+      out.vigenciaInicio = b.vigenciaInicio || "";
+
+      out.vigenciaFin = b.vigenciaFin || "";
+
+    }
+
+
+    /* ubicación: la que tenga coordenadas (prioridad la del que queda) */
+    var conPunto = function (m) {
+
+      return !!(m && m.lat !== null && m.lat !== undefined && isFinite(m.lat) && m.lng !== null && isFinite(m.lng));
+
+    };
+
+
+    if (!conPunto(a.mapa) && conPunto(b.mapa)) {
+
+      out.mapa = b.mapa;
+
+    } else if (!a.mapa && b.mapa) {
+
+      out.mapa = b.mapa;
+
+    }
+
+
+    /* logística: se completa campo por campo */
+    if (a.logistica || b.logistica) {
+
+      var la = a.logistica || {};
+
+      var lb = b.logistica || {};
+
+
+      out.logistica = {
+        camioneroId: la.camioneroId || lb.camioneroId || "",
+        reponedorId: la.reponedorId || lb.reponedorId || "",
+        dias: (la.dias || []).length ? la.dias : (lb.dias || []),
+        diasReposicion: (la.diasReposicion || []).length ? la.diasReposicion : (lb.diasReposicion || [])
+      };
+
+    }
+
+
+    /* notas: si las dos tienen, se juntan */
+    var na = (a.notas || "").trim();
+
+    var nb = (b.notas || "").trim();
+
+
+    if (nb && na !== nb) {
+
+      out.notas = na ? na + "\n\n" + nb : nb;
+
+    }
+
+
+    /* espacios: quedan los del que queda; se suman los acordados del otro */
+    var espacios = Object.assign({}, a.espacios || {});
+
+    var sumoEspacios = false;
+
+
+    Object.keys(b.espacios || {}).forEach(
+      function (k) {
+
+        var eb = b.espacios[k];
+
+
+        if (eb && eb.activo && (!espacios[k] || !espacios[k].activo)) {
+
+          espacios[k] = eb;
+
+          sumoEspacios = true;
+
+        }
+
+      }
+    );
+
+
+    if (sumoEspacios) {
+
+      out.espacios = espacios;
+
+    }
+
+
+    /* acuerdos firmados: todos los archivos de los dos */
+    var acuerdosB = leerAcuerdosFirmados(b);
+
+
+    if (acuerdosB.length) {
+
+      var todos =
+        unirListas(leerAcuerdosFirmados(a), acuerdosB, "url");
+
+
+      out.acuerdosFirmados = todos;
+
+      out.acuerdoFirmado = todos[0] || null;
+
+    }
+
+
+    /* listas: se juntan sin repetir */
+    if ((b.productos || []).length) {
+
+      out.productos = unirListas(a.productos, b.productos, "id");
+
+    }
+
+
+    if ((b.operaciones || []).length) {
+
+      out.operaciones = unirListas(a.operaciones, b.operaciones);
+
+    }
+
+
+    if ((b.tareasHechas || []).length) {
+
+      out.tareasHechas = unirListas(a.tareasHechas, b.tareasHechas);
+
+    }
+
+
+    out.historial =
+      unirListas(a.historial, b.historial)
+        .concat([{
+          fecha: ahora,
+          usuario: usuario,
+          cambios: [
+            "Fusionado con «" + (b.nombre || "otro cliente") + "»" +
+            (b.codigo ? " (cliente #" + b.codigo + " del sistema)" : "") +
+            ": se unieron los datos de los dos"
+          ]
+        }])
+        .sort(
+          function (x, y) {
+
+            return (x.fecha || 0) - (y.fecha || 0);
+
+          }
+        )
+        .slice(-HISTORIAL_MAX);
+
+
+    out.updatedAt = ahora;
+
+
+    return out;
+
+  }
+
+
+
+  function fusionarClientes(keepId, otroId) {
+
+    var db = state.db;
+
+    var kRef = db.doc("clientes/" + keepId);
+
+    var oRef = db.doc("clientes/" + otroId);
+
+    var jRef = db.doc("clientes/" + JORNADA_DOC_ID);
+
+    var tRef = db.doc("clientes/" + TAREAS_DOC_ID);
+
+    var ahora = Date.now();
+
+    var usuario = usuarioActual();
+
+
+    return db.runTransaction(
+      function (tx) {
+
+        return Promise.all([tx.get(kRef), tx.get(oRef), tx.get(jRef), tx.get(tRef)]).then(
+          function (s) {
+
+            if (!s[0].exists || !s[1].exists) {
+
+              throw errorDeValidacion("Uno de los dos clientes ya no existe.");
+
+            }
+
+
+            tx.update(kRef, combinarClientes(s[0].data(), s[1].data(), ahora, usuario));
+
+
+            /* la jornada de hoy y las tareas apuntan al cliente que queda */
+            if (s[2].exists) {
+
+              var j = s[2].data();
+
+              var cambio = false;
+
+
+              if (j.estados && j.estados[otroId]) {
+
+                if (!j.estados[keepId]) {
+
+                  j.estados[keepId] = j.estados[otroId];
+
+                }
+
+
+                delete j.estados[otroId];
+
+                cambio = true;
+
+              }
+
+
+              Object.keys(j.destinos || {}).forEach(
+                function (u) {
+
+                  if (j.destinos[u] === otroId) {
+
+                    j.destinos[u] = keepId;
+
+                    cambio = true;
+
+                  }
+
+                }
+              );
+
+
+              Object.keys(j.ordenes || {}).forEach(
+                function (u) {
+
+                  if ((j.ordenes[u] || []).indexOf(otroId) !== -1) {
+
+                    j.ordenes[u] =
+                      unirListas(
+                        j.ordenes[u].map(function (id) { return id === otroId ? keepId : id; }),
+                        []
+                      );
+
+                    cambio = true;
+
+                  }
+
+                }
+              );
+
+
+              if (cambio) {
+
+                tx.set(jRef, j);
+
+              }
+
+            }
+
+
+            if (s[3].exists) {
+
+              var tareas = (s[3].data().tareas || []);
+
+              var cambioT = false;
+
+
+              tareas.forEach(
+                function (t) {
+
+                  if ((t.clientes || []).indexOf(otroId) !== -1) {
+
+                    t.clientes =
+                      unirListas(
+                        t.clientes.map(function (id) { return id === otroId ? keepId : id; }),
+                        []
+                      );
+
+                    cambioT = true;
+
+                  }
+
+                }
+              );
+
+
+              if (cambioT) {
+
+                tx.set(tRef, { tareas: tareas, updatedAt: ahora }, { merge: true });
+
+              }
+
+            }
+
+
+            tx.delete(oRef);
+
+          }
+        );
+
+      }
+    );
+
+  }
+
+
+
+  /* Parecido entre dos nombres (para sugerir el duplicado) */
+
+  function parecidoClientes(a, b) {
+
+    var comunes = { s: 1, a: 1, sa: 1, srl: 1, r: 1, l: 1, ltda: 1, sas: 1, de: 1, la: 1, el: 1, los: 1, las: 1, y: 1, local: 1, general: 1 };
+
+
+    var palabras = function (c) {
+
+      return normalizarTexto([c.nombre, c.razonSocial].join(" ")).split(" ").filter(
+        function (t) {
+
+          return t && !comunes[t];
+
+        }
+      );
+
+    };
+
+
+    var pa = palabras(a);
+
+    var pb = palabras(b);
+
+
+    var puntos =
+      pa.filter(function (t) { return pb.indexOf(t) !== -1; }).reduce(
+        function (s, t) {
+
+          return s + (t.length > 3 ? 2 : 1);
+
+        },
+        0
+      );
+
+
+    /* mismo lugar en el mapa (menos de 150 m) también suma */
+    if (tieneUbicacion(a) && tieneUbicacion(b) && distanciaMetros(a.mapa, b.mapa) < 150) {
+
+      puntos += 2;
+
+    }
+
+
+    return puntos / Math.max(1, pa.length);
+
+  }
+
+
+
+  /* Ventana para elegir con qué cliente fusionar */
+
+  function abrirFusion(keepId) {
+
+    var c = clientePorId(keepId);
+
+
+    if (!c || !state.canEdit) {
+
+      return;
+
+    }
+
+
+    var bd = document.createElement("div");
+
+
+    bd.className = "modal-backdrop op-confirm fusion-modal";
+
+
+    bd.innerHTML =
+      '<div class="modal-card" role="dialog" aria-modal="true">' +
+        '<h2 class="modal-title">Fusionar «' + escapeHtml(c.nombre) + '»</h2>' +
+        '<p class="modal-sub">Elegí el cliente duplicado. Queda <strong>' + escapeHtml(c.nombre) + '</strong> con los datos de los dos ' +
+          '(acuerdos, espacios, datos del sistema, historial) y el otro se borra.</p>' +
+        '<input type="search" class="fusion-buscar" placeholder="Buscar por nombre, razón social o número…">' +
+        '<div class="fusion-lista"></div>' +
+        '<div class="op-confirm-botones"><button type="button" class="btn btn-ghost op-btn-grande" data-r="no">Cancelar</button></div>' +
+      '</div>';
+
+
+    document.body.appendChild(bd);
+
+
+    var lista = bd.querySelector(".fusion-lista");
+
+    var buscar = bd.querySelector(".fusion-buscar");
+
+
+    var pintar = function () {
+
+      var q = normalizarTexto(buscar.value);
+
+
+      var candidatos =
+        state.clients
+          .filter(
+            function (x) {
+
+              return x.id !== c.id;
+
+            }
+          )
+          .map(
+            function (x) {
+
+              return { x: x, p: parecidoClientes(c, x) };
+
+            }
+          )
+          .filter(
+            function (o) {
+
+              return q
+                ? normalizarTexto([o.x.nombre, o.x.razonSocial, o.x.codigo, o.x.mapa && o.x.mapa.direccion].join(" ")).indexOf(q) !== -1
+                : o.p > 0;
+
+            }
+          )
+          .sort(
+            function (m, n) {
+
+              return n.p - m.p || (m.x.nombre || "").localeCompare(n.x.nombre || "", "es");
+
+            }
+          )
+          .slice(0, 25);
+
+
+      lista.innerHTML =
+        candidatos.length
+          ? candidatos.map(
+            function (o) {
+
+              var x = o.x;
+
+
+              return (
+                '<button type="button" class="fusion-item" data-fusion-con="' + escapeHtml(x.id) + '">' +
+                  '<strong>' + (x.codigo ? '<span class="client-row-num">#' + escapeHtml(x.codigo) + '</span> ' : '') + escapeHtml(x.nombre) + '</strong>' +
+                  '<small>' + escapeHtml([x.razonSocial, x.mapa && x.mapa.direccion, x.vigenciaFin ? "contrato hasta " + fmtDate(x.vigenciaFin) : ""].filter(Boolean).join(" · ")) + '</small>' +
+                '</button>'
+              );
+
+            }
+          ).join("")
+          : '<div class="hist-empty">' + (q ? "No hay clientes con ese texto." : "No encontré parecidos: buscalo por nombre o número.") + '</div>';
+
+    };
+
+
+    pintar();
+
+    buscar.addEventListener("input", pintar);
+
+    setTimeout(function () { buscar.focus(); }, 30);
+
+
+    bd.addEventListener(
+      "click",
+      function (e) {
+
+        if (e.target === bd || e.target.closest('[data-r="no"]')) {
+
+          bd.remove();
+
+          return;
+
+        }
+
+
+        var b = e.target.closest("[data-fusion-con]");
+
+
+        if (!b) {
+
+          return;
+
+        }
+
+
+        var otro = clientePorId(b.getAttribute("data-fusion-con"));
+
+
+        if (!otro) {
+
+          return;
+
+        }
+
+
+        bd.remove();
+
+
+        confirmarAccion(
+          "¿Fusionar estos dos clientes?",
+          "Queda <strong>" + escapeHtml(c.nombre) + "</strong> con los datos de los dos y se borra <strong>" +
+            escapeHtml(otro.nombre) + (otro.codigo ? " (#" + escapeHtml(otro.codigo) + ")" : "") + "</strong>. " +
+            "Las fotos y archivos se conservan.",
+          "Sí, fusionar"
+        ).then(
+          function (ok) {
+
+            if (!ok) {
+
+              return;
+
+            }
+
+
+            fusionarClientes(c.id, otro.id)
+              .then(
+                function () {
+
+                  showToast("Listo: «" + otro.nombre + "» quedó unido a «" + c.nombre + "».");
+
+                }
+              )
+              .catch(
+                function (err) {
+
+                  avisarError(err, "No se pudo fusionar. Revisá tu conexión.");
+
+                }
+              );
+
+          }
+        );
+
+      }
     );
 
   }
