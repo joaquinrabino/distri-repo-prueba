@@ -830,6 +830,30 @@ button {
 
 }
 
+/* número de cliente en la lista */
+.client-row-num {
+
+  display: inline-block;
+
+  margin-right: 4px;
+
+  padding: 0 6px;
+
+  border-radius: 6px;
+
+  background: var(--accent-soft);
+
+  color: var(--accent);
+
+  font-size: 12px;
+
+  font-weight: 700;
+
+  font-variant-numeric: tabular-nums;
+
+}
+
+
 
 
 .client-row-meta {
@@ -12747,6 +12771,13 @@ body[data-vista="ruta"] #avisoBar {
               '<span class="client-row-text">' +
 
                 '<span class="client-row-name">' +
+
+                  /* número de cliente (código del sistema) */
+                  (
+                    c.codigo
+                      ? '<span class="client-row-num">#' + escapeHtml(c.codigo) + '</span> '
+                      : ''
+                  ) +
 
                   escapeHtml(
                     c.nombre ||
