@@ -26538,8 +26538,10 @@ body[data-vista="ruta"] #avisoBar {
   /* ---------- plan del día (ruta cargada desde un archivo) ----------
      clientes/_planes = { dias: { "AAAA-MM-DD": { camioneros: { uid: {
        clientes: [ids en orden], horarios: { id: { desde, hasta } },
-       importes: { id: n }, reponedorId, conReposicion, etas: { id: min },
-       etasPromotor: { id: min } } } } }, deposito, horaSalida }
+       importes: { id: n }, cobros: { id: n }, reponedores: { id: uid },
+       conReposicion, etas: { id: min } } } } }, deposito, horaSalida }
+     El promotor es de cada local (no del camionero): "reponedores" solo
+     guarda los que se eligieron en la carga o vinieron en el archivo.
      Si un camionero tiene plan para hoy, ese día entrega exactamente
      esos clientes (en ese orden); si no, se usan sus días de entrega. */
 
@@ -26659,10 +26661,21 @@ body[data-vista="ruta"] #avisoBar {
 
   function reponedorHoy(c) {
 
+    /* se decide local por local: el de la ruta cargada (si se eligió ahí)
+       o el de la ficha del cliente. Un promotor no está atado a un camionero. */
     var pl = enPlanHoy(c);
 
+    var rep = pl && pl.entrada.reponedores;
 
-    return (pl && pl.entrada.reponedorId) || logisticaDe(c).reponedorId;
+
+    if (rep && Object.prototype.hasOwnProperty.call(rep, c.id)) {
+
+      return rep[c.id] || "";
+
+    }
+
+
+    return logisticaDe(c).reponedorId;
 
   }
 
@@ -31748,29 +31761,56 @@ body[data-vista="ruta"] #avisoBar {
 
   function localesReponedor(uid) {
 
-    /* clientes de hoy asignados a él (o sin reponedor asignado) */
+    /* clientes de hoy asignados a él (o sin promotor fijo). Un promotor
+       repone locales de distintos camioneros: no depende del camión. */
     var mios =
       state.clients.filter(
         function (c) {
 
-          var l = logisticaDe(c);
-
-
           var rep = reponedorHoy(c);
 
-          return tieneReposicionHoy(c) && (!rep || rep === uid);
+
+          if (!tieneReposicionHoy(c) || (rep && rep !== uid)) {
+
+            return false;
+
+          }
+
+
+          /* local sin promotor fijo que ya repuso otro: no es suyo */
+          var e = estadoGuardado(c);
+
+
+          return !(!rep && e.reposicion && e.reposicion.porId !== uid);
 
         }
       );
 
 
+    /* local sin promotor fijo en el que ya está trabajando otro promotor */
+    var otroEnElLocal = function (c) {
+
+      var v = estadoGuardado(c).visitaRep;
+
+
+      return !!(v && v.llegada && v.llegada.porId !== uid && !estadoGuardado(c).reposicion);
+
+    };
+
+
     return {
       mios: mios,
-      disponibles: mios.filter(disponibleParaReponer),
+      disponibles: mios.filter(
+        function (c) {
+
+          return disponibleParaReponer(c) && !otroEnElLocal(c);
+
+        }
+      ),
       noDisponibles: mios.filter(
         function (c) {
 
-          return !estadoGuardado(c).reposicion && !disponibleParaReponer(c);
+          return !estadoGuardado(c).reposicion && (!disponibleParaReponer(c) || otroEnElLocal(c));
 
         }
       ),
@@ -32147,7 +32187,9 @@ body[data-vista="ruta"] #avisoBar {
 
                 return filaRutaHtml(c, 0, {
                   detalle:
-                    e.noEntrega
+                    e.visitaRep && e.visitaRep.llegada && e.visitaRep.llegada.porId !== uid
+                      ? "Lo está reponiendo " + escapeHtml(e.visitaRep.llegada.porNombre) + " desde las " + horaDe(e.visitaRep.llegada.at)
+                      : e.noEntrega
                       ? "No se pudo entregar: " + (RESULTADOS_ENTREGA[e.noEntrega.motivo] || {}).label
                       : "Camionero: " + escapeHtml(nombreUsuario(camioneroHoy(c)) || "sin asignar") +
                         (
@@ -33319,6 +33361,15 @@ body[data-vista="ruta"] #avisoBar {
     if (!esAdmin && !visitaDe(c)) {
 
       showToast("Primero marcá «Llegué al local» para que empiece a contar tu tiempo.");
+
+      return;
+
+    }
+
+
+    if (!esAdmin && visitaDe(c).llegada.porId !== miUsuarioId()) {
+
+      showToast("Este local lo está reponiendo " + visitaDe(c).llegada.porNombre + ".");
 
       return;
 
@@ -38056,7 +38107,11 @@ body[data-vista="ruta"] #avisoBar {
 
         if (e.visitaRep && e.visitaRep.llegada) {
 
-          throw errorDeValidacion("La llegada ya estaba marcada a las " + horaDe(e.visitaRep.llegada.at) + ".");
+          throw errorDeValidacion(
+            e.visitaRep.llegada.porId === f.porId
+              ? "La llegada ya estaba marcada a las " + horaDe(e.visitaRep.llegada.at) + "."
+              : "Este local ya lo está reponiendo " + e.visitaRep.llegada.porNombre + " (llegó a las " + horaDe(e.visitaRep.llegada.at) + ")."
+          );
 
         }
 
@@ -39018,7 +39073,8 @@ body[data-vista="ruta"] #avisoBar {
         archivo: "",
         grupos: {},
         camionPorDefecto: "",
-        ordenes: {}
+        ordenes: {},
+        promotores: {}
       };
 
     }
@@ -39967,6 +40023,8 @@ body[data-vista="ruta"] #avisoBar {
 
     p.ordenes = {};
 
+    p.promotores = {};
+
   }
 
 
@@ -39994,19 +40052,12 @@ body[data-vista="ruta"] #avisoBar {
 
 
         var g =
-          grupos[cam] = grupos[cam] || { uid: cam, filas: [], reponedor: "" };
+          grupos[cam] = grupos[cam] || { uid: cam, filas: [] };
 
 
         if (!g.filas.some(function (x) { return x.cid === f.cid; })) {
 
           g.filas.push(f);
-
-        }
-
-
-        if (f.reponedor && !g.reponedor) {
-
-          g.reponedor = f.reponedor;
 
         }
 
@@ -40024,8 +40075,6 @@ body[data-vista="ruta"] #avisoBar {
 
         var conf = p.grupos[cam] || {};
 
-
-        g.reponedor = conf.reponedor !== undefined ? conf.reponedor : g.reponedor;
 
         g.conReposicion = conf.conReposicion !== false;
 
@@ -40084,8 +40133,6 @@ body[data-vista="ruta"] #avisoBar {
 
         g.manual = !!p.ordenes[cam];
 
-        g.etasPromotor = horariosPromotor(r.orden, r.llegadas);
-
       }
     );
 
@@ -40096,57 +40143,41 @@ body[data-vista="ruta"] #avisoBar {
 
 
 
-  /* A qué hora llegaría el promotor a cada local, yendo detrás del camión */
+  /* Promotor de un local en el plan: el elegido acá, el que dice el archivo
+     o el de la ficha del cliente. Se decide local por local (un promotor
+     repone locales de distintos camioneros y no sigue a ningún camión). */
 
-  function horariosPromotor(orden, etasCamion) {
+  function promotorDePlan(cid) {
 
-    var res = {};
-
-    var libre = null;
-
-    var prev = null;
+    var p = state.plan;
 
 
-    orden.forEach(
-      function (c) {
+    if (p.promotores && Object.prototype.hasOwnProperty.call(p.promotores, cid)) {
 
-        var disponible =
-          etasCamion[c.id] !== undefined ? etasCamion[c.id] + 5 : null;
+      return { uid: p.promotores[cid], origen: "elegido" };
 
-
-        if (disponible === null) {
-
-          return;
-
-        }
+    }
 
 
-        var viaje =
-          prev && tieneUbicacion(prev) && tieneUbicacion(c)
-            ? MOTOR_RUTAS.minutosViaje({ lat: prev.mapa.lat, lng: prev.mapa.lng }, { lat: c.mapa.lat, lng: c.mapa.lng })
-            : 0;
+    var f = (p.filas || []).find(function (x) { return x.cid === cid; });
 
 
-        var llegada =
-          libre === null ? disponible : Math.max(disponible, libre + viaje);
+    if (f && f.reponedor) {
+
+      return { uid: f.reponedor, origen: "archivo" };
+
+    }
 
 
-        var fin = llegada + tiempoAsignadoDe(c, 20);
+    var c = clientePorId(cid);
 
 
-        res[c.id] = { llegada: Math.round(llegada), fin: Math.round(fin) };
-
-        libre = fin;
-
-        prev = c;
-
-      }
-    );
-
-
-    return res;
+    return { uid: c ? logisticaDe(c).reponedorId : "", origen: "ficha" };
 
   }
+
+
+
 
 
 
@@ -40326,8 +40357,6 @@ body[data-vista="ruta"] #avisoBar {
 
             var g = grupos[cam];
 
-            var fin = 0;
-
 
             var filasHtml =
               g.orden.map(
@@ -40335,18 +40364,11 @@ body[data-vista="ruta"] #avisoBar {
 
                   var eta = g.etas[c.id];
 
-                  var ep = g.etasPromotor[c.id];
-
                   var h = g.horarios[c.id] || horarioDe(c, true);
 
                   var tarde = g.tarde[c.id] > 0;
 
-
-                  if (ep) {
-
-                    fin = Math.max(fin, ep.fin);
-
-                  }
+                  var prom = promotorDePlan(c.id);
 
 
                   return (
@@ -40356,7 +40378,17 @@ body[data-vista="ruta"] #avisoBar {
                         '<br><small>' + escapeHtml(c.mapa && c.mapa.direccion ? c.mapa.direccion : "Sin dirección") + (tieneUbicacion(c) ? '' : ' · sin ubicación (va al final)') + '</small></td>' +
                       '<td>' + escapeHtml(h.desde || h.hasta ? (h.desde || "…") + " a " + (h.hasta || "…") : "—") + '</td>' +
                       '<td>' + (eta !== undefined ? '<strong>' + deMinutos(eta) + '</strong>' + (tarde ? '<br><small class="op-rojo">llega tarde</small>' : '') : '—') + '</td>' +
-                      '<td>' + (ep ? deMinutos(ep.llegada) + ' – ' + deMinutos(ep.fin) : '—') + '</td>' +
+                      '<td>' + (eta !== undefined && g.conReposicion ? '≈ ' + deMinutos(eta + 5) : '—') + '</td>' +
+                      '<td>' +
+                        (
+                          g.conReposicion
+                            ? '<select class="plan-prom" data-plan-prom-cli="' + escapeHtml(c.id) + '" aria-label="Promotor de ' + escapeHtml(c.nombre) + '">' +
+                                opcionesPersona(promotores, prom.uid, "Cualquier promotor") +
+                              '</select>' +
+                              (prom.origen !== "elegido" && prom.uid ? '<br><small>' + (prom.origen === "archivo" ? "del archivo" : "de la ficha") + '</small>' : '')
+                            : '—'
+                        ) +
+                      '</td>' +
                       '<td>' + (importeDeFila(c.id) ? plata(importeDeFila(c.id)) : '') + '</td>' +
                       '<td>' + (cobrarDeFila(c.id) !== null ? plata(cobrarDeFila(c.id)) : '') + '</td>' +
                       '<td class="plan-mover">' +
@@ -40380,16 +40412,15 @@ body[data-vista="ruta"] #avisoBar {
               '<div class="dash-card plan-grupo">' +
                 '<div class="dash-card-head">' +
                   '<h2 class="dash-card-title">&#128666; ' + escapeHtml(nombreUsuario(cam)) + ' · ' + plural(g.orden.length, "cliente", "clientes") + '</h2>' +
-                  '<span class="dash-card-hint">Sale ' + escapeHtml(p.horaSalida) + ' · última entrega ≈ ' + deMinutos(ultimaEta) +
-                    (fin ? ' · el promotor termina ≈ ' + deMinutos(fin) : '') + '</span>' +
+                  '<span class="dash-card-hint">Sale ' + escapeHtml(p.horaSalida) + ' · última entrega ≈ ' + deMinutos(ultimaEta) + '</span>' +
                 '</div>' +
                 '<div class="plan-opciones">' +
-                  '<label>Promotor: <select data-plan-promotor="' + escapeHtml(cam) + '">' + opcionesPersona(promotores, g.reponedor, "Cualquier promotor") + '</select></label>' +
-                  '<label class="tarea-check"><input type="checkbox" data-plan-repo="' + escapeHtml(cam) + '"' + (g.conReposicion ? " checked" : "") + '> El promotor repone estos locales</label>' +
+                  '<label class="tarea-check"><input type="checkbox" data-plan-repo="' + escapeHtml(cam) + '"' + (g.conReposicion ? " checked" : "") + '> Estos locales llevan reposición</label>' +
                   (g.manual ? '<button type="button" class="hist-more" data-plan-auto="' + escapeHtml(cam) + '">Volver al orden óptimo</button>' : '') +
+                  '<span class="custom-hint">Cada local lo repone su promotor (de la ficha o del archivo). Los promotores arman su propia ruta con los locales de todos los camioneros.</span>' +
                 '</div>' +
                 '<div class="op-tabla-wrap"><table class="op-tabla">' +
-                  '<thead><tr><th></th><th>Cliente</th><th>Recibe</th><th>Camión llega</th><th>Promotor</th><th>Importe</th><th>A cobrar</th><th></th></tr></thead>' +
+                  '<thead><tr><th></th><th>Cliente</th><th>Recibe</th><th>Camión llega</th><th>Listo para reponer</th><th>Promotor</th><th>Importe</th><th>A cobrar</th><th></th></tr></thead>' +
                   '<tbody>' + filasHtml + '</tbody>' +
                 '</table></div>' +
               '</div>'
@@ -40878,9 +40909,12 @@ body[data-vista="ruta"] #avisoBar {
     }
 
 
-    if ((v = target.getAttribute("data-plan-promotor")) !== null) {
+    /* promotor de un local (se elige local por local) */
+    if ((v = target.getAttribute("data-plan-prom-cli")) !== null) {
 
-      p.grupos[v] = Object.assign(p.grupos[v] || {}, { reponedor: target.value });
+      p.promotores = p.promotores || {};
+
+      p.promotores[v] = target.value;
 
       renderPlan();
 
@@ -40967,6 +41001,8 @@ body[data-vista="ruta"] #avisoBar {
 
         var cobros = {};
 
+        var reponedores = {};
+
         var horarios = {};
 
         var etas = {};
@@ -40981,6 +41017,18 @@ body[data-vista="ruta"] #avisoBar {
             if (imp) {
 
               importes[c.id] = imp;
+
+            }
+
+
+            /* promotor del local: solo se guarda si se eligió acá o vino en el archivo
+               (si no, se usa el de la ficha del cliente) */
+            var prom = promotorDePlan(c.id);
+
+
+            if (prom.origen !== "ficha" && g.conReposicion) {
+
+              reponedores[c.id] = prom.uid || "";
 
             }
 
@@ -41017,10 +41065,9 @@ body[data-vista="ruta"] #avisoBar {
           horarios: horarios,
           importes: importes,
           cobros: cobros,
-          reponedorId: g.reponedor || "",
+          reponedores: reponedores,
           conReposicion: g.conReposicion,
           etas: etas,
-          etasPromotor: g.etasPromotor,
           horaSalida: p.horaSalida
         };
 
@@ -41241,11 +41288,10 @@ body[data-vista="ruta"] #avisoBar {
 
     var eta = pl && pl.entrada.etas ? pl.entrada.etas[c.id] : undefined;
 
-    var ep = pl && pl.entrada.etasPromotor ? pl.entrada.etasPromotor[c.id] : null;
 
 
     return eta !== undefined
-      ? " · camión ≈ " + deMinutos(eta) + (ep ? " · vos ≈ " + deMinutos(ep.llegada) : "") + " (según la ruta cargada)"
+      ? " · el camión llega ≈ " + deMinutos(eta) + " (según la ruta cargada)"
       : "";
 
   }
@@ -41288,7 +41334,7 @@ body[data-vista="ruta"] #avisoBar {
 
 
                                 return escapeHtml(nombreUsuario(u)) + ": " + (e.clientes || []).length + " clientes" +
-                                  (e.reponedorId ? " · promotor " + escapeHtml(nombreUsuario(e.reponedorId)) : "");
+                                  (Object.keys(e.reponedores || {}).length ? " · " + Object.keys(e.reponedores).length + " con promotor elegido" : "");
 
                               }
                             ).join(" · ") +
