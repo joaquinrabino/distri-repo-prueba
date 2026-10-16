@@ -7844,6 +7844,17 @@ body[data-vista="ruta"] #avisoBar {
 }
 
 
+.op-chip.op-cobrar {
+
+  background: #fff1d6;
+
+  color: #8a5a00;
+
+  font-weight: 700;
+
+}
+
+
 .op-rojo {
 
   color: var(--vencido);
@@ -15020,7 +15031,8 @@ body[data-vista="ruta"] #avisoBar {
 
             (
               state.canEdit
-                ? '<button type="button" class="btn btn-ghost" data-importar="1">Importar clientes (Excel)</button>'
+                ? '<button type="button" class="btn btn-ghost" data-importar="1">Importar clientes (Excel)</button>' +
+                  '<button type="button" class="btn btn-ghost" data-respaldo="1" title="Baja una copia de toda la base (clientes, usuarios, jornadas, tarjetero…) para guardar">Descargar respaldo</button>'
                 : ''
             ) +
 
@@ -27357,6 +27369,9 @@ body[data-vista="ruta"] #avisoBar {
     };
 
 
+    try {
+
+
 
 
     var servicioDe = function (c) {
@@ -27510,7 +27525,12 @@ body[data-vista="ruta"] #avisoBar {
     );
 
 
-    contextoPuntos = contextoAnterior;
+    } finally {
+
+      /* el contexto vuelve a como estaba aunque algo falle */
+      contextoPuntos = contextoAnterior;
+
+    }
 
 
     var resultado = {
@@ -28031,6 +28051,30 @@ body[data-vista="ruta"] #avisoBar {
      aunque dos personas toquen al mismo tiempo)
   ======================================================== */
 
+  /* Días que se guardan de entregas, reposiciones y tareas de cada cliente.
+     (Las horas del tarjetero se guardan aparte, por mes, y no se borran.) */
+  var DIAS_HISTORIAL_OPERATIVO = 90;
+
+
+
+  function recortarPorFecha(lista) {
+
+    var limite =
+      isoDia(new Date(Date.now() - DIAS_HISTORIAL_OPERATIVO * 86400000));
+
+
+    return (lista || []).filter(
+      function (o) {
+
+        return o && o.fecha && o.fecha >= limite;
+
+      }
+    );
+
+  }
+
+
+
   function modificarJornada(clientId, mutar, entradaHistorial) {
 
     var db = state.db;
@@ -28043,8 +28087,17 @@ body[data-vista="ruta"] #avisoBar {
     return db.runTransaction(
       function (tx) {
 
-        return tx.get(jRef).then(
-          function (snap) {
+        /* se leen la jornada y (si hay que registrar algo) el cliente */
+        return Promise.all([
+          tx.get(jRef),
+          cRef && entradaHistorial ? tx.get(cRef) : null
+        ]).then(
+          function (lecturas) {
+
+            var snap = lecturas[0];
+
+            var cSnap = lecturas[1];
+
 
             var data =
               snap.exists ? snap.data() : {};
@@ -28075,8 +28128,21 @@ body[data-vista="ruta"] #avisoBar {
 
             if (cRef && entradaHistorial) {
 
+              if (!cSnap || !cSnap.exists) {
+
+                throw errorDeValidacion("Este cliente ya no existe.");
+
+              }
+
+
+              /* historial del cliente: se guarda lo de los últimos días
+                 (si no, crece para siempre y la web se pone lenta) */
+              var previas =
+                Array.isArray(cSnap.data().operaciones) ? cSnap.data().operaciones : [];
+
+
               tx.update(cRef, {
-                operaciones: firebase.firestore.FieldValue.arrayUnion(entradaHistorial)
+                operaciones: recortarPorFecha(previas).concat([entradaHistorial])
               });
 
             }
@@ -28734,8 +28800,9 @@ body[data-vista="ruta"] #avisoBar {
 
   function guardarImporte(clientId, valor) {
 
+    /* "12500.5" (campo numérico), "12.500" o "12.500,50" */
     var n =
-      Math.max(0, Math.round(Number(String(valor).replace(/[^\d.,-]/g, "").replace(/\./g, "").replace(",", ".")) || 0));
+      Math.max(0, Math.round(numeroPlan(valor)));
 
 
     return modificarJornada(
@@ -29558,12 +29625,12 @@ body[data-vista="ruta"] #avisoBar {
                             '<td>' + escapeHtml(fmtDate(f.fecha)) + '</td>' +
                             '<td><strong>' + escapeHtml(f.nombre) + '</strong></td>' +
                             '<td>' + (f.horas.inicio ? horaDe(f.horas.inicio) : '—') + '</td>' +
-                            '<td>' + (f.horas.fin ? horaDe(f.horas.fin) : (f.horas.abierto ? '<small>sin marcar</small>' : '—')) + '</td>' +
+                            '<td>' + (f.horas.fin ? horaDe(f.horas.fin) : (f.horas.abierto ? (f.fecha === hoyIso() ? '<small>sin marcar</small>' : '<small class="op-rojo">&#9888; no marcó el fin (no se cuentan las horas)</small>') : '—')) + '</td>' +
                             '<td>' + (f.horas.descansos ? duracionTexto(f.horas.descansoMin) + ' <small>(' + f.horas.descansos + ')</small>' : '—') + '</td>' +
                             '<td><strong>' + duracionTexto(f.horas.trabajadoMin) + '</strong>' + (f.horas.abierto && f.fecha === hoyIso() ? ' <small>hasta ahora</small>' : '') + '</td>' +
                             '<td>' + duracionTexto(rend.enClientes) + ' <small>(' + rend.productividad + '%)</small>' + (rend.excedidos ? '<br><small class="op-rojo">' + plural(rend.excedidos, "local excedido", "locales excedidos") + '</small>' : '') + '</td>' +
                             '<td>' + duracionTexto(rend.traslados) + (rend.lentos ? '<br><small class="op-rojo">' + plural(rend.lentos, "demorado", "demorados") + '</small>' : '') + '</td>' +
-                            '<td>' + escapeHtml({ sin_iniciar: "—", activo: "Trabajando", descanso: "En descanso", terminado: "Terminado" }[f.estado]) + '</td>' +
+                            '<td>' + escapeHtml(f.fecha !== hoyIso() && (f.estado === "activo" || f.estado === "descanso") ? "Sin cerrar" : { sin_iniciar: "—", activo: "Trabajando", descanso: "En descanso", terminado: "Terminado" }[f.estado]) + '</td>' +
                           '</tr>' +
                           (
                             abierto
@@ -29581,6 +29648,11 @@ body[data-vista="ruta"] #avisoBar {
 
                                     }
                                   ).join("") +
+                                  (
+                                    f.horas.abierto && f.fecha !== hoyIso()
+                                      ? '<div class="tarj-marca"><button type="button" class="btn btn-ghost op-mini" data-tarj-fin="' + escapeHtml(f.uid) + '" data-fecha="' + f.fecha + '">Cargar la hora de fin</button></div>'
+                                      : ''
+                                  ) +
                                 '</td></tr>'
                               : ''
                           )
@@ -29613,6 +29685,99 @@ body[data-vista="ruta"] #avisoBar {
 
       }
     );
+
+  }
+
+
+
+  /* Solo administrador: carga el fin de un día que el promotor se olvidó de cerrar */
+
+  function cargarFinOlvidado(uid, fecha) {
+
+    if (!puede("deshacer")) {
+
+      return;
+
+    }
+
+
+    var hora = prompt("¿A qué hora terminó " + nombreUsuario(uid) + " el " + fmtDate(fecha) + "? (HH:MM)", "18:00");
+
+
+    if (hora === null) {
+
+      return;
+
+    }
+
+
+    var min = aMinutos(String(hora).trim().replace(".", ":"));
+
+
+    if (min === null) {
+
+      showToast("Hora no válida. Escribila como 18:30.");
+
+      return;
+
+    }
+
+
+    var partes = fecha.split("-").map(Number);
+
+    var at = new Date(partes[0], partes[1] - 1, partes[2], Math.floor(min / 60), min % 60).getTime();
+
+    var marcas = marcasDe(uid, fecha);
+
+    var ultima = marcas[marcas.length - 1];
+
+
+    if (ultima && at <= ultima.at) {
+
+      showToast("La hora tiene que ser después de la última marca (" + horaDe(ultima.at) + ").");
+
+      return;
+
+    }
+
+
+    var base = {
+      uid: uid,
+      nombre: nombreUsuario(uid),
+      fecha: fecha,
+      cargadaPor: quienSoy()
+    };
+
+
+    /* si había quedado en descanso, primero se cierra el descanso */
+    var paso =
+      estadoTarjetero(marcas) === "descanso"
+        ? guardarMarca(Object.assign({ id: "m" + Date.now().toString(36) + "d", tipo: "descanso_fin", at: at - 1000 }, base))
+        : Promise.resolve();
+
+
+    paso
+      .then(
+        function () {
+
+          return guardarMarca(Object.assign({ id: "m" + Date.now().toString(36) + "f", tipo: "fin", at: at }, base));
+
+        }
+      )
+      .then(
+        function () {
+
+          showToast("Fin cargado a las " + horaDe(at) + ".");
+
+        }
+      )
+      .catch(
+        function (err) {
+
+          avisarError(err, "No se pudo cargar el fin.");
+
+        }
+      );
 
   }
 
@@ -30137,9 +30302,36 @@ body[data-vista="ruta"] #avisoBar {
       .then(
         function () {
 
-          return state.db.doc("clientes/" + clientId).update({
-            tareasHechas: firebase.firestore.FieldValue.arrayUnion(hecha)
-          });
+          /* se guardan las de los últimos días (las fotos quedan en Storage) */
+          var ref = state.db.doc("clientes/" + clientId);
+
+
+          return state.db.runTransaction(
+            function (tx) {
+
+              return tx.get(ref).then(
+                function (snap) {
+
+                  if (!snap.exists) {
+
+                    throw errorDeValidacion("Este cliente ya no existe.");
+
+                  }
+
+
+                  var previas =
+                    Array.isArray(snap.data().tareasHechas) ? snap.data().tareasHechas : [];
+
+
+                  tx.update(ref, {
+                    tareasHechas: recortarPorFecha(previas).concat([hecha])
+                  });
+
+                }
+              );
+
+            }
+          );
 
         }
       )
@@ -31259,6 +31451,10 @@ body[data-vista="ruta"] #avisoBar {
 
     var entregadoPlata = 0;
 
+    var totalCobrar = 0;
+
+    var cobrado = 0;
+
 
     mios.forEach(
       function (c) {
@@ -31268,10 +31464,14 @@ body[data-vista="ruta"] #avisoBar {
 
         total += importeHoy(c);
 
+        totalCobrar += cobrarHoy(c) || 0;
+
 
         if (est.entrega) {
 
           entregadoPlata += importeHoy(c);
+
+          cobrado += cobrarHoy(c) || 0;
 
         }
 
@@ -31291,7 +31491,9 @@ body[data-vista="ruta"] #avisoBar {
         "visitados",
         total
           ? '<div class="ruta-plata"><span>&#128176; A entregar hoy: <strong>' + plata(total) + '</strong></span>' +
-              '<span>Entregado: <strong>' + plata(entregadoPlata) + '</strong> · Falta: <strong>' + plata(total - entregadoPlata) + '</strong></span></div>'
+              '<span>Entregado: <strong>' + plata(entregadoPlata) + '</strong> · Falta: <strong>' + plata(total - entregadoPlata) + '</strong></span>' +
+              (totalCobrar ? '<span>&#128181; A cobrar hoy: <strong>' + plata(totalCobrar) + '</strong> · Cobrado: <strong>' + plata(cobrado) + '</strong></span>' : '') +
+            '</div>'
           : ''
       );
 
@@ -31355,7 +31557,8 @@ body[data-vista="ruta"] #avisoBar {
                 reordenar: true,
                 eta: r.plan.llegadas[c.id],
                 tarde: r.plan.tarde[c.id],
-                importe: importeHoy(c)
+                importe: importeHoy(c),
+                cobrar: cobrarHoy(c)
               });
 
             }
@@ -31373,7 +31576,8 @@ body[data-vista="ruta"] #avisoBar {
               return filaRutaHtml(c, ruta.indexOf(c) + 1, {
                 reordenar: true,
                 detalle: "Postergado a las " + horaDe(p.at) + (p.veces > 1 ? " (" + p.veces + " veces)" : ""),
-                importe: importeHoy(c)
+                importe: importeHoy(c),
+                cobrar: cobrarHoy(c)
               });
 
             }
@@ -31466,6 +31670,7 @@ body[data-vista="ruta"] #avisoBar {
       eta: e.llegada ? null : r.plan.llegadas[c.id],
       tarde: e.llegada ? 0 : r.plan.tarde[c.id],
       importe: importeHoy(c),
+      extra: cobrarHoy(c) ? '<span class="op-chip op-cobrar">&#128181; Cobrar ' + plata(cobrarHoy(c)) + '</span>' : "",
       acciones: acciones
     });
 
@@ -32234,7 +32439,8 @@ body[data-vista="ruta"] #avisoBar {
         h ? "Recibe " + h + (horarioPasado(c) ? " (ya pasó)" : "") : "",
         opts.eta !== null && opts.eta !== undefined ? "llegada ≈ " + deMinutos(opts.eta) : "",
         p <= 2 ? "prioridad " + p : "",
-        opts.importe ? plata(opts.importe) : ""
+        opts.importe ? plata(opts.importe) : "",
+        opts.cobrar ? "cobrar " + plata(opts.cobrar) : ""
       ].filter(Boolean).join(" · ");
 
 
@@ -35642,6 +35848,15 @@ body[data-vista="ruta"] #avisoBar {
     }
 
 
+    if ((el = e.target.closest("[data-tarj-fin]"))) {
+
+      cargarFinOlvidado(el.getAttribute("data-tarj-fin"), el.getAttribute("data-fecha"));
+
+      return true;
+
+    }
+
+
     if ((el = e.target.closest("[data-tarj-anular]"))) {
 
       anularMarca(el.getAttribute("data-tarj-anular"), el.getAttribute("data-mes"));
@@ -35705,6 +35920,15 @@ body[data-vista="ruta"] #avisoBar {
     if ((el = e.target.closest("[data-fusionar]"))) {
 
       abrirFusion(el.getAttribute("data-fusionar"));
+
+      return true;
+
+    }
+
+
+    if ((el = e.target.closest("[data-respaldo]"))) {
+
+      descargarRespaldo(el);
 
       return true;
 
@@ -35863,9 +36087,73 @@ body[data-vista="ruta"] #avisoBar {
 
   /* El export viene con comas en lugar de puntos ("S,A,", "hotmail,com") */
 
+  /* El sistema a veces exporta letras con tilde/ñ mal codificadas
+     ("ORDOÃ‘EZ" en vez de "ORDOÑEZ"): se vuelven a decodificar */
+
+  var CP1252 = {
+    0x20AC: 0x80, 0x201A: 0x82, 0x0192: 0x83, 0x201E: 0x84, 0x2026: 0x85, 0x2020: 0x86, 0x2021: 0x87,
+    0x02C6: 0x88, 0x2030: 0x89, 0x0160: 0x8A, 0x2039: 0x8B, 0x0152: 0x8C, 0x017D: 0x8E, 0x2018: 0x91,
+    0x2019: 0x92, 0x201C: 0x93, 0x201D: 0x94, 0x2022: 0x95, 0x2013: 0x96, 0x2014: 0x97, 0x02DC: 0x98,
+    0x2122: 0x99, 0x0161: 0x9A, 0x203A: 0x9B, 0x0153: 0x9C, 0x017E: 0x9E, 0x0178: 0x9F
+  };
+
+
+
+  function arreglarCodificacion(s) {
+
+    if (
+      typeof s !== "string" ||
+      !/[ÃÂ][\u0080-¿‘-›Œ-ƒˆ˜€™]/.test(s) ||
+      typeof TextDecoder === "undefined"
+    ) {
+
+      return s;
+
+    }
+
+
+    var bytes = [];
+
+
+    for (var i = 0; i < s.length; i++) {
+
+      var c = s.charCodeAt(i);
+
+
+      if (c < 256) {
+
+        bytes.push(c);
+
+      } else if (CP1252[c] !== undefined) {
+
+        bytes.push(CP1252[c]);
+
+      } else {
+
+        return s;
+
+      }
+
+    }
+
+
+    try {
+
+      return new TextDecoder("utf-8", { fatal: true }).decode(new Uint8Array(bytes));
+
+    } catch (e) {
+
+      return s;
+
+    }
+
+  }
+
+
+
   function limpiarTextoErp(v) {
 
-    return String(v === null || v === undefined ? "" : v)
+    return arreglarCodificacion(String(v === null || v === undefined ? "" : v))
       .replace(/,/g, ".")
       .replace(/\.{2,}/g, ".")
       .replace(/\s+/g, " ")
@@ -38616,7 +38904,8 @@ body[data-vista="ruta"] #avisoBar {
     hasta: ["hasta", "hora hasta", "fin", "hora fin", "cierra", "cierre", "limite", "hora limite"],
     camionero: ["camionero", "camion", "repartidor", "chofer", "entregador", "vehiculo", "movil", "reparto"],
     reponedor: ["reponedor", "promotor", "repositor"],
-    importe: ["importe", "total", "monto", "valor", "importe total", "total pedido", "a cobrar", "cobrar"],
+    importe: ["importe", "total", "monto", "valor", "importe total", "total pedido", "total a entregar"],
+    cobrar: ["a cobrar", "cobrar", "a cobrar cli", "a cobrar cliente", "cobro", "cobranza"],
     direccion: ["direccion", "lugar entrega", "lugar de entrega", "domicilio"],
     orden: ["orden", "secuencia", "n orden", "nro orden", "parada"]
   };
@@ -38624,7 +38913,7 @@ body[data-vista="ruta"] #avisoBar {
 
   var CAMPOS_PLAN = [
     ["codigo", "Número de cliente"], ["nombre", "Nombre"], ["horario", "Horario"], ["desde", "Recibe desde"],
-    ["hasta", "Recibe hasta"], ["camionero", "Camionero"], ["reponedor", "Promotor"], ["importe", "Importe"],
+    ["hasta", "Recibe hasta"], ["camionero", "Camionero"], ["reponedor", "Promotor"], ["importe", "Importe"], ["cobrar", "A cobrar"],
     ["direccion", "Dirección"], ["orden", "Orden"]
   ];
 
@@ -38692,6 +38981,553 @@ body[data-vista="ruta"] #avisoBar {
     var h = interpretarHorario(String(v || ""));
 
     return h.desde || h.hasta || "";
+
+  }
+
+
+
+  /* Números de plata del sistema: "6.799,00", "-291,00", 1234.5… */
+
+  function numeroPlan(v) {
+
+    if (typeof v === "number") {
+
+      return v;
+
+    }
+
+
+    var s = String(v || "").replace(/[^\d,.-]/g, "");
+
+
+    if (!s) {
+
+      return 0;
+
+    }
+
+
+    /* "6799.00" (punto decimal) vs "6.799,00" (formato uruguayo) */
+    if (/^-?\d+\.\d{1,2}$/.test(s)) {
+
+      return Number(s) || 0;
+
+    }
+
+
+    return Number(s.replace(/\./g, "").replace(",", ".")) || 0;
+
+  }
+
+
+
+  /* Cuánto tiene que cobrar hoy el camionero en este cliente (si vino en la ruta) */
+
+  function cobrarHoy(c) {
+
+    var pl = enPlanHoy(c);
+
+    var v = pl && pl.entrada.cobros ? pl.entrada.cobros[c.id] : null;
+
+
+    return v === null || v === undefined ? null : Number(v) || 0;
+
+  }
+
+
+
+  /* ---------- PDF "Reporte de Viaje" del sistema ----------
+     Encabezado: Viaje 13684 · CAMILO VIERNES · PENDIENTE · Fecha · Zona
+     Repartidor: "7 CAMILO"
+     Por cliente: número, nombre, una o varias líneas de documentos
+     (factura, ticket, nota de crédito) con su importe, y "a Cobrar". */
+
+  var PDFJS_URL = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js";
+
+  var PDFJS_WORKER = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+
+
+
+  function textoDePdf(file) {
+
+    return loadScript(PDFJS_URL)
+
+      .then(
+        function () {
+
+          window.pdfjsLib.GlobalWorkerOptions.workerSrc = PDFJS_WORKER;
+
+          return file.arrayBuffer();
+
+        }
+      )
+
+      .then(
+        function (buf) {
+
+          return window.pdfjsLib.getDocument({ data: buf }).promise;
+
+        }
+      )
+
+      .then(
+        function (pdf) {
+
+          var paginas = [];
+
+
+          for (var i = 1; i <= pdf.numPages; i++) {
+
+            paginas.push(
+              pdf.getPage(i).then(
+                function (pg) {
+
+                  return pg.getTextContent();
+
+                }
+              )
+            );
+
+          }
+
+
+          return Promise.all(paginas);
+
+        }
+      )
+
+      .then(
+        function (contenidos) {
+
+          /* renglones (de arriba hacia abajo, página por página) con sus textos y posiciones */
+          var renglones = [];
+
+
+          contenidos.forEach(
+            function (tc) {
+
+              var items =
+                tc.items
+                  .filter(function (it) { return String(it.str).trim() !== ""; })
+                  .map(function (it) { return { s: String(it.str).trim(), x: it.transform[4], y: it.transform[5] }; })
+                  .sort(function (a, b) { return b.y - a.y || a.x - b.x; });
+
+
+              var actual = null;
+
+
+              items.forEach(
+                function (it) {
+
+                  if (actual && Math.abs(actual.y - it.y) <= 1.5) {
+
+                    actual.items.push(it);
+
+                  } else {
+
+                    actual = { y: it.y, items: [it] };
+
+                    renglones.push(actual);
+
+                  }
+
+                }
+              );
+
+            }
+          );
+
+
+          renglones.forEach(
+            function (r) {
+
+              r.items.sort(function (a, b) { return a.x - b.x; });
+
+              r.texto = r.items.map(function (it) { return it.s; }).join(" ");
+
+            }
+          );
+
+
+          return renglones;
+
+        }
+      );
+
+  }
+
+
+
+  function parsearViajePdf(renglones) {
+
+    var viaje = { viaje: "", ruta: "", estado: "", fecha: "", zona: "", repartidor: "", clientes: [], totalPdf: null };
+
+
+    var hIdx = -1;
+
+
+    renglones.forEach(
+      function (r, i) {
+
+        var m = /Viaje\s+(\d+)\s+(.+?)\s+(PENDIENTE|CERRADO|FINALIZADO|ENTREGADO|ANULADO|EN CURSO|ABIERTO)\b/i.exec(r.texto);
+
+
+        if (m && !viaje.viaje) {
+
+          viaje.viaje = m[1];
+
+          viaje.ruta = m[2].trim();
+
+          viaje.estado = m[3];
+
+
+          var f = /Fecha\s+(\d{1,2}\/\d{1,2}\/\d{2,4})/.exec(r.texto);
+
+          var z = /Zon\.?\s*(.+)$/.exec(r.texto);
+
+
+          viaje.fecha = f ? f[1] : "";
+
+          viaje.zona = z ? z[1].trim() : "";
+
+
+          /* repartidor: el renglón siguiente con "número nombre" */
+          for (var k = i + 1; k < Math.min(renglones.length, i + 4); k++) {
+
+            var rm = /^(\d+)\s+([A-Za-zÁÉÍÓÚÑáéíóúñ][A-Za-zÁÉÍÓÚÑáéíóúñ .]*?)(?:\s+Vend\.|$)/.exec(renglones[k].texto);
+
+
+            if (rm) {
+
+              viaje.repartidor = rm[2].trim();
+
+              break;
+
+            }
+
+          }
+
+        }
+
+
+        if (hIdx === -1 && /Cliente/.test(r.texto) && /Importe/.test(r.texto)) {
+
+          hIdx = i;
+
+        }
+
+      }
+    );
+
+
+    if (hIdx === -1) {
+
+      throw errorDeValidacion("No reconozco este PDF: busco la tabla «Cliente · Fecha · Documento · Importe · a Cobrar».");
+
+    }
+
+
+    /* columnas por la posición de los títulos */
+    var xDe = function (re) {
+
+      var it = renglones[hIdx].items.find(function (x) { return re.test(x.s); });
+
+      return it ? it.x : null;
+
+    };
+
+
+    var xCliente = xDe(/^Cliente/i);
+
+    var xFecha = xDe(/^Fecha/i);
+
+    var xImporte = xDe(/^Importe/i);
+
+    var xCobrar = xDe(/Cobrar/i);
+
+
+    var esPlata = function (s) {
+
+      return /^-?[\d.]+,\d{2}$/.test(s);
+
+    };
+
+
+    var actual = null;
+
+    var nombrePendiente = null;
+
+
+    for (var i = hIdx + 1; i < renglones.length; i++) {
+
+      var r = renglones[i];
+
+
+      if (/Docs|Total a Entregar|Contados/i.test(r.texto)) {
+
+        break;
+
+      }
+
+
+      var codigo = null;
+
+      var nombre = [];
+
+
+      r.items.forEach(
+        function (it) {
+
+          if (/^\d{1,7}$/.test(it.s) && it.x < xCliente - 1) {
+
+            codigo = it.s;
+
+          } else if (it.x >= xCliente - 3 && (xFecha === null || it.x < xFecha - 4) && /[A-Za-z]/.test(it.s)) {
+
+            nombre.push(it.s);
+
+          }
+
+        }
+      );
+
+
+      var nombreTxt = nombre.join(" ").trim();
+
+
+      if (codigo) {
+
+        actual = {
+          codigo: codigo,
+          nombre:
+            nombreTxt ||
+            (nombrePendiente && Math.abs(nombrePendiente.y - r.y) <= 8 ? nombrePendiente.s : ""),
+          importe: 0,
+          cobrar: null,
+          docs: 0
+        };
+
+
+        viaje.clientes.push(actual);
+
+        nombrePendiente = null;
+
+      } else if (nombreTxt) {
+
+        /* el nombre a veces viene un renglón arriba del número */
+        if (actual && !actual.nombre) {
+
+          actual.nombre = nombreTxt;
+
+        } else {
+
+          nombrePendiente = { s: nombreTxt, y: r.y };
+
+        }
+
+      }
+
+
+      r.items.forEach(
+        function (it) {
+
+          if (!actual || !esPlata(it.s)) {
+
+            return;
+
+          }
+
+
+          if (xCobrar !== null && it.x >= xCobrar + 12) {
+
+            actual.cobrar = numeroPlan(it.s);
+
+          } else if (xImporte === null || it.x >= xImporte - 50) {
+
+            actual.importe += numeroPlan(it.s);
+
+            actual.docs++;
+
+          }
+
+        }
+      );
+
+    }
+
+
+    /* total del pie ("Total a Entregar"), para controlar que se leyó todo */
+    renglones.forEach(
+      function (r, i) {
+
+        if (/Total a Entregar/i.test(r.texto) && viaje.totalPdf === null) {
+
+          /* el importe está en el mismo renglón o en uno pegado (arriba o abajo) */
+          [r, renglones[i - 1], renglones[i + 1]].some(
+            function (x) {
+
+              var m = x ? /(-?\d{1,3}(?:\.\d{3})*,\d{2})/.exec(x.texto) : null;
+
+
+              if (m) {
+
+                viaje.totalPdf = numeroPlan(m[1]);
+
+              }
+
+
+              return !!m;
+
+            }
+          );
+
+        }
+
+
+        if (!viaje.zona) {
+
+          var z = /Zon\.?\s*([A-Za-z0-9 ]+)$/.exec(r.texto);
+
+
+          if (z && i < hIdx) {
+
+            viaje.zona = z[1].trim();
+
+          }
+
+        }
+
+      }
+    );
+
+
+    viaje.clientes.forEach(
+      function (c) {
+
+        c.importe = Math.round(c.importe * 100) / 100;
+
+      }
+    );
+
+
+    return viaje;
+
+  }
+
+
+
+  /* Próxima fecha (desde hoy) del día de la semana que dice la ruta, ej. "CAMILO VIERNES" */
+
+  function fechaDeRuta(texto) {
+
+    var t = normalizarTexto(texto);
+
+    var dias = { domingo: 0, lunes: 1, martes: 2, miercoles: 3, jueves: 4, viernes: 5, sabado: 6 };
+
+    var d = null;
+
+
+    Object.keys(dias).forEach(
+      function (k) {
+
+        if (t.split(" ").some(function (w) { return w.replace(/\d+$/, "") === k; })) {
+
+          d = dias[k];
+
+        }
+
+      }
+    );
+
+
+    if (d === null) {
+
+      return "";
+
+    }
+
+
+    var f = new Date();
+
+
+    while (f.getDay() !== d) {
+
+      f.setDate(f.getDate() + 1);
+
+    }
+
+
+    return isoDia(f);
+
+  }
+
+
+
+  /* Uno o varios PDF de viaje → la misma tabla que un Excel */
+
+  function leerPdfsPlan(archivos) {
+
+    return Promise.all(
+      archivos.map(
+        function (file) {
+
+          return textoDePdf(file).then(
+            function (renglones) {
+
+              var v = parsearViajePdf(renglones);
+
+              v.archivo = file.name;
+
+              return v;
+
+            }
+          );
+
+        }
+      )
+    ).then(
+      function (viajes) {
+
+        var datos = [];
+
+
+        viajes.forEach(
+          function (v) {
+
+            v.clientes.forEach(
+              function (c) {
+
+                datos.push([c.codigo, c.nombre, v.repartidor || v.ruta, c.importe, c.cobrar === null ? "" : c.cobrar, v.viaje]);
+
+              }
+            );
+
+          }
+        );
+
+
+        if (!datos.length) {
+
+          throw errorDeValidacion("No encontré clientes en el PDF.");
+
+        }
+
+
+        var fechas =
+          viajes.map(function (v) { return fechaDeRuta(v.ruta); }).filter(Boolean);
+
+
+        return {
+          titulos: ["Número de cliente", "Nombre", "Repartidor", "Importe", "A cobrar", "Viaje"],
+          datos: datos,
+          columnas: { codigo: 0, nombre: 1, camionero: 2, importe: 3, cobrar: 4 },
+          archivo: archivos.map(function (a) { return a.name; }).join(", "),
+          viajes: viajes,
+          fechaSugerida: fechas[0] || ""
+        };
+
+      }
+    );
 
   }
 
@@ -39052,7 +39888,8 @@ body[data-vista="ruta"] #avisoBar {
             cid: m ? m.c.id : "",
             seguro: m ? m.seguro : false,
             horario: desde || hasta ? { desde: desde || "", hasta: hasta || "", texto: String(texto || "") } : null,
-            importe: typeof importe === "number" ? importe : Number(String(importe).replace(/[^\d,.-]/g, "").replace(/\./g, "").replace(",", ".")) || 0,
+            importe: numeroPlan(importe),
+            cobrar: val(f, "cobrar") === "" ? null : numeroPlan(val(f, "cobrar")),
             camionero: usuarioDeTexto(val(f, "camionero"), "camionero") || "",
             camioneroTexto: String(val(f, "camionero") || ""),
             reponedor: usuarioDeTexto(val(f, "reponedor"), "reponedor") || "",
@@ -39297,7 +40134,7 @@ body[data-vista="ruta"] #avisoBar {
           '</div>' +
           '<div class="ac-field"><label>Archivo (Excel o CSV)</label>' +
             '<label class="btn btn-primary import-elegir">' + (p.archivo ? "Cambiar archivo" : "Elegir archivo") +
-              '<input type="file" accept=".xlsx,.xls,.csv" id="planArchivo" hidden>' +
+              '<input type="file" accept=".xlsx,.xls,.csv,.pdf" id="planArchivo" multiple hidden>' +
             '</label>' +
             (p.archivo ? '<small class="custom-hint">' + escapeHtml(p.archivo) + '</small>' : '') +
           '</div>' +
@@ -39360,6 +40197,14 @@ body[data-vista="ruta"] #avisoBar {
           ).join("") +
         '</div>' +
       '</div>';
+
+
+    /* PDF de viaje: en vez de las columnas, el resumen de cada viaje */
+    if (p.viajes) {
+
+      columnasHtml = resumenViajesHtml(p.viajes);
+
+    }
 
 
     /* filas a revisar: sin cliente o parecidas */
@@ -39448,6 +40293,7 @@ body[data-vista="ruta"] #avisoBar {
                       '<td>' + (eta !== undefined ? '<strong>' + deMinutos(eta) + '</strong>' + (tarde ? '<br><small class="op-rojo">llega tarde</small>' : '') : '—') + '</td>' +
                       '<td>' + (ep ? deMinutos(ep.llegada) + ' – ' + deMinutos(ep.fin) : '—') + '</td>' +
                       '<td>' + (importeDeFila(c.id) ? plata(importeDeFila(c.id)) : '') + '</td>' +
+                      '<td>' + (cobrarDeFila(c.id) !== null ? plata(cobrarDeFila(c.id)) : '') + '</td>' +
                       '<td class="plan-mover">' +
                         '<button type="button" class="btn btn-ghost ruta-mover" data-plan-mover="arriba" data-cam="' + escapeHtml(cam) + '" data-cliente="' + escapeHtml(c.id) + '" aria-label="Subir">&#9650;</button>' +
                         '<button type="button" class="btn btn-ghost ruta-mover" data-plan-mover="abajo" data-cam="' + escapeHtml(cam) + '" data-cliente="' + escapeHtml(c.id) + '" aria-label="Bajar">&#9660;</button>' +
@@ -39478,7 +40324,7 @@ body[data-vista="ruta"] #avisoBar {
                   (g.manual ? '<button type="button" class="hist-more" data-plan-auto="' + escapeHtml(cam) + '">Volver al orden óptimo</button>' : '') +
                 '</div>' +
                 '<div class="op-tabla-wrap"><table class="op-tabla">' +
-                  '<thead><tr><th></th><th>Cliente</th><th>Recibe</th><th>Camión llega</th><th>Promotor</th><th>Importe</th><th></th></tr></thead>' +
+                  '<thead><tr><th></th><th>Cliente</th><th>Recibe</th><th>Camión llega</th><th>Promotor</th><th>Importe</th><th>A cobrar</th><th></th></tr></thead>' +
                   '<tbody>' + filasHtml + '</tbody>' +
                 '</table></div>' +
               '</div>'
@@ -39529,6 +40375,82 @@ body[data-vista="ruta"] #avisoBar {
 
 
 
+  function resumenViajesHtml(viajes) {
+
+    return (
+      '<div class="dash-card">' +
+        '<div class="dash-card-head"><h2 class="dash-card-title">Viajes del PDF</h2>' +
+          '<span class="dash-card-hint">Leídos del «Reporte de Viaje» del sistema</span></div>' +
+        '<div class="user-list">' +
+          viajes.map(
+            function (v) {
+
+              var suma = 0;
+
+              var cobrar = 0;
+
+
+              v.clientes.forEach(
+                function (c) {
+
+                  suma += c.importe;
+
+                  cobrar += c.cobrar || 0;
+
+                }
+              );
+
+
+              var cuadra =
+                v.totalPdf === null || Math.abs(v.totalPdf - suma) < 1;
+
+
+              var cam = usuarioDeTexto(v.repartidor || v.ruta, "camionero");
+
+
+              return (
+                '<div class="user-row">' +
+                  '<span class="user-info">' +
+                    '<strong>Viaje ' + escapeHtml(v.viaje) + ' · ' + escapeHtml(v.ruta) + '</strong>' +
+                    '<small>' +
+                      'Repartidor: ' + escapeHtml(v.repartidor || "—") +
+                      (cam ? ' → ' + escapeHtml(nombreUsuario(cam)) : ' <span class="op-rojo">(no hay un usuario camionero con ese nombre)</span>') +
+                      (v.zona ? ' · ' + escapeHtml(v.zona) : '') +
+                      (v.fecha ? ' · viaje del ' + escapeHtml(v.fecha) : '') +
+                    '</small>' +
+                    '<small>' +
+                      plural(v.clientes.length, "cliente", "clientes") + ' · a entregar ' + plata(suma) +
+                      ' · a cobrar ' + plata(cobrar) +
+                      (
+                        v.totalPdf !== null
+                          ? (cuadra ? ' · ✓ coincide con el total del PDF' : ' · <span class="op-rojo">⚠ el PDF dice ' + plata(v.totalPdf) + '</span>')
+                          : ''
+                      ) +
+                    '</small>' +
+                  '</span>' +
+                '</div>'
+              );
+
+            }
+          ).join("") +
+        '</div>' +
+      '</div>'
+    );
+
+  }
+
+
+
+  function cobrarDeFila(cid) {
+
+    var f = (state.plan.filas || []).find(function (x) { return x.cid === cid; });
+
+    return f && f.cobrar !== null && f.cobrar !== undefined ? f.cobrar : null;
+
+  }
+
+
+
   function importeDeFila(cid) {
 
     var f = (state.plan.filas || []).find(function (x) { return x.cid === cid; });
@@ -39555,7 +40477,9 @@ body[data-vista="ruta"] #avisoBar {
       "change",
       function () {
 
-        var file = input.files && input.files[0];
+        var archivos = Array.prototype.slice.call(input.files || []);
+
+        var file = archivos[0];
 
         var est = document.getElementById("planEstado");
 
@@ -39570,7 +40494,18 @@ body[data-vista="ruta"] #avisoBar {
         est.textContent = "Leyendo el archivo…";
 
 
-        leerArchivoPlan(file)
+        /* PDF del "Reporte de Viaje" del sistema (uno o varios, uno por viaje) */
+        var esPdf =
+          archivos.some(
+            function (a) {
+
+              return /\.pdf$/i.test(a.name) || a.type === "application/pdf";
+
+            }
+          );
+
+
+        (esPdf ? leerPdfsPlan(archivos) : leerArchivoPlan(file))
 
           .then(
             function (r) {
@@ -39587,6 +40522,16 @@ body[data-vista="ruta"] #avisoBar {
               p.archivo = r.archivo;
 
               p.grupos = {};
+
+              p.viajes = r.viajes || null;
+
+
+              /* la fecha que sugiere el archivo (ej: ruta "… VIERNES") */
+              if (r.fechaSugerida) {
+
+                p.fecha = r.fechaSugerida;
+
+              }
 
 
               armarFilasPlan();
@@ -39955,6 +40900,8 @@ body[data-vista="ruta"] #avisoBar {
 
         var importes = {};
 
+        var cobros = {};
+
         var horarios = {};
 
         var etas = {};
@@ -39969,6 +40916,16 @@ body[data-vista="ruta"] #avisoBar {
             if (imp) {
 
               importes[c.id] = imp;
+
+            }
+
+
+            var cob = cobrarDeFila(c.id);
+
+
+            if (cob !== null) {
+
+              cobros[c.id] = cob;
 
             }
 
@@ -39994,6 +40951,7 @@ body[data-vista="ruta"] #avisoBar {
           clientes: g.orden.map(function (c) { return c.id; }),
           horarios: horarios,
           importes: importes,
+          cobros: cobros,
           reponedorId: g.reponedor || "",
           conReposicion: g.conReposicion,
           etas: etas,
@@ -40111,6 +41069,97 @@ body[data-vista="ruta"] #avisoBar {
           boton.disabled = false;
 
           avisarError(err, "No se pudo publicar la ruta. Revisá tu conexión.");
+
+        }
+      );
+
+  }
+
+
+
+  /* ========================================================
+     RESPALDO: copia completa de la base en un archivo (JSON)
+     Las reglas de Firestore están abiertas: conviene bajar un
+     respaldo cada tanto. Las fotos y PDF quedan en Storage
+     (en el respaldo van sus links).
+  ======================================================== */
+
+  function descargarRespaldo(boton) {
+
+    if (!state.canEdit || !state.db) {
+
+      return;
+
+    }
+
+
+    boton.disabled = true;
+
+
+    state.db.collection("clientes").get()
+
+      .then(
+        function (snap) {
+
+          var docs = {};
+
+
+          snap.docs.forEach(
+            function (d) {
+
+              docs[d.id] = d.data();
+
+            }
+          );
+
+
+          var datos = {
+            app: "Espacios & Condiciones · Distrishop",
+            coleccion: "clientes",
+            fecha: new Date().toISOString(),
+            documentos: snap.docs.length,
+            datos: docs
+          };
+
+
+          var blob = new Blob([JSON.stringify(datos)], { type: "application/json" });
+
+          var url = URL.createObjectURL(blob);
+
+          var a = document.createElement("a");
+
+
+          a.href = url;
+
+          a.download = "respaldo-distrishop-" + hoyIso() + ".json";
+
+          document.body.appendChild(a);
+
+          a.click();
+
+          a.remove();
+
+
+          setTimeout(function () { URL.revokeObjectURL(url); }, 5000);
+
+
+          showToast("Respaldo descargado: " + plural(snap.docs.length, "documento", "documentos") + ".");
+
+        }
+      )
+
+      .catch(
+        function (err) {
+
+          avisarError(err, "No se pudo hacer el respaldo. Revisá tu conexión.");
+
+        }
+      )
+
+      .then(
+        function () {
+
+          boton.disabled = false;
 
         }
       );
@@ -40526,6 +41575,10 @@ body[data-vista="ruta"] #avisoBar {
         verificarSesionVendedor();
 
 
+        /* si solo cambiaron documentos internos (ubicaciones, jornada…), los
+           clientes no cambiaron: no hace falta volver a procesarlos */
+        if (!soloInternos) {
+
         state.clients =
 
           snap.docs.filter(
@@ -40757,6 +41810,8 @@ body[data-vista="ruta"] #avisoBar {
 
             }
           );
+
+        }
 
 
         /* solo se movió alguien del equipo: se redibuja solo donde se ve */
