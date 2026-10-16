@@ -8118,6 +8118,13 @@ body[data-vista="ruta"] #avisoBar {
 }
 
 
+.persona-pin.deposito span {
+
+  background: #5d5a72;
+
+}
+
+
 /* ---------- tarjetero ---------- */
 
 .tarj-bar {
@@ -31314,9 +31321,18 @@ body[data-vista="ruta"] #avisoBar {
       visitados.find(tieneUbicacion);
 
 
+    /* sin GPS ni entregas todavía: sale del depósito */
+    var deposito = depositoGuardado();
+
+
     var origen =
       posicion ||
-      (ultimo ? { lat: ultimo.mapa.lat, lng: ultimo.mapa.lng } : null);
+      (ultimo ? { lat: ultimo.mapa.lat, lng: ultimo.mapa.lng } : null) ||
+      deposito;
+
+
+    var origenTipo =
+      posicion ? "gps" : ultimo ? "ultimo" : deposito ? "deposito" : "";
 
 
     /* si está en un cliente (marcó la llegada), ese va primero */
@@ -31406,6 +31422,7 @@ body[data-vista="ruta"] #avisoBar {
       entregados: entregados,
       noEntregados: noEntregados,
       origen: origen,
+      origenTipo: origenTipo,
       fijo: fijo,
       manual: !!(j.ordenes[uid] && j.ordenes[uid].length),
       conPlan: camioneroConPlanHoy(uid),
@@ -31516,7 +31533,7 @@ body[data-vista="ruta"] #avisoBar {
 
       html +=
         '<div class="ruta-mapa" id="mapaRuta"></div>' +
-        leyendaRutaHtml(true, r.origen) +
+        leyendaRutaHtml(true, r.origen, [], r.origenTipo) +
         '<div class="ruta-bajo-mapa">' + destinoHtml + '</div>';
 
     } else {
@@ -31631,6 +31648,7 @@ body[data-vista="ruta"] #avisoBar {
       hechos: r.entregados,
       noHechos: r.noEntregados,
       origen: r.origen,
+      origenTipo: r.origenTipo,
       personas: []
     });
 
@@ -32516,14 +32534,41 @@ body[data-vista="ruta"] #avisoBar {
 
 
 
-  function leyendaRutaHtml(esCamionero, origen, personas) {
+  /* Depósito de Distrishop (de donde salen los camioneros), si está ubicado */
+
+  function depositoGuardado() {
+
+    var d = state.planes && state.planes.deposito;
+
+
+    return d && isFinite(d.lat) && isFinite(d.lng) && d.lat !== null
+      ? { lat: Number(d.lat), lng: Number(d.lng), direccion: d.direccion || "Depósito" }
+      : null;
+
+  }
+
+
+
+  function etiquetaOrigen(tipo) {
+
+    return tipo === "deposito"
+      ? "Depósito"
+      : tipo === "gps" || (!tipo && state.miPosicion)
+        ? "Vos"
+        : "Último lugar visitado";
+
+  }
+
+
+
+  function leyendaRutaHtml(esCamionero, origen, personas, origenTipo) {
 
     return (
       '<div class="mapa-leyenda">' +
         '<span><i style="background:#6f5bd3"></i>' + (esCamionero ? "Por entregar (en orden)" : "Disponible (en orden)") + '</span>' +
         (esCamionero ? '<span><i style="background:#c0453a"></i>No entregado</span>' : '<span><i style="background:#a8a3bf"></i>Todavía no disponible</span>') +
         '<span><i style="background:#2f8a63"></i>' + (esCamionero ? "Entregado" : "Repuesto") + '</span>' +
-        (origen ? '<span><i style="background:#2563eb"></i>' + (state.miPosicion ? "Vos" : "Último lugar visitado") + '</span>' : '') +
+        (origen ? '<span><i style="background:#2563eb"></i>' + etiquetaOrigen(origenTipo) + '</span>' : '') +
         ((personas || []).some(function (x) { return x.pos; }) ? '<span>&#128666; Camionero</span>' : '') +
       '</div>'
     );
@@ -32734,7 +32779,7 @@ body[data-vista="ruta"] #avisoBar {
 
             L.circleMarker([datos.origen.lat, datos.origen.lng], { radius: 9, color: "#ffffff", weight: 3, fillColor: "#2563eb", fillOpacity: 1 })
               .addTo(mapa)
-              .bindTooltip(state.miPosicion ? "Vos" : "Último lugar visitado");
+              .bindTooltip(etiquetaOrigen(datos.origenTipo));
 
           }
 
@@ -34316,6 +34361,26 @@ body[data-vista="ruta"] #avisoBar {
 
             }
           );
+
+
+          /* depósito (de donde salen los camioneros) */
+          var dep = depositoGuardado();
+
+
+          if (dep) {
+
+            L.marker([dep.lat, dep.lng], {
+              icon: L.divIcon({
+                className: "persona-pin deposito",
+                html: '<span>&#127981;</span>',
+                iconSize: [34, 34],
+                iconAnchor: [17, 17]
+              })
+            })
+              .addTo(mapa)
+              .bindTooltip("Depósito · " + escapeHtml(dep.direccion));
+
+          }
 
 
           mapaOpsPersonas = {};
