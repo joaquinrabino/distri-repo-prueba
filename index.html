@@ -8545,6 +8545,266 @@ body[data-vista="ruta"] #avisoBar {
 }
 
 
+/* ---------- ausencias avisadas ---------- */
+
+.aus-form {
+
+  display: grid;
+
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+
+  gap: 10px 14px;
+
+  align-items: end;
+
+  padding: 12px;
+
+  margin-bottom: 12px;
+
+  border-radius: 10px;
+
+  background: var(--surface-2);
+
+}
+
+
+.aus-form select,
+.aus-form input[type="date"],
+.aus-form input[type="text"] {
+
+  font: inherit;
+
+  font-size: 14px;
+
+  padding: 7px 9px;
+
+  border: 1px solid var(--border-strong);
+
+  border-radius: 7px;
+
+  background: var(--surface);
+
+  min-width: 0;
+
+  width: 100%;
+
+  box-sizing: border-box;
+
+}
+
+
+.aus-form .ac-field {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 4px;
+
+  font-size: 12.5px;
+
+  color: var(--ink-soft);
+
+}
+
+
+.aus-modo {
+
+  grid-column: 1 / -1;
+
+  border: 0;
+
+  margin: 0;
+
+  padding: 0;
+
+  display: flex;
+
+  flex-wrap: wrap;
+
+  gap: 6px 18px;
+
+  font-size: 14px;
+
+}
+
+
+.aus-modo legend {
+
+  font-size: 12.5px;
+
+  color: var(--ink-soft);
+
+  margin-bottom: 4px;
+
+  padding: 0;
+
+}
+
+
+.aus-modo small {
+
+  color: var(--ink-faint);
+
+}
+
+
+.aus-just {
+
+  font-size: 14px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 6px;
+
+}
+
+
+.aus-item {
+
+  border: 1px solid var(--border);
+
+  border-radius: 10px;
+
+  padding: 10px 12px;
+
+  margin-bottom: 10px;
+
+}
+
+
+.aus-item-head {
+
+  display: flex;
+
+  flex-wrap: wrap;
+
+  align-items: center;
+
+  gap: 6px 10px;
+
+  font-size: 14px;
+
+  margin-bottom: 8px;
+
+}
+
+
+.aus-item-head small {
+
+  color: var(--ink-soft);
+
+}
+
+
+.aus-acciones {
+
+  margin-left: auto;
+
+  display: flex;
+
+  gap: 8px;
+
+}
+
+
+.aus-nota {
+
+  margin: 0;
+
+  font-size: 13.5px;
+
+  color: var(--ink-soft);
+
+}
+
+
+.op-tabla.aus-tabla {
+
+  min-width: 0;
+
+  font-size: 13.5px;
+
+}
+
+
+.aus-tabla tr.aus-sin td {
+
+  background: var(--vencido-bg);
+
+}
+
+
+.aus-cargas {
+
+  display: flex;
+
+  flex-wrap: wrap;
+
+  gap: 8px;
+
+  font-size: 13px;
+
+}
+
+
+.aus-carga {
+
+  padding: 5px 10px;
+
+  border-radius: 99px;
+
+  background: var(--vigente-bg);
+
+  color: var(--ink);
+
+}
+
+
+.aus-carga.pasa {
+
+  background: var(--vencido-bg);
+
+}
+
+
+.aus-proximas {
+
+  margin-top: 14px;
+
+}
+
+
+.aus-proximas h3 {
+
+  margin: 0 0 4px;
+
+  font-size: 14px;
+
+  color: var(--ink-soft);
+
+}
+
+
+.aus-aviso {
+
+  display: flex;
+
+  flex-wrap: wrap;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 8px;
+
+  margin-bottom: 14px;
+
+}
+
+
 .op-tabla.falta-tabla {
 
   min-width: 0;
@@ -27117,7 +27377,30 @@ body[data-vista="ruta"] #avisoBar {
 
   /* Promotor que repone hoy este cliente ("" = cualquiera) */
 
+  /* Promotor del día: si el que le toca avisó que falta, el local pasa
+     al compañero que le asignó el reparto (o queda sin promotor fijo) */
   function reponedorHoy(c) {
+
+    var base = reponedorBase(c);
+
+
+    if (!base || !ausenciaDe(base, hoyIso())) {
+
+      return base;
+
+    }
+
+
+    var r = repartoHoy();
+
+
+    return r.asignados[c.id] || "";
+
+  }
+
+
+
+  function reponedorBase(c) {
 
     /* se decide local por local: el de la ruta cargada (si se eligió ahí)
        o el de la ficha del cliente. Un promotor no está atado a un camionero. */
@@ -27134,6 +27417,374 @@ body[data-vista="ruta"] #avisoBar {
 
 
     return logisticaDe(c).reponedorId;
+
+  }
+
+
+
+  /* ========================================================
+     AUSENCIAS AVISADAS Y REPARTO DE LOCALES
+     El administrador marca que un promotor va a faltar (cualquier
+     motivo). Ese día sus locales se reparten entre los promotores que
+     sí trabajan, por prioridad del cliente (1 primero): cada local va
+     al que tiene tiempo libre en su jornada y le queda más cerca. Los
+     de prioridad 1 y 2 se asignan siempre (aunque se pase de horas);
+     los demás, si no entran, quedan sin promotor fijo y cualquiera los
+     puede tomar como extra. El admin elige al marcarla si el reparto es
+     automático o manual (en manual asigna él cada local); en los dos
+     casos puede cambiar a mano cualquier local.
+     Se guardan en clientes/_tarjetero_AAAA-MM → ausencias.
+  ======================================================== */
+
+  var cacheReparto = { clave: "", valor: null };
+
+
+
+  function ausenciasDelDia(fecha) {
+
+    return (state.tarjeteroAusencias && state.tarjeteroAusencias[fecha.slice(0, 7)] || []).filter(
+      function (a) {
+
+        return a.fecha === fecha;
+
+      }
+    );
+
+  }
+
+
+
+  function ausenciaDe(uid, fecha) {
+
+    return ausenciasDelDia(fecha).find(
+      function (a) {
+
+        return a.uid === uid;
+
+      }
+    ) || null;
+
+  }
+
+
+
+  /* Reparto de hoy: { asignados: {clienteId: uid}, locales: [...], cargas: {uid: {...}} } */
+  function repartoHoy() {
+
+    var hoy = hoyIso();
+
+    var ausencias = ausenciasDelDia(hoy);
+
+
+    var clave =
+      hoy + "|" + (state.snapVersion || 0);
+
+
+    if (cacheReparto.clave === clave) {
+
+      return cacheReparto.valor;
+
+    }
+
+
+    var vacio = { asignados: {}, esperando: {}, locales: [], cargas: {}, presentes: [] };
+
+
+    /* se guarda antes de calcular (por si algo de adentro pregunta el promotor) */
+    cacheReparto = { clave: clave, valor: vacio };
+
+
+    if (!ausencias.length) {
+
+      return vacio;
+
+    }
+
+
+    var ausentes = {};
+
+    var cambios = {};
+
+
+    ausencias.forEach(
+      function (a) {
+
+        ausentes[a.uid] = a;
+
+        Object.assign(cambios, a.cambios || {});
+
+      }
+    );
+
+
+    var presentes =
+      usuariosConRol("reponedor").filter(
+        function (u) {
+
+          return !ausentes[u.id];
+
+        }
+      );
+
+
+    var inicio = aMinutos(INICIO_PROMOTOR);
+
+    var capacidad = JORNADA_PROMOTOR_MIN - DESCANSO_PROMOTOR_MIN;
+
+
+    /* lo que ya tiene cada promotor que trabaja (sus propios locales) */
+    var cargas = {};
+
+
+    presentes.forEach(
+      function (u) {
+
+        var propios =
+          state.clients.filter(
+            function (c) {
+
+              return tieneReposicionHoy(c) && reponedorBase(c) === u.id;
+
+            }
+          );
+
+
+        var plan =
+          propios.length
+            ? planificarRuta(propios, { servicio: 20, usarTiempoAsignado: true, inicio: inicio })
+            : null;
+
+
+        cargas[u.id] = {
+          uid: u.id,
+          nombre: u.nombre || u.usuario,
+          propios: propios.length,
+          minutos: plan ? Math.max(0, plan.fin - inicio) : 0,
+          sumados: 0,
+          puntos: propios.filter(tieneUbicacion).map(
+            function (c) {
+
+              return { lat: c.mapa.lat, lng: c.mapa.lng };
+
+            }
+          )
+        };
+
+      }
+    );
+
+
+    /* locales de los que faltan, por prioridad (1 primero) y después los que llevan más tiempo */
+    var locales =
+      state.clients
+        .filter(
+          function (c) {
+
+            return tieneReposicionHoy(c) && !!ausentes[reponedorBase(c)];
+
+          }
+        )
+        .sort(
+          function (a, b) {
+
+            return prioridadDe(a) - prioridadDe(b) ||
+              tiempoAsignadoDe(b, 20) - tiempoAsignadoDe(a, 20) ||
+              String(a.nombre || "").localeCompare(String(b.nombre || ""), "es");
+
+          }
+        );
+
+
+    /* minutos que le suma un local a un promotor: el tiempo en el local
+       más ir y volver desde lo más cerca de su recorrido */
+    var costo = function (c, carga) {
+
+      var viaje = 15;
+
+
+      if (tieneUbicacion(c) && carga.puntos.length) {
+
+        var p = { lat: c.mapa.lat, lng: c.mapa.lng };
+
+
+        viaje = Infinity;
+
+
+        carga.puntos.forEach(
+          function (q) {
+
+            viaje = Math.min(viaje, MOTOR_RUTAS.minutosViaje(q, p));
+
+          }
+        );
+
+      }
+
+
+      return Math.round(tiempoAsignadoDe(c, 20) + viaje * 2);
+
+    };
+
+
+    var sumar = function (c, carga) {
+
+      carga.minutos += costo(c, carga);
+
+      carga.sumados++;
+
+
+      if (tieneUbicacion(c)) {
+
+        carga.puntos.push({ lat: c.mapa.lat, lng: c.mapa.lng });
+
+      }
+
+    };
+
+
+    var asignados = {};
+
+    var esperando = {};
+
+    var detalle = [];
+
+
+    /* primero los que el admin cambió a mano */
+    locales.forEach(
+      function (c) {
+
+        if (Object.prototype.hasOwnProperty.call(cambios, c.id) && (cambios[c.id] === "" || cargas[cambios[c.id]])) {
+
+          asignados[c.id] = cambios[c.id];
+
+
+          if (cambios[c.id]) {
+
+            sumar(c, cargas[cambios[c.id]]);
+
+          }
+
+        }
+
+      }
+    );
+
+
+    locales.forEach(
+      function (c) {
+
+        var manual = Object.prototype.hasOwnProperty.call(asignados, c.id);
+
+        var elegido = null;
+
+        var excede = false;
+
+
+        /* ausencia en modo manual: lo que el admin no asignó queda esperando */
+        if (!manual && ausentes[reponedorBase(c)].modo === "manual") {
+
+          esperando[c.id] = true;
+
+
+          asignados[c.id] = "";
+
+        }
+        else if (!manual) {
+
+          var opciones =
+            presentes.map(
+              function (u) {
+
+                var carga = cargas[u.id];
+
+                var min = costo(c, carga);
+
+
+                return { carga: carga, costo: min, sobra: capacidad - carga.minutos - min };
+
+              }
+            );
+
+
+          var entran =
+            opciones
+              .filter(
+                function (o) {
+
+                  return o.sobra >= 0;
+
+                }
+              )
+              .sort(
+                function (a, b) {
+
+                  return a.costo - b.costo || b.sobra - a.sobra;
+
+                }
+              );
+
+
+          if (entran.length) {
+
+            elegido = entran[0].carga;
+
+          }
+          else if (prioridadDe(c) <= 2 && opciones.length) {
+
+            /* prioridad alta: no se puede perder, va al que tiene más margen */
+            elegido = opciones.sort(
+              function (a, b) {
+
+                return b.sobra - a.sobra;
+
+              }
+            )[0].carga;
+
+
+            excede = true;
+
+          }
+
+
+          if (elegido) {
+
+            asignados[c.id] = elegido.uid;
+
+            sumar(c, elegido);
+
+          }
+          else {
+
+            asignados[c.id] = "";
+
+          }
+
+        }
+
+
+        detalle.push({
+          c: c,
+          de: reponedorBase(c),
+          a: asignados[c.id],
+          manual: manual,
+          excede: excede
+        });
+
+      }
+    );
+
+
+    cacheReparto.valor = {
+      asignados: asignados,
+      esperando: esperando,
+      locales: detalle,
+      cargas: cargas,
+      presentes: presentes,
+      capacidad: capacidad
+    };
+
+
+    return cacheReparto.valor;
 
   }
 
@@ -29457,6 +30108,8 @@ body[data-vista="ruta"] #avisoBar {
 
   state.tarjeteroJustificadas = {};
 
+  state.tarjeteroAusencias = {};
+
 
 
   var MARCAS = {
@@ -30073,10 +30726,27 @@ body[data-vista="ruta"] #avisoBar {
 
     var j = justificacionDe(u.id, fecha);
 
+    var aus = ausenciaDe(u.id, fecha);
+
 
     if (j) {
 
       return { estado: "justificada", motivo: j.motivo || "", por: j.por || "" };
+
+    }
+
+
+    /* avisó que faltaba: si la ausencia se marcó justificada, no se descuenta */
+    if (aus && aus.justificada) {
+
+      return { estado: "justificada", motivo: "Avisó: " + (aus.motivo || "ausencia"), por: aus.por || "", avisada: true };
+
+    }
+
+
+    if (aus) {
+
+      return { estado: "falta", motivo: "Avisó: " + (aus.motivo || "ausencia") };
 
     }
 
@@ -30303,6 +30973,604 @@ body[data-vista="ruta"] #avisoBar {
 
 
 
+  /* ---------- ausencias avisadas (solo administrador) ---------- */
+
+  /* cambia la lista de ausencias de un mes dentro de una transacción */
+  function editarAusencias(mes, cambiar, aviso) {
+
+    var ref = state.db.doc("clientes/" + TARJ_PREFIX + mes);
+
+
+    return state.db.runTransaction(
+      function (tx) {
+
+        return tx.get(ref).then(
+          function (snap) {
+
+            var lista =
+              (snap.exists && Array.isArray(snap.data().ausencias)) ? snap.data().ausencias : [];
+
+
+            tx.set(ref, { mes: mes, ausencias: cambiar(lista.slice()) }, { merge: true });
+
+          }
+        );
+
+      }
+    )
+      .then(
+        function () {
+
+          if (aviso) {
+
+            showToast(aviso);
+
+          }
+
+        }
+      )
+      .catch(
+        function (err) {
+
+          avisarError(err, "No se pudo guardar la ausencia.");
+
+        }
+      );
+
+  }
+
+
+
+  function marcarAusencia() {
+
+    if (!puede("deshacer")) {
+
+      return;
+
+    }
+
+
+    var uid = (document.getElementById("ausUid") || {}).value || "";
+
+    var fecha = (document.getElementById("ausFecha") || {}).value || "";
+
+    var motivo = String((document.getElementById("ausMotivo") || {}).value || "").trim();
+
+    var just = !!(document.getElementById("ausJust") || {}).checked;
+
+    var modoEl = els.mainInner.querySelector('input[name="ausModo"]:checked');
+
+    var modo = modoEl && modoEl.value === "manual" ? "manual" : "auto";
+
+
+    if (!uid) {
+
+      showToast("Elegí el promotor que va a faltar.");
+
+      return;
+
+    }
+
+
+    if (!fecha || fecha < hoyIso()) {
+
+      showToast("Elegí la fecha (de hoy en adelante).");
+
+      return;
+
+    }
+
+
+    if (ausenciaDe(uid, fecha)) {
+
+      showToast(nombreUsuario(uid) + " ya está marcado como ausente ese día.");
+
+      return;
+
+    }
+
+
+    var nueva = {
+      id: "a" + Date.now().toString(36),
+      uid: uid,
+      fecha: fecha,
+      motivo: motivo,
+      justificada: just,
+      modo: modo,
+      cambios: {},
+      por: quienSoy(),
+      at: Date.now()
+    };
+
+
+    editarAusencias(
+      fecha.slice(0, 7),
+      function (lista) {
+
+        return lista.filter(
+          function (a) {
+
+            return !(a.uid === uid && a.fecha === fecha);
+
+          }
+        ).concat([nueva]);
+
+      },
+      nombreUsuario(uid) + " marcado como ausente el " + fmtDate(fecha) +
+        (modo === "auto" ? ". Sus locales se reparten solos." : ". Asigná sus locales a mano.")
+    ).then(
+      function () {
+
+        ["ausUid", "ausMotivo"].forEach(
+          function (id) {
+
+            if (document.getElementById(id)) {
+
+              document.getElementById(id).value = "";
+
+            }
+
+          }
+        );
+
+
+        if (document.getElementById("ausJust")) {
+
+          document.getElementById("ausJust").checked = false;
+
+        }
+
+      }
+    );
+
+
+    /* se muestra ese día para ver el reparto */
+    state.tarjeteroFecha = fecha <= hoyIso() ? fecha : state.tarjeteroFecha;
+
+  }
+
+
+
+  function quitarAusencia(id, mes) {
+
+    if (!puede("deshacer") || !confirm("¿Quitar la ausencia? Sus locales vuelven a ser suyos.")) {
+
+      return;
+
+    }
+
+
+    editarAusencias(
+      mes,
+      function (lista) {
+
+        return lista.filter(
+          function (a) {
+
+            return a.id !== id;
+
+          }
+        );
+
+      },
+      "Ausencia quitada."
+    );
+
+  }
+
+
+
+  function modoAusencia(id, mes, modo) {
+
+    if (!puede("deshacer")) {
+
+      return;
+
+    }
+
+
+    editarAusencias(
+      mes,
+      function (lista) {
+
+        return lista.map(
+          function (a) {
+
+            return a.id === id ? Object.assign({}, a, { modo: modo }) : a;
+
+          }
+        );
+
+      },
+      modo === "auto" ? "Reparto automático por prioridad." : "Reparto manual: asigná cada local."
+    );
+
+  }
+
+
+
+  /* el admin cambia a quién va un local ("__auto" = que lo decida el reparto) */
+  function cambiarReparto(clienteId, uid) {
+
+    if (!puede("deshacer")) {
+
+      return;
+
+    }
+
+
+    var c =
+      state.clients.find(
+        function (x) {
+
+          return x.id === clienteId;
+
+        }
+      );
+
+
+    var aus = c ? ausenciaDe(reponedorBase(c), hoyIso()) : null;
+
+
+    if (!aus) {
+
+      return;
+
+    }
+
+
+    editarAusencias(
+      hoyIso().slice(0, 7),
+      function (lista) {
+
+        return lista.map(
+          function (a) {
+
+            if (a.id !== aus.id) {
+
+              return a;
+
+            }
+
+
+            var cambios = Object.assign({}, a.cambios || {});
+
+
+            if (uid === "__auto") {
+
+              delete cambios[clienteId];
+
+            }
+            else {
+
+              cambios[clienteId] = uid;
+
+            }
+
+
+            return Object.assign({}, a, { cambios: cambios });
+
+          }
+        );
+
+      },
+      uid === "__auto"
+        ? "Vuelve al reparto automático."
+        : uid ? (c.nombre || "Local") + " → " + nombreUsuario(uid) + "." : (c.nombre || "Local") + " quedó sin asignar."
+    );
+
+  }
+
+
+
+  /* aviso en Operaciones: quién falta hoy y cómo quedó el reparto */
+  function avisoAusenciasHtml() {
+
+    var lista = ausenciasDelDia(hoyIso());
+
+
+    if (!lista.length) {
+
+      return '';
+
+    }
+
+
+    var r = repartoHoy();
+
+
+    var sinAsignar =
+      r.locales.filter(
+        function (x) {
+
+          return !x.a;
+
+        }
+      ).length;
+
+
+    return (
+      '<div class="jor-bar excedida aus-aviso">' +
+        '<span>&#128683; Faltan hoy: <strong>' +
+          lista.map(
+            function (a) {
+
+              return escapeHtml(nombreUsuario(a.uid));
+
+            }
+          ).join(", ") +
+        '</strong> · ' + plural(r.locales.length - sinAsignar, "local repartido", "locales repartidos") +
+        (sinAsignar ? ' · <strong>' + plural(sinAsignar, "sin asignar", "sin asignar") + '</strong>' : '') +
+        '</span>' +
+        '<button type="button" class="btn btn-ghost op-mini" data-ir-ausencias="1">Ver reparto</button>' +
+      '</div>'
+    );
+
+  }
+
+
+
+  function ausenciasHtml(fecha) {
+
+    var admin = puede("deshacer");
+
+    var hoy = hoyIso();
+
+    var lista = ausenciasDelDia(fecha);
+
+    var r = fecha === hoy && lista.length ? repartoHoy() : null;
+
+
+    var form =
+      admin
+        ? '<div class="aus-form">' +
+            '<label class="ac-field"><span>Promotor</span>' +
+              '<select id="ausUid"><option value="">Elegí…</option>' +
+                usuariosConRol("reponedor").map(
+                  function (u) {
+
+                    return '<option value="' + escapeHtml(u.id) + '">' + escapeHtml(u.nombre || u.usuario) + '</option>';
+
+                  }
+                ).join("") +
+              '</select>' +
+            '</label>' +
+            '<label class="ac-field"><span>Día</span><input type="date" id="ausFecha" value="' + (fecha < hoy ? hoy : fecha) + '" min="' + hoy + '"></label>' +
+            '<label class="ac-field aus-motivo"><span>Motivo</span><input type="text" id="ausMotivo" maxlength="80" placeholder="Enfermedad, licencia, trámite…"></label>' +
+            '<fieldset class="aus-modo"><legend>Sus locales</legend>' +
+              '<label><input type="radio" name="ausModo" value="auto" checked> Automático <small>(por prioridad, al que tiene tiempo y queda más cerca)</small></label>' +
+              '<label><input type="radio" name="ausModo" value="manual"> Manual <small>(los asigno yo)</small></label>' +
+            '</fieldset>' +
+            '<label class="aus-just"><input type="checkbox" id="ausJust"> Justificada (no se descuenta el día)</label>' +
+            '<button type="button" class="btn btn-primary" data-aus-marcar="1">Marcar que va a faltar</button>' +
+          '</div>'
+        : '';
+
+
+    var opcionesPara = function (x, aus) {
+
+      return (
+        (aus.modo !== "manual" && x.manual ? '<option value="__auto">↺ Automático</option>' : '') +
+        '<option value=""' + (!x.a ? ' selected' : '') + '>— Sin asignar —</option>' +
+        r.presentes.map(
+          function (u) {
+
+            var carga = r.cargas[u.id];
+
+
+            return '<option value="' + escapeHtml(u.id) + '"' + (x.a === u.id ? ' selected' : '') + '>' +
+              escapeHtml(carga.nombre) + ' (' + duracionTexto(carga.minutos) + ')' +
+            '</option>';
+
+          }
+        ).join("")
+      );
+
+    };
+
+
+    var items =
+      lista.map(
+        function (aus) {
+
+          var locales =
+            r
+              ? r.locales.filter(
+                  function (x) {
+
+                    return x.de === aus.uid;
+
+                  }
+                )
+              : [];
+
+
+          var sinAsignar =
+            locales.filter(
+              function (x) {
+
+                return !x.a;
+
+              }
+            ).length;
+
+
+          var tabla =
+            !r
+              ? '<p class="aus-nota">' +
+                  (aus.modo === "manual"
+                    ? 'Ese día vas a poder asignar sus locales acá, uno por uno.'
+                    : 'Ese día sus locales se reparten solos entre los demás promotores, por prioridad.') +
+                '</p>'
+              : !locales.length
+                ? '<p class="aus-nota">No tenía locales para reponer hoy.</p>'
+                : '<div class="op-tabla-wrap"><table class="op-tabla aus-tabla">' +
+                    '<thead><tr><th>Cliente</th><th>Prioridad</th><th>Tiempo</th><th>Pasa a</th></tr></thead>' +
+                    '<tbody>' +
+                      locales.map(
+                        function (x) {
+
+                          return (
+                            '<tr' + (!x.a ? ' class="aus-sin"' : '') + '>' +
+                              '<td><strong>' + escapeHtml(x.c.nombre || "") + '</strong>' + (x.c.codigo ? ' <small>#' + escapeHtml(x.c.codigo) + '</small>' : '') +
+                                (estadoGuardado(x.c).reposicion ? '<br><small>&#10003; ya repuesto</small>' : '') + '</td>' +
+                              '<td>' + prioridadDe(x.c) + '</td>' +
+                              '<td>' + tiempoAsignadoDe(x.c, 20) + ' min</td>' +
+                              '<td>' +
+                                (admin
+                                  ? '<select class="mov-sel" data-aus-reparto="' + escapeHtml(x.c.id) + '">' + opcionesPara(x, aus) + '</select>'
+                                  : escapeHtml(x.a ? nombreUsuario(x.a) : "Sin asignar")) +
+                                (x.manual ? ' <small>a mano</small>' : '') +
+                                (x.excede ? '<br><small class="op-rojo">&#9888; se pasa de su jornada (prioridad alta)</small>' : '') +
+                                (!x.a ? '<br><small class="op-rojo">' + (x.manual ? 'sin asignar: queda libre como extra' : aus.modo === "manual" ? 'esperando que lo asignes' : 'no entra en ninguna jornada: queda libre como extra') + '</small>' : '') +
+                              '</td>' +
+                            '</tr>'
+                          );
+
+                        }
+                      ).join("") +
+                    '</tbody>' +
+                  '</table></div>';
+
+
+          return (
+            '<div class="aus-item">' +
+              '<div class="aus-item-head">' +
+                '<span class="falta-chip">AUSENTE</span>' +
+                '<strong>' + escapeHtml(nombreUsuario(aus.uid)) + '</strong>' +
+                (aus.motivo ? '<small>' + escapeHtml(aus.motivo) + '</small>' : '') +
+                '<span class="falta-chip ' + (aus.justificada ? 'justificada">Justificada' : 'pendiente">Se descuenta el día') + '</span>' +
+                '<span class="falta-chip justificada">' + (aus.modo === "manual" ? 'Reparto manual' : 'Reparto automático') + '</span>' +
+                (r && sinAsignar ? '<small class="op-rojo">' + plural(sinAsignar, "local sin asignar", "locales sin asignar") + '</small>' : '') +
+                (
+                  admin
+                    ? '<span class="aus-acciones">' +
+                        '<button type="button" class="hist-more" data-aus-modo="' + (aus.modo === "manual" ? "auto" : "manual") + '" data-aus-id="' + escapeHtml(aus.id) + '" data-mes="' + fecha.slice(0, 7) + '">' +
+                          (aus.modo === "manual" ? 'Pasar a automático' : 'Pasar a manual') +
+                        '</button>' +
+                        '<button type="button" class="hist-more" data-aus-quitar="' + escapeHtml(aus.id) + '" data-mes="' + fecha.slice(0, 7) + '">Quitar ausencia</button>' +
+                      '</span>'
+                    : ''
+                ) +
+              '</div>' +
+              tabla +
+            '</div>'
+          );
+
+        }
+      ).join("");
+
+
+    /* cómo quedan las jornadas de los que cubren */
+    var cargasHtml =
+      r && r.presentes.length
+        ? '<div class="aus-cargas">' +
+            r.presentes.map(
+              function (u) {
+
+                var carga = r.cargas[u.id];
+
+                var pasa = carga.minutos > r.capacidad;
+
+
+                return (
+                  '<span class="aus-carga' + (pasa ? ' pasa' : '') + '">' +
+                    '<strong>' + escapeHtml(carga.nombre) + '</strong> ' +
+                    plural(carga.propios, "local", "locales") + (carga.sumados ? ' + ' + carga.sumados + ' cubiertos' : '') +
+                    ' · ≈ ' + duracionTexto(carga.minutos) + ' de ' + duracionTexto(r.capacidad) +
+                  '</span>'
+                );
+
+              }
+            ).join("") +
+          '</div>'
+        : '';
+
+
+    /* las que vienen (el calendario del tarjetero llega hasta hoy) */
+    var proximas = [];
+
+
+    Object.keys(state.tarjeteroAusencias || {}).forEach(
+      function (mes) {
+
+        (state.tarjeteroAusencias[mes] || []).forEach(
+          function (a) {
+
+            if (a.fecha > hoy) {
+
+              proximas.push(a);
+
+            }
+
+          }
+        );
+
+      }
+    );
+
+
+    proximas.sort(
+      function (a, b) {
+
+        return a.fecha.localeCompare(b.fecha);
+
+      }
+    );
+
+
+    var proximasHtml =
+      proximas.length
+        ? '<div class="aus-proximas"><h3>Próximas ausencias</h3>' +
+            proximas.map(
+              function (a) {
+
+                return (
+                  '<div class="falta-item">' +
+                    '<strong>' + escapeHtml(fmtDate(a.fecha)) + '</strong>' +
+                    '<span>' + escapeHtml(nombreUsuario(a.uid)) + '</span>' +
+                    (a.motivo ? '<small>' + escapeHtml(a.motivo) + '</small>' : '') +
+                    '<span class="falta-chip ' + (a.justificada ? 'justificada">Justificada' : 'pendiente">Se descuenta el día') + '</span>' +
+                    '<span class="falta-chip justificada">' + (a.modo === "manual" ? 'Reparto manual' : 'Reparto automático') + '</span>' +
+                    (
+                      admin
+                        ? '<span class="aus-acciones">' +
+                            '<button type="button" class="hist-more" data-aus-modo="' + (a.modo === "manual" ? "auto" : "manual") + '" data-aus-id="' + escapeHtml(a.id) + '" data-mes="' + a.fecha.slice(0, 7) + '">' +
+                              (a.modo === "manual" ? 'Pasar a automático' : 'Pasar a manual') +
+                            '</button>' +
+                            '<button type="button" class="hist-more" data-aus-quitar="' + escapeHtml(a.id) + '" data-mes="' + a.fecha.slice(0, 7) + '">Quitar</button>' +
+                          '</span>'
+                        : ''
+                    ) +
+                  '</div>'
+                );
+
+              }
+            ).join("") +
+          '</div>'
+        : '';
+
+
+    return (
+      '<div class="dash-card">' +
+        '<div class="dash-card-head">' +
+          '<h2 class="dash-card-title">Ausencias avisadas' + (lista.length ? ' <span class="falta-chip">' + lista.length + '</span>' : '') + '</h2>' +
+          '<span class="dash-card-hint">Si un promotor va a faltar, sus locales se reparten para no perder la reposición</span>' +
+        '</div>' +
+        form +
+        (
+          lista.length
+            ? items + cargasHtml
+            : '<div class="dash-empty">Nadie avisó que falta ese día.</div>'
+        ) +
+        proximasHtml +
+      '</div>'
+    );
+
+  }
+
+
+
   function faltasHtml(fecha, mes) {
 
     var delDia = faltasDelDia(fecha);
@@ -30330,12 +31598,12 @@ body[data-vista="ruta"] #avisoBar {
                   '<div class="falta-item">' +
                     chip +
                     '<strong>' + escapeHtml(f.nombre) + '</strong>' +
-                    (f.estado === "falta" ? '<small class="op-rojo">no marcó el tarjetero: se descuenta el día</small>' : '') +
+                    (f.estado === "falta" ? '<small class="op-rojo">' + (f.motivo ? escapeHtml(f.motivo) + ' · ' : 'no marcó el tarjetero: ') + 'se descuenta el día</small>' : '') +
                     (f.estado === "justificada" ? '<small>' + escapeHtml(f.motivo) + (f.por ? ' · ' + escapeHtml(f.por) : '') + '</small>' : '') +
                     (
                       admin && f.estado === "falta"
                         ? '<button type="button" class="hist-more" data-falta-just="' + escapeHtml(f.uid) + '" data-fecha="' + fecha + '">Justificar</button>'
-                        : admin && f.estado === "justificada"
+                        : admin && f.estado === "justificada" && !f.avisada
                           ? '<button type="button" class="hist-more" data-falta-quitar="' + escapeHtml(f.uid) + '" data-fecha="' + fecha + '">Quitar justificación</button>'
                           : ''
                     ) +
@@ -30528,6 +31796,33 @@ body[data-vista="ruta"] #avisoBar {
     els.mainInner.classList.add("wide");
 
 
+    /* valores del formulario de ausencia antes de redibujar */
+    var formAus = {};
+
+
+    ["ausUid", "ausFecha", "ausMotivo", "ausJust"].forEach(
+      function (id) {
+
+        var el = document.getElementById(id);
+
+
+        if (el) {
+
+          formAus[id] = el.type === "checkbox" ? el.checked : el.value;
+
+        }
+
+      }
+    );
+
+
+    var modoEl = els.mainInner.querySelector('input[name="ausModo"]:checked');
+
+    var modoAus = modoEl ? modoEl.value : "";
+
+    var focoAus = document.activeElement && /^aus/.test(document.activeElement.id || "") ? document.activeElement.id : "";
+
+
     els.mainInner.innerHTML =
 
       '<div class="ops-view">' +
@@ -30635,9 +31930,58 @@ body[data-vista="ruta"] #avisoBar {
           ) +
         '</div>' +
 
+        ausenciasHtml(fecha) +
+
         faltasHtml(fecha, mes) +
 
       '</div>';
+
+
+    /* lo que se estaba escribiendo en el formulario de ausencia no se pierde */
+    Object.keys(formAus).forEach(
+      function (id) {
+
+        var el = document.getElementById(id);
+
+
+        if (el) {
+
+          if (el.type === "checkbox") {
+
+            el.checked = formAus[id];
+
+          }
+          else {
+
+            el.value = formAus[id];
+
+          }
+
+        }
+
+      }
+    );
+
+
+    if (modoAus) {
+
+      var radio = els.mainInner.querySelector('input[name="ausModo"][value="' + modoAus + '"]');
+
+
+      if (radio) {
+
+        radio.checked = true;
+
+      }
+
+    }
+
+
+    if (focoAus && document.getElementById(focoAus)) {
+
+      document.getElementById(focoAus).focus();
+
+    }
 
 
     var input =
@@ -32875,6 +34219,7 @@ body[data-vista="ruta"] #avisoBar {
         if (
           !e.reposicion && !v &&
           disponibleParaReponer(c) &&
+          !repartoHoy().esperando[c.id] &&
           !destinoDeOtroPromotor(c, uid)
         ) {
 
@@ -32939,6 +34284,18 @@ body[data-vista="ruta"] #avisoBar {
   function esExtra(c) {
 
     return !reponedorHoy(c);
+
+  }
+
+
+
+  /* uid del promotor que falta hoy y al que se le cubre este local (o "") */
+  function cubreA(c) {
+
+    var base = reponedorBase(c);
+
+
+    return base && reponedorHoy(c) && reponedorHoy(c) !== base ? base : "";
 
   }
 
@@ -33122,7 +34479,7 @@ body[data-vista="ruta"] #avisoBar {
         );
 
 
-    if (jornada.laborable && !jornada.terminado) {
+    if (jornada.laborable && !jornada.terminado && !ausenciaDe(uid, hoyIso())) {
 
       candidatos.forEach(
         function (x) {
@@ -33484,10 +34841,30 @@ body[data-vista="ruta"] #avisoBar {
         totalDia,
         "repuestos"
       ) +
-      jornadaPromotorHtml(r, propio);
+      (ausenciaDe(uid, hoyIso()) ? "" : jornadaPromotorHtml(r, propio));
 
 
-    if (!r.mios.length && !r.extras.length) {
+    var ausencia =
+      ausenciaDe(uid, hoyIso());
+
+
+    if (ausencia) {
+
+      html +=
+        '<div class="jor-bar excedida"><span>&#128683; ' +
+          (propio ? 'Hoy estás marcado como <strong>ausente</strong>' : '<strong>' + escapeHtml(nombreUsuario(uid)) + '</strong> avisó que falta hoy') +
+          (ausencia.motivo ? ' (' + escapeHtml(ausencia.motivo) + ')' : '') +
+          '. ' + (propio ? 'Tus' : 'Sus') + ' locales se repartieron entre los demás promotores.' +
+        '</span></div>';
+
+    }
+
+
+    if (ausencia && !r.mios.length && !r.extras.length) {
+
+      /* falta hoy: solo el aviso */
+
+    } else if (!r.mios.length && !r.extras.length) {
 
       html +=
         '<div class="ruta-vacia">' +
@@ -33528,6 +34905,7 @@ body[data-vista="ruta"] #avisoBar {
                 tarde: r.plan.tarde[c.id],
                 detalle:
                   (esExtra(c) ? '<span class="op-extra">Extra</span> ' : '') +
+                  (cubreA(c) ? '<span class="op-extra">Cubre a ' + escapeHtml(nombreUsuario(cubreA(c))) + '</span> ' : '') +
                   (e.entrega ? "Entregado a las " + horaDe(e.entrega.at) : "Sin entrega hoy") +
                   " · " + tiempoAsignadoDe(c, 20) + " min asignados" +
                   (nTareas ? " · " + plural(nTareas, "tarea", "tareas") : "")
@@ -33558,7 +34936,8 @@ body[data-vista="ruta"] #avisoBar {
 
                 return filaRutaHtml(c, 0, {
                   detalle:
-                    e.visitaRep && e.visitaRep.llegada && e.visitaRep.llegada.porId !== uid
+                    (cubreA(c) ? '<span class="op-extra">Cubre a ' + escapeHtml(nombreUsuario(cubreA(c))) + '</span> ' : '') +
+                    (e.visitaRep && e.visitaRep.llegada && e.visitaRep.llegada.porId !== uid
                       ? "Lo está reponiendo " + escapeHtml(e.visitaRep.llegada.porNombre) + " desde las " + horaDe(e.visitaRep.llegada.at)
                       : e.noEntrega
                       ? "No se pudo entregar: " + (RESULTADOS_ENTREGA[e.noEntrega.motivo] || {}).label
@@ -33570,7 +34949,7 @@ body[data-vista="ruta"] #avisoBar {
                               ? " · antes tiene " + plural(pos - 1, "entrega", "entregas")
                               : ""
                         ) +
-                        etaCamionPlanTexto(c)
+                        etaCamionPlanTexto(c))
                 });
 
               }
@@ -33674,7 +35053,7 @@ body[data-vista="ruta"] #avisoBar {
 
 
     return tarjetaDestinoHtml(c, {
-      etiqueta: (v ? "Estás reponiendo en este local" : "Próximo destino") + (esExtra(c) ? " · extra (sin promotor fijo)" : ""),
+      etiqueta: (v ? "Estás reponiendo en este local" : "Próximo destino") + (esExtra(c) ? " · extra (sin promotor fijo)" : "") + (cubreA(c) ? " · cubrís a " + nombreUsuario(cubreA(c)) : ""),
       estado: est,
       distancia: v ? "" : tramo(r.origen, c),
       eta: v ? null : r.plan.llegadas[c.id],
@@ -34967,6 +36346,16 @@ body[data-vista="ruta"] #avisoBar {
     }
 
 
+    /* a quién va un local de un promotor que falta */
+    if (target.matches("[data-aus-reparto]")) {
+
+      cambiarReparto(target.getAttribute("data-aus-reparto"), target.value);
+
+      return true;
+
+    }
+
+
     /* orden de la tabla de productos del panel */
     if (target.matches("[data-prod-orden]")) {
 
@@ -35533,7 +36922,8 @@ body[data-vista="ruta"] #avisoBar {
         state.movSoloAlertas,
         JSON.stringify(state.planes.dias || {}).length,
         state.opsOrden || "",
-        state.opsVer === null || state.opsVer === undefined ? "-" : state.opsVer
+        state.opsVer === null || state.opsVer === undefined ? "-" : state.opsVer,
+        JSON.stringify(ausenciasDelDia(hoyIso()))
       ]);
 
 
@@ -35873,6 +37263,9 @@ body[data-vista="ruta"] #avisoBar {
         '</div>' +
         /* rutas cargadas desde archivo (hoy y próximos días) */
         (esHoy ? planesCargadosHtml() : '') +
+
+        /* promotores que avisaron que faltan hoy */
+        (esHoy ? avisoAusenciasHtml() : '') +
 
 
         (
@@ -37665,6 +39058,44 @@ body[data-vista="ruta"] #avisoBar {
     if ((el = e.target.closest("[data-tarj-fin]"))) {
 
       cargarFinOlvidado(el.getAttribute("data-tarj-fin"), el.getAttribute("data-fecha"));
+
+      return true;
+
+    }
+
+
+    if (e.target.closest("[data-aus-marcar]")) {
+
+      marcarAusencia();
+
+      return true;
+
+    }
+
+
+    if ((el = e.target.closest("[data-aus-quitar]"))) {
+
+      quitarAusencia(el.getAttribute("data-aus-quitar"), el.getAttribute("data-mes"));
+
+      return true;
+
+    }
+
+
+    if ((el = e.target.closest("[data-aus-modo]"))) {
+
+      modoAusencia(el.getAttribute("data-aus-id"), el.getAttribute("data-mes"), el.getAttribute("data-aus-modo"));
+
+      return true;
+
+    }
+
+
+    if (e.target.closest("[data-ir-ausencias]")) {
+
+      state.tarjeteroFecha = hoyIso();
+
+      abrirTarjetero();
 
       return true;
 
@@ -43362,6 +44793,8 @@ body[data-vista="ruta"] #avisoBar {
 
         var justificadas = {};
 
+        var ausencias = {};
+
         var tareas = [];
 
         var planes = {};
@@ -43382,6 +44815,8 @@ body[data-vista="ruta"] #avisoBar {
 
               justificadas[doc.id.slice(TARJ_PREFIX.length)] = Array.isArray(d.justificadas) ? d.justificadas : [];
 
+              ausencias[doc.id.slice(TARJ_PREFIX.length)] = Array.isArray(d.ausencias) ? d.ausencias : [];
+
             } else if (doc.id === TAREAS_DOC_ID) {
 
               tareas = Array.isArray((doc.data() || {}).tareas) ? doc.data().tareas : [];
@@ -43401,6 +44836,10 @@ body[data-vista="ruta"] #avisoBar {
         state.tarjetero = tarjetero;
 
         state.tarjeteroJustificadas = justificadas;
+
+        state.tarjeteroAusencias = ausencias;
+
+        state.snapVersion = (state.snapVersion || 0) + 1;
 
         state.tareas = tareas;
 
