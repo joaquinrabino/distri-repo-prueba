@@ -7277,6 +7277,24 @@ body[data-vista="ruta"] #avisoBar {
 }
 
 
+.tarj-dia {
+
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 6px;
+
+}
+
+
+.tarj-dia .btn {
+
+  padding: 7px 11px;
+
+}
+
+
 .ops-fecha input {
 
   font: inherit;
@@ -28993,7 +29011,7 @@ body[data-vista="ruta"] #avisoBar {
 
   state.tarjeteroView = false;
 
-  state.tarjeteroMes = "";
+  state.tarjeteroFecha = "";
 
   state.tarjeteroAbierto = null;
 
@@ -29458,7 +29476,7 @@ body[data-vista="ruta"] #avisoBar {
 
     state.tarjeteroView = true;
 
-    state.tarjeteroMes = state.tarjeteroMes || hoyIso().slice(0, 7);
+    state.tarjeteroFecha = state.tarjeteroFecha || hoyIso();
 
 
     render();
@@ -29529,12 +29547,27 @@ body[data-vista="ruta"] #avisoBar {
 
   function renderTarjetero() {
 
+    /* se busca por día (el Excel sigue bajando el mes entero) */
+    var fecha =
+      state.tarjeteroFecha || hoyIso();
+
+
     var mes =
-      state.tarjeteroMes || hoyIso().slice(0, 7);
+      fecha.slice(0, 7);
 
 
     var filas =
-      filasTarjetero(mes);
+      filasTarjetero(mes).filter(
+        function (f) {
+
+          return f.fecha === fecha;
+
+        }
+      );
+
+
+    var esHoy =
+      fecha === hoyIso();
 
 
     /* movimientos de cada día (para el tiempo en locales y traslados) */
@@ -29594,8 +29627,13 @@ body[data-vista="ruta"] #avisoBar {
             '<p class="dash-sub">Marcas de los promotores: inicio, descansos y fin de actividad, con horas trabajadas.</p>' +
           '</div>' +
           '<div class="ops-head-acciones">' +
-            '<label class="ops-fecha">Mes <input type="month" id="tarjMes" value="' + mes + '" max="' + hoyIso().slice(0, 7) + '"></label>' +
-            (filas.length ? '<button type="button" class="btn btn-ghost" data-tarj-excel="1">Descargar Excel</button>' : '') +
+            '<div class="tarj-dia">' +
+              '<button type="button" class="btn btn-ghost" data-tarj-dia="-1" aria-label="Día anterior">&#9664;</button>' +
+              '<label class="ops-fecha">Día <input type="date" id="tarjFecha" value="' + fecha + '" max="' + hoyIso() + '"></label>' +
+              '<button type="button" class="btn btn-ghost" data-tarj-dia="1" aria-label="Día siguiente"' + (esHoy ? ' disabled' : '') + '>&#9654;</button>' +
+              (esHoy ? '' : '<button type="button" class="btn btn-ghost" data-tarj-dia="hoy">Hoy</button>') +
+            '</div>' +
+            '<button type="button" class="btn btn-ghost" data-tarj-excel="1" title="Baja todas las marcas y horas del mes de este día">Excel del mes</button>' +
           '</div>' +
         '</div>' +
 
@@ -29611,7 +29649,7 @@ body[data-vista="ruta"] #avisoBar {
                     return dashTile({
                       label: t.nombre,
                       value: duracionTexto(t.trabajado),
-                      sub: plural(t.dias, "día", "días") + " · descanso " + duracionTexto(t.descanso)
+                      sub: "descanso " + duracionTexto(t.descanso)
                     });
 
                   }
@@ -29622,7 +29660,7 @@ body[data-vista="ruta"] #avisoBar {
 
         '<div class="dash-card">' +
           '<div class="dash-card-head">' +
-            '<h2 class="dash-card-title">Detalle por día</h2>' +
+            '<h2 class="dash-card-title">' + escapeHtml(new Date(fecha + "T12:00:00").toLocaleDateString("es-UY", { weekday: "long", day: "numeric", month: "long" })) + (esHoy ? " (hoy)" : "") + '</h2>' +
             '<span class="dash-card-hint">Tocá una fila para ver cada marca</span>' +
           '</div>' +
           (
@@ -29682,7 +29720,7 @@ body[data-vista="ruta"] #avisoBar {
                     ).join("") +
                   '</tbody>' +
                 '</table></div>'
-              : '<div class="dash-empty">No hay marcas en ese mes.</div>'
+              : '<div class="dash-empty">Nadie marcó el tarjetero ese día.</div>'
           ) +
         '</div>' +
 
@@ -29690,14 +29728,14 @@ body[data-vista="ruta"] #avisoBar {
 
 
     var input =
-      document.getElementById("tarjMes");
+      document.getElementById("tarjFecha");
 
 
     input.addEventListener(
       "change",
       function () {
 
-        state.tarjeteroMes = input.value || hoyIso().slice(0, 7);
+        state.tarjeteroFecha = input.value || hoyIso();
 
         state.tarjeteroAbierto = null;
 
@@ -29865,7 +29903,7 @@ body[data-vista="ruta"] #avisoBar {
   function excelTarjetero() {
 
     var mes =
-      state.tarjeteroMes || hoyIso().slice(0, 7);
+      (state.tarjeteroFecha || hoyIso()).slice(0, 7);
 
 
     var filas =
@@ -35958,6 +35996,40 @@ body[data-vista="ruta"] #avisoBar {
     if ((el = e.target.closest("[data-tarea-nueva], [data-tarea-cancelar], [data-tarea-editar], [data-tarea-pausar], [data-tarea-borrar]"))) {
 
       accionTareasAdmin(el);
+
+      return true;
+
+    }
+
+
+    /* tarjetero: día anterior / siguiente / hoy */
+    if ((el = e.target.closest("[data-tarj-dia]"))) {
+
+      var paso = el.getAttribute("data-tarj-dia");
+
+
+      if (paso === "hoy") {
+
+        state.tarjeteroFecha = hoyIso();
+
+      } else {
+
+        var dd = new Date((state.tarjeteroFecha || hoyIso()) + "T12:00:00");
+
+        dd.setDate(dd.getDate() + Number(paso));
+
+
+        var nueva = isoDia(dd);
+
+
+        state.tarjeteroFecha = nueva > hoyIso() ? hoyIso() : nueva;
+
+      }
+
+
+      state.tarjeteroAbierto = null;
+
+      renderTarjetero();
 
       return true;
 
