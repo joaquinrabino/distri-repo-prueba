@@ -8103,6 +8103,68 @@ body[data-vista="ruta"] #avisoBar {
 }
 
 
+.jor-bar {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 3px;
+
+  background: var(--surface);
+
+  border: 1px solid var(--border);
+
+  border-left: 4px solid var(--accent);
+
+  border-radius: 10px;
+
+  padding: 9px 12px;
+
+  margin: -4px 0 14px;
+
+  font-size: 13.5px;
+
+  color: var(--ink-soft);
+
+}
+
+
+.jor-bar.excedida {
+
+  border-left-color: var(--vencido);
+
+  background: var(--vencido-bg);
+
+}
+
+
+.op-extra {
+
+  display: inline-block;
+
+  padding: 0 7px;
+
+  border-radius: 99px;
+
+  background: #e3ecfd;
+
+  color: #1d4ed8;
+
+  font-size: 11.5px;
+
+  font-weight: 700;
+
+}
+
+
+.ruta-libres .ruta-fila {
+
+  border-style: dashed;
+
+}
+
+
 .ruta-camiones {
 
   display: flex;
@@ -9211,6 +9273,15 @@ body[data-vista="ruta"] #avisoBar {
   background: var(--vencido-bg);
 
   color: var(--vencido);
+
+}
+
+
+.rend-jornada {
+
+  font-size: 12.5px;
+
+  color: var(--ink-soft);
 
 }
 
@@ -31221,7 +31292,7 @@ body[data-vista="ruta"] #avisoBar {
     } else if (state.loaded && rol === "reponedor") {
 
       pendientes =
-        localesReponedor(yo).disponibles.length;
+        rutaDeReponedor(yo, posicionDe(yo)).ruta.length;
 
     } else if (state.loaded && rol === "admin") {
 
@@ -31817,37 +31888,116 @@ body[data-vista="ruta"] #avisoBar {
 
 
 
-  /* Locales del día del promotor, separados por estado */
+  /* ========================================================
+     JORNADA DEL PROMOTOR Y LOCALES EXTRA
+     El promotor trabaja 8 h 45 (con 30 min de descanso) de lunes a
+     viernes, desde que llega al primer cliente (≈ 8:30). Primero van
+     sus locales; si le sobra tiempo se le suman locales SIN promotor
+     fijo, los más cercanos a su recorrido, hasta completar las horas.
+     Se recalcula solo a medida que avanza el día.
+  ======================================================== */
+
+  var JORNADA_PROMOTOR_MIN = 8 * 60 + 45;
+
+  var DESCANSO_PROMOTOR_MIN = 30;
+
+  var INICIO_PROMOTOR = "08:30";
+
+
+
+  /* ¿Otro promotor tiene este local como próximo destino? (para no mandar a dos) */
+
+  function destinoDeOtroPromotor(c, uid) {
+
+    var j = jornadaHoy();
+
+
+    return usuariosConRol("reponedor").some(
+      function (u) {
+
+        return u.id !== uid && j.destinos[u.id] === c.id;
+
+      }
+    );
+
+  }
+
+
+
+  /* Locales del día del promotor:
+     - propios: los que tienen a este promotor (en la ficha o en la ruta cargada)
+     - extras ya suyos: sin promotor fijo que él empezó o terminó
+     - libres: sin promotor fijo, disponibles, que nadie está haciendo */
 
   function localesReponedor(uid) {
 
-    /* clientes de hoy asignados a él (o sin promotor fijo). Un promotor
-       repone locales de distintos camioneros: no depende del camión. */
-    var mios =
-      state.clients.filter(
-        function (c) {
+    var mios = [];
 
-          var rep = reponedorHoy(c);
+    var libres = [];
 
 
-          if (!tieneReposicionHoy(c) || (rep && rep !== uid)) {
+    state.clients.forEach(
+      function (c) {
 
-            return false;
+        if (!tieneReposicionHoy(c)) {
 
-          }
-
-
-          /* local sin promotor fijo que ya repuso otro: no es suyo */
-          var e = estadoGuardado(c);
-
-
-          return !(!rep && e.reposicion && e.reposicion.porId !== uid);
+          return;
 
         }
-      );
 
 
-    /* local sin promotor fijo en el que ya está trabajando otro promotor */
+        var rep = reponedorHoy(c);
+
+        var e = estadoGuardado(c);
+
+        var v = e.visitaRep && e.visitaRep.llegada ? e.visitaRep : null;
+
+
+        if (rep === uid) {
+
+          mios.push(c);
+
+          return;
+
+        }
+
+
+        if (rep) {
+
+          return;
+
+        }
+
+
+        /* sin promotor fijo */
+        var esMio =
+          (e.reposicion && e.reposicion.porId === uid) || (v && v.llegada.porId === uid && !e.reposicion);
+
+
+        if (esMio) {
+
+          mios.push(c);
+
+          return;
+
+        }
+
+
+        if (
+          !e.reposicion && !v &&
+          disponibleParaReponer(c) &&
+          !destinoDeOtroPromotor(c, uid)
+        ) {
+
+          libres.push(c);
+
+        }
+
+      }
+    );
+
+
+    /* local en el que está trabajando otro promotor */
     var otroEnElLocal = function (c) {
 
       var v = estadoGuardado(c).visitaRep;
@@ -31860,6 +32010,7 @@ body[data-vista="ruta"] #avisoBar {
 
     return {
       mios: mios,
+      libres: libres,
       disponibles: mios.filter(
         function (c) {
 
@@ -31896,21 +32047,57 @@ body[data-vista="ruta"] #avisoBar {
 
 
 
+  function esExtra(c) {
+
+    return !reponedorHoy(c);
+
+  }
+
+
+
+  /* Horario de trabajo del día y tiempo que le queda (en minutos) */
+
+  function jornadaPromotor(uid) {
+
+    var marcas = marcasDe(uid, hoyIso());
+
+    var h = calcularHoras(marcas, true);
+
+
+    var inicio =
+      h.inicio
+        ? (new Date(h.inicio).getHours() * 60 + new Date(h.inicio).getMinutes())
+        : aMinutos(INICIO_PROMOTOR);
+
+
+    var fin = inicio + JORNADA_PROMOTOR_MIN;
+
+    var ahora = Math.max(minutosAhora(), inicio);
+
+    var descansoPendiente = Math.max(0, DESCANSO_PROMOTOR_MIN - h.descansoMin);
+
+    var dia = diaSemanaHoy();
+
+
+    return {
+      inicio: inicio,
+      fin: fin,
+      ahora: ahora,
+      descansoPendiente: descansoPendiente,
+      quedan: Math.max(0, fin - ahora - descansoPendiente),
+      laborable: dia >= 1 && dia <= 5,
+      terminado: estadoTarjetero(marcas) === "terminado"
+    };
+
+  }
+
+
+
   function rutaDeReponedor(uid, posicion) {
 
     var j = jornadaHoy();
 
     var loc = localesReponedor(uid);
-
-
-    var ids =
-      loc.disponibles.map(
-        function (c) {
-
-          return c.id;
-
-        }
-      );
 
 
     var ultimo =
@@ -31922,13 +32109,167 @@ body[data-vista="ruta"] #avisoBar {
       (ultimo ? { lat: ultimo.mapa.lat, lng: ultimo.mapa.lng } : null);
 
 
-    /* el destino actual se mantiene mientras siga disponible:
-       solo se reoptimizan los siguientes */
-    /* si está trabajando en un local, ese va primero; si está parado en
-       un local disponible, ese; si no, el destino fijado */
     var activa = visitaActivaDe(uid);
 
-    var aca = localCercano(loc.disponibles, posicion);
+    var jornada = jornadaPromotor(uid);
+
+
+    /* ---- cuánto le llevan sus locales (incluye los que esperan al camión) ---- */
+    var pendientesPropios =
+      loc.disponibles.concat(loc.noDisponibles).filter(
+        function (c) {
+
+          return !estadoGuardado(c).reposicion;
+
+        }
+      );
+
+
+    var planPropio =
+      planificarRuta(pendientesPropios, {
+        origen: origen,
+        servicio: 20,
+        usarTiempoAsignado: true,
+        inicio: Math.round(jornada.ahora)
+      });
+
+
+    var cargaPropia =
+      pendientesPropios.length ? Math.max(0, planPropio.fin - Math.round(jornada.ahora)) : 0;
+
+
+    var sobra =
+      jornada.terminado ? 0 : jornada.quedan - cargaPropia;
+
+
+    /* ---- extras: locales sin promotor fijo, los más cercanos a su recorrido ---- */
+    var extras = [];
+
+
+    /* si eligió ir a uno ("Ir ahora"), ese entra sí o sí */
+    var elegido =
+      loc.libres.find(
+        function (c) {
+
+          return c.id === j.destinos[uid];
+
+        }
+      );
+
+
+    if (elegido) {
+
+      extras.push(elegido);
+
+      sobra -= tiempoAsignadoDe(elegido, 20);
+
+    }
+
+
+    /* puntos del recorrido (para medir el desvío de cada extra) */
+    var puntosRuta =
+      pendientesPropios.concat(extras)
+        .filter(tieneUbicacion)
+        .map(
+          function (c) {
+
+            return { lat: c.mapa.lat, lng: c.mapa.lng };
+
+          }
+        );
+
+
+    if (origen) {
+
+      puntosRuta.push(origen);
+
+    }
+
+
+    var candidatos =
+      loc.libres
+        .filter(
+          function (c) {
+
+            return c !== elegido && tieneUbicacion(c);
+
+          }
+        )
+        .map(
+          function (c) {
+
+            var p = { lat: c.mapa.lat, lng: c.mapa.lng };
+
+            var cerca = Infinity;
+
+
+            puntosRuta.forEach(
+              function (q) {
+
+                cerca = Math.min(cerca, MOTOR_RUTAS.minutosViaje(q, p));
+
+              }
+            );
+
+
+            if (cerca === Infinity) {
+
+              cerca = 0;
+
+            }
+
+
+            /* ida y vuelta al recorrido + el tiempo en el local */
+            return { c: c, costo: cerca * 2 + tiempoAsignadoDe(c, 20) };
+
+          }
+        )
+        .sort(
+          function (a, b) {
+
+            return a.costo - b.costo || prioridadDe(a.c) - prioridadDe(b.c);
+
+          }
+        );
+
+
+    if (jornada.laborable && !jornada.terminado) {
+
+      candidatos.forEach(
+        function (x) {
+
+          if (sobra >= x.costo) {
+
+            extras.push(x.c);
+
+            sobra -= x.costo;
+
+          }
+
+        }
+      );
+
+    }
+
+
+    /* ---- ruta final: sus locales disponibles + los extras ---- */
+    var paraRuta =
+      loc.disponibles.concat(extras);
+
+
+    var ids =
+      paraRuta.map(
+        function (c) {
+
+          return c.id;
+
+        }
+      );
+
+
+    /* si está trabajando en un local, ese va primero; si está parado en
+       un local disponible, ese; si no, el destino fijado */
+    var aca = localCercano(paraRuta, posicion);
 
 
     var fijo =
@@ -31946,7 +32287,7 @@ body[data-vista="ruta"] #avisoBar {
 
 
     var plan =
-      planificarRuta(loc.disponibles, {
+      planificarRuta(paraRuta, {
         origen: origen,
         fijo: fijo,
         manual: manual,
@@ -31974,15 +32315,89 @@ body[data-vista="ruta"] #avisoBar {
     }
 
 
+    var idsExtras =
+      extras.map(
+        function (c) {
+
+          return c.id;
+
+        }
+      );
+
+
     return Object.assign(loc, {
       origen: origen,
       fijo: fijo,
       manual: !!manual,
       plan: plan,
-      ruta: ruta
+      ruta: ruta,
+      extras: extras,
+      idsExtras: idsExtras,
+      otrosLibres: loc.libres.filter(
+        function (c) {
+
+          return idsExtras.indexOf(c.id) === -1;
+
+        }
+      ),
+      jornada: jornada,
+      cargaPropia: cargaPropia,
+      sobra: sobra,
+      excedida: !jornada.terminado && jornada.quedan - cargaPropia < 0
     });
 
   }
+
+
+
+  /* Resumen de la jornada arriba de la ruta del promotor */
+
+  function jornadaPromotorHtml(r, propio) {
+
+    var jo = r.jornada;
+
+
+    if (!jo.laborable) {
+
+      return '<div class="jor-bar"><span>Hoy no es día laborable: no se suman locales extra.</span></div>';
+
+    }
+
+
+    if (jo.terminado) {
+
+      return '';
+
+    }
+
+
+    var texto =
+      r.excedida
+        ? '<strong class="op-rojo">&#9888; Con ' + (propio ? "tus locales ya te pasás" : "sus locales ya se pasa") + ' ≈ ' +
+            duracionTexto(r.cargaPropia - jo.quedan) + ' de la jornada.</strong>'
+        : r.extras.length
+          ? 'Sumamos <strong>' + plural(r.extras.length, "local extra", "locales extra") + '</strong> sin promotor fijo para completar ' +
+              (propio ? "tu" : "su") + ' jornada.'
+          : r.otrosLibres.length
+            ? 'Por ahora ' + (propio ? "tus" : "sus") + ' locales completan la jornada.'
+            : 'No hay locales sin promotor fijo disponibles cerca.';
+
+
+    return (
+      '<div class="jor-bar' + (r.excedida ? ' excedida' : '') + '">' +
+        '<span>&#128197; Jornada ' + deMinutos(jo.inicio) + ' a ' + deMinutos(jo.fin) +
+          ' · ' + (propio ? "te quedan" : "le quedan") + ' <strong>' + duracionTexto(jo.quedan) + '</strong>' +
+          (jo.descansoPendiente ? ' (sin contar ' + Math.round(jo.descansoPendiente) + ' min de descanso)' : '') +
+          ' · ' + (propio ? "tus" : "sus") + ' locales ≈ ' + duracionTexto(r.cargaPropia) +
+        '</span>' +
+        '<span>' + texto + '</span>' +
+      '</div>'
+    );
+
+  }
+
+
+
 
 
 
@@ -32167,17 +32582,23 @@ body[data-vista="ruta"] #avisoBar {
         );
 
 
+    /* total del día: sus locales + los extras que se le sumaron */
+    var totalDia =
+      r.mios.length + r.extras.filter(function (c) { return r.mios.indexOf(c) === -1; }).length;
+
+
     var html =
       tarjeteroBarHtml(uid) +
       cabeceraRuta(
         propio ? "Mi ruta de reposición" : "Ruta de " + nombreUsuario(uid),
         r.completados.length,
-        r.mios.length,
+        totalDia,
         "repuestos"
-      );
+      ) +
+      jornadaPromotorHtml(r, propio);
 
 
-    if (!r.mios.length) {
+    if (!r.mios.length && !r.extras.length) {
 
       html +=
         '<div class="ruta-vacia">' +
@@ -32217,6 +32638,7 @@ body[data-vista="ruta"] #avisoBar {
                 eta: r.plan.llegadas[c.id],
                 tarde: r.plan.tarde[c.id],
                 detalle:
+                  (esExtra(c) ? '<span class="op-extra">Extra</span> ' : '') +
                   (e.entrega ? "Entregado a las " + horaDe(e.entrega.at) : "Sin entrega hoy") +
                   " · " + tiempoAsignadoDe(c, 20) + " min asignados" +
                   (nTareas ? " · " + plural(nTareas, "tarea", "tareas") : "")
@@ -32286,12 +32708,45 @@ body[data-vista="ruta"] #avisoBar {
             }
           ).join(""),
           "ruta-hechos"
+        ) +
+
+        /* más locales sin promotor fijo (por si termina antes o quiere ir a uno) */
+        seccionRuta(
+          "Otros locales sin promotor fijo (" + r.otrosLibres.length + ")",
+          r.otrosLibres
+            .filter(tieneUbicacion)
+            .map(
+              function (c) {
+
+                return {
+                  c: c,
+                  d: r.origen ? MOTOR_RUTAS.minutosViaje(r.origen, { lat: c.mapa.lat, lng: c.mapa.lng }) : 0
+                };
+
+              }
+            )
+            .sort(function (a, b) { return a.d - b.d; })
+            .slice(0, 8)
+            .map(
+              function (x) {
+
+                return filaRutaHtml(x.c, 0, {
+                  irAhora: true,
+                  detalle:
+                    '<span class="op-extra">Sin promotor fijo</span> ' +
+                    tiempoAsignadoDe(x.c, 20) + " min asignados" +
+                    (r.origen ? " · a " + Math.round(x.d) + " min" : "")
+                });
+
+              }
+            ).join(""),
+          "ruta-libres"
         );
 
     }
 
 
-    pintarRuta(uid, html, r.mios.length, {
+    pintarRuta(uid, html, r.mios.length + r.extras.length, {
       ruta: ruta,
       bloqueados: r.noDisponibles,
       hechos: r.completados,
@@ -32330,7 +32785,7 @@ body[data-vista="ruta"] #avisoBar {
 
 
     return tarjetaDestinoHtml(c, {
-      etiqueta: v ? "Estás reponiendo en este local" : "Próximo destino",
+      etiqueta: (v ? "Estás reponiendo en este local" : "Próximo destino") + (esExtra(c) ? " · extra (sin promotor fijo)" : ""),
       estado: est,
       distancia: v ? "" : tramo(r.origen, c),
       eta: v ? null : r.plan.llegadas[c.id],
@@ -32583,7 +33038,11 @@ body[data-vista="ruta"] #avisoBar {
                 '<button type="button" class="btn btn-ghost ruta-mover" data-mover="abajo" data-cliente="' + escapeHtml(c.id) + '" title="Bajar" aria-label="Bajar">&#9660;</button>' +
                 '<button type="button" class="btn btn-ghost ruta-fila-btn" data-fijar="' + escapeHtml(c.id) + '">Ir ahora</button>' +
               '</span>'
-            : ''
+            : opts.irAhora
+              ? '<span class="ruta-fila-botones">' +
+                  '<button type="button" class="btn btn-ghost ruta-fila-btn" data-fijar="' + escapeHtml(c.id) + '">Ir ahora</button>' +
+                '</span>'
+              : ''
         ) +
 
       '</div>'
@@ -33122,7 +33581,7 @@ body[data-vista="ruta"] #avisoBar {
         el.disabled = true;
 
 
-        marcarTarjetero(tipo, localesReponedor(miUsuarioId()).mios).then(
+        marcarTarjetero(tipo, localesReponedor(miUsuarioId()).mios.concat(localesReponedor(miUsuarioId()).libres)).then(
           function () {
 
             el.disabled = false;
@@ -39153,6 +39612,32 @@ body[data-vista="ruta"] #avisoBar {
               var v = r.activa ? visitaDe(r.activa) : null;
 
 
+              /* hoy: cómo viene su jornada (le quedan, extras sumados, si no le alcanza) */
+              var jor = "";
+
+
+              if (fecha === hoyIso()) {
+
+                var rr = rutaDeReponedor(u.id, posicionDe(u.id));
+
+
+                if (rr.jornada.laborable && !rr.jornada.terminado) {
+
+                  jor =
+                    '<div class="rend-jornada' + (rr.excedida ? ' op-rojo' : '') + '">' +
+                      'Le quedan ' + duracionTexto(rr.jornada.quedan) + ' · sus locales ≈ ' + duracionTexto(rr.cargaPropia) +
+                      (
+                        rr.excedida
+                          ? ' · &#9888; no le alcanza la jornada'
+                          : rr.extras.length ? ' · +' + plural(rr.extras.length, "local extra", "locales extra") : ''
+                      ) +
+                    '</div>';
+
+                }
+
+              }
+
+
               var ahora =
                 v
                   ? '<div class="rend-ahora">En <strong>' + escapeHtml(r.activa.nombre) + '</strong> desde las ' + horaDe(v.llegada.at) +
@@ -39168,6 +39653,7 @@ body[data-vista="ruta"] #avisoBar {
                   '<div class="rend-head"><strong>&#129523; ' + escapeHtml(u.nombre || u.usuario) + '</strong>' +
                     '<span class="rend-prod' + (r.productividad < 60 && r.trabajado > 60 ? ' bajo' : '') + '">' + r.productividad + '% en locales</span></div>' +
                   ahora +
+                  jor +
                   '<div class="rend-barra">' +
                     '<span class="rb-cli" style="width:' + (r.trabajado ? r.enClientes / r.trabajado * 100 : 0) + '%"></span>' +
                     '<span class="rb-tras" style="width:' + (r.trabajado ? r.traslados / r.trabajado * 100 : 0) + '%"></span>' +
