@@ -14454,7 +14454,7 @@ body[data-vista="ruta"] #avisoBar {
 
 
     /* los mapas de ruta y de operaciones se cierran al salir de esas pantallas */
-    if (mapaRutaActual && !(state.canEdit && state.opsView && state.opsVerRuta)) {
+    if (mapaRutaActual && !(puede("ver_operaciones") && state.opsView && state.opsVerRuta)) {
 
       mapaRutaActual.remove();
 
@@ -14463,7 +14463,7 @@ body[data-vista="ruta"] #avisoBar {
     }
 
 
-    if (mapaOps && !(state.canEdit && state.opsView && !state.opsVerRuta && !state.asignacionView)) {
+    if (mapaOps && !(puede("ver_operaciones") && state.opsView && !state.opsVerRuta && !state.asignacionView)) {
 
       mapaOps.remove();
 
@@ -14474,7 +14474,7 @@ body[data-vista="ruta"] #avisoBar {
     }
 
 
-    if (state.canEdit) {
+    if (puede("ver_operaciones")) {
 
       if (state.opsView) {
 
@@ -25349,7 +25349,7 @@ body[data-vista="ruta"] #avisoBar {
     state.rol =
       canEdit
         ? "admin"
-        : sesionRol === "camionero" || sesionRol === "reponedor"
+        : sesionRol === "camionero" || sesionRol === "reponedor" || sesionRol === "supervisor"
           ? sesionRol
           : "vendedor";
 
@@ -25364,12 +25364,12 @@ body[data-vista="ruta"] #avisoBar {
         ? "Administrador" + (nombreVendedor && safeSession("get", "vendedorId") ? " · " + nombreVendedor : "")
         : state.rol === "vendedor"
           ? "Solo lectura" + (nombreVendedor ? " · " + nombreVendedor : "")
-          : (state.rol === "camionero" ? "Camionero" : "Reponedor") + (nombreVendedor ? " · " + nombreVendedor : "");
+          : (state.rol === "camionero" ? "Camionero" : state.rol === "supervisor" ? "Supervisor de promotores" : "Promotor de visibilidad") + (nombreVendedor ? " · " + nombreVendedor : "");
 
 
 
 
-    if (state.rol !== "camionero" && state.rol !== "reponedor") {
+    if (state.rol !== "camionero" && !esPromotorRol(state.rol)) {
 
       detenerGeolocalizacion();
 
@@ -26087,7 +26087,8 @@ body[data-vista="ruta"] #avisoBar {
               'Cada usuario entra con su usuario y contraseña y ve solo lo de su rol: ' +
               '<strong>Vendedor</strong> consulta clientes y su estado (sin editar ni ver acuerdos firmados) · ' +
               '<strong>Camionero / Repartidor</strong> ve su ruta de entregas · ' +
-              '<strong>Reponedor</strong> ve su ruta de reposición · ' +
+              '<strong>Promotor de visibilidad</strong> ve su ruta de reposición · ' +
+              '<strong>Supervisor de promotores</strong> tiene su ruta de reposición y maneja Operaciones, Tarjetero y Tareas · ' +
               '<strong>Administrador</strong> tiene acceso completo.' +
             '</p>' +
 
@@ -26536,7 +26537,7 @@ body[data-vista="ruta"] #avisoBar {
 
   function opcionesRol(actual) {
 
-    return ["vendedor", "camionero", "reponedor", "admin"].map(
+    return ["vendedor", "camionero", "reponedor", "supervisor", "admin"].map(
       function (r) {
 
         return '<option value="' + r + '"' + (r === actual ? " selected" : "") + '>' + ROLES[r] + '</option>';
@@ -26586,7 +26587,7 @@ body[data-vista="ruta"] #avisoBar {
 
           var l = logisticaDe(c);
 
-          return (anterior === "camionero" && l.camioneroId === id) || (anterior === "reponedor" && l.reponedorId === id);
+          return (anterior === "camionero" && l.camioneroId === id) || (esPromotorRol(anterior) && !esPromotorRol(nuevoRol) && l.reponedorId === id);
 
         }
       ).length;
@@ -26692,7 +26693,8 @@ body[data-vista="ruta"] #avisoBar {
     admin: "Administrador",
     vendedor: "Vendedor",
     camionero: "Camionero / Repartidor",
-    reponedor: "Reponedor / Promotor"
+    reponedor: "Promotor de visibilidad",
+    supervisor: "Supervisor de promotores"
   };
 
 
@@ -26776,6 +26778,36 @@ body[data-vista="ruta"] #avisoBar {
 
 
 
+  /* el supervisor de promotores también repone: tiene su ruta como un promotor */
+  function esPromotorRol(rol) {
+
+    return rol === "reponedor" || rol === "supervisor";
+
+  }
+
+
+
+  /* manejan Operaciones, Tarjetero y Tareas (ver y modificar) */
+  function esGestorRol(rol) {
+
+    return rol === "admin" || rol === "supervisor";
+
+  }
+
+
+
+  /* el supervisor en "Mi ruta" trabaja como promotor; desde Operaciones, como admin */
+  function actuoComoGestor() {
+
+    var rol = rolActual();
+
+
+    return rol === "admin" || (rol === "supervisor" && !enPestanaRuta());
+
+  }
+
+
+
   function miUsuarioId() {
 
     return safeSession("get", "vendedorId") || ADMIN_FIJO_ID;
@@ -26792,12 +26824,13 @@ body[data-vista="ruta"] #avisoBar {
 
 
 
+  /* "reponedor" incluye a los supervisores de promotores (también reponen) */
   function usuariosConRol(rol) {
 
     return state.vendedores.filter(
       function (v) {
 
-        return rolDeUsuario(v) === rol;
+        return rol === "reponedor" ? esPromotorRol(rolDeUsuario(v)) : rolDeUsuario(v) === rol;
 
       }
     );
@@ -26864,21 +26897,21 @@ body[data-vista="ruta"] #avisoBar {
       accion === "importe"
     ) {
 
-      return rol === "admin";
+      return esGestorRol(rol);
 
     }
 
 
     if (accion === "entregar") {
 
-      return rol === "admin" || (rol === "camionero" && !!c && camioneroHoy(c) === yo);
+      return esGestorRol(rol) || (rol === "camionero" && !!c && camioneroHoy(c) === yo);
 
     }
 
 
     if (accion === "reponer") {
 
-      return rol === "admin" || (rol === "reponedor" && !!c && (!reponedorHoy(c) || reponedorHoy(c) === yo));
+      return esGestorRol(rol) || (rol === "reponedor" && !!c && (!reponedorHoy(c) || reponedorHoy(c) === yo));
 
     }
 
@@ -28951,7 +28984,7 @@ body[data-vista="ruta"] #avisoBar {
 
     var rol = rolActual();
 
-    return rol === "camionero" || rol === "reponedor";
+    return rol === "camionero" || esPromotorRol(rol);
 
   }
 
@@ -30490,7 +30523,7 @@ body[data-vista="ruta"] #avisoBar {
 
 
     var propio =
-      uid === miUsuarioId() && rolActual() === "reponedor";
+      uid === miUsuarioId() && esPromotorRol(rolActual());
 
 
     var textos = {
@@ -33444,8 +33477,10 @@ body[data-vista="ruta"] #avisoBar {
 
 
     return (
-      (rol === "camionero" || rol === "reponedor") &&
-      state.pestana !== "clientes"
+      (rol === "camionero" || esPromotorRol(rol)) &&
+      state.pestana !== "clientes" &&
+      /* el supervisor puede estar en Operaciones, Tarjetero o Tareas */
+      !(rol === "supervisor" && (state.opsView || state.tarjeteroView || state.tareasView))
     );
 
   }
@@ -33487,7 +33522,9 @@ body[data-vista="ruta"] #avisoBar {
           ? [["ruta", "Mi ruta de entregas"], ["clientes", "Clientes"]]
           : rol === "reponedor"
             ? [["ruta", "Mi ruta de reposición"], ["clientes", "Clientes"]]
-            : [];
+            : rol === "supervisor"
+              ? [["ruta", "Mi ruta de reposición"], ["clientes", "Clientes"], ["operaciones", "Operaciones"], ["tarjetero", "Tarjetero"], ["tareas", "Tareas"]]
+              : [];
 
 
     document.body.setAttribute(
@@ -33508,7 +33545,7 @@ body[data-vista="ruta"] #avisoBar {
 
 
     var activa =
-      rol === "admin"
+      rol === "admin" || (rol === "supervisor" && pestanaAdminActiva() !== "clientes")
         ? pestanaAdminActiva()
         : (enPestanaRuta() ? "ruta" : "clientes");
 
@@ -33522,7 +33559,7 @@ body[data-vista="ruta"] #avisoBar {
       pendientes =
         rutaDeCamionero(yo, null).ruta.length;
 
-    } else if (state.loaded && rol === "reponedor") {
+    } else if (state.loaded && esPromotorRol(rol)) {
 
       pendientes =
         rutaDeReponedor(yo, posicionDe(yo)).ruta.length;
@@ -33550,7 +33587,7 @@ body[data-vista="ruta"] #avisoBar {
         function (p) {
 
           var conContador =
-            p[0] === "ruta" || p[0] === "operaciones";
+            p[0] === "ruta" || (p[0] === "operaciones" && rol === "admin");
 
 
           return (
@@ -33573,6 +33610,49 @@ body[data-vista="ruta"] #avisoBar {
 
 
   function cambiarPestana(p) {
+
+    /* supervisor: Operaciones, Tarjetero y Tareas como el admin; Mi ruta y
+       Clientes como un promotor */
+    if (rolActual() === "supervisor") {
+
+      if (p === "operaciones") {
+
+        abrirOperaciones();
+
+        return;
+
+      }
+
+
+      if (p === "tarjetero") {
+
+        abrirTarjetero();
+
+        return;
+
+      }
+
+
+      if (p === "tareas") {
+
+        abrirTareas();
+
+        return;
+
+      }
+
+
+      if (pestanaAdminActiva() !== "clientes") {
+
+        /* cierra la vista de gestión que estaba abierta */
+        resetPendingPhotos();
+
+        state.pestana = "";
+
+      }
+
+    }
+
 
     if (rolActual() === "admin") {
 
@@ -34652,7 +34732,7 @@ body[data-vista="ruta"] #avisoBar {
 
   function avisarNuevosDisponibles() {
 
-    if (rolActual() !== "reponedor" || !state.loaded) {
+    if (!esPromotorRol(rolActual()) || !state.loaded) {
 
       disponiblesAntes = null;
 
@@ -35033,7 +35113,7 @@ body[data-vista="ruta"] #avisoBar {
 
     var est = estadoHoy(c);
 
-    var editable = uid === miUsuarioId() || rolActual() === "admin";
+    var editable = uid === miUsuarioId() || esGestorRol(rolActual());
 
     var v = visitaDe(c);
 
@@ -35199,7 +35279,7 @@ body[data-vista="ruta"] #avisoBar {
       (extra || "") +
 
       (
-        state.geoError && rolActual() !== "admin"
+        state.geoError && !actuoComoGestor()
           ? '<div class="ruta-geo-aviso">&#9888; ' + escapeHtml(state.geoError) + '</div>'
           : ''
       )
@@ -35457,7 +35537,7 @@ body[data-vista="ruta"] #avisoBar {
     els.mainInner.innerHTML =
       '<div class="ruta-vista" data-ruta-uid="' + escapeHtml(uid) + '">' +
         (
-          rolActual() === "admin"
+          esGestorRol(rolActual()) && !enPestanaRuta()
             ? '<button type="button" class="back-link" data-ops-volver="1">&larr; Operaciones</button>'
             : ''
         ) +
@@ -36047,7 +36127,7 @@ body[data-vista="ruta"] #avisoBar {
 
   function marcarLlegadaPromotor(el, c) {
 
-    var esAdmin = rolActual() === "admin";
+    var esAdmin = actuoComoGestor();
 
 
     if (!esAdmin) {
@@ -36141,7 +36221,7 @@ body[data-vista="ruta"] #avisoBar {
 
   function iniciarReposicion(el, c, propio) {
 
-    var esAdmin = rolActual() === "admin";
+    var esAdmin = actuoComoGestor();
 
 
     /* el promotor tiene que haber marcado la llegada (así se mide el tiempo) */
@@ -36554,7 +36634,7 @@ body[data-vista="ruta"] #avisoBar {
       }
 
 
-      if (u && rolDeUsuario(u) === "reponedor") {
+      if (u && esPromotorRol(rolDeUsuario(u))) {
 
         renderRutaReponedor(u.id);
 
@@ -36828,7 +36908,7 @@ body[data-vista="ruta"] #avisoBar {
         var extra = "";
 
 
-        if (esHoy && rol === "reponedor") {
+        if (esHoy && esPromotorRol(rol)) {
 
           var marcas = marcasDe(u.id, hoyIso());
 
@@ -37000,7 +37080,7 @@ body[data-vista="ruta"] #avisoBar {
 
       return uid
         ? nombreUsuario(uid)
-        : (modoOrden === "camionero" ? "Sin camionero" : "Cualquier reponedor");
+        : (modoOrden === "camionero" ? "Sin camionero" : "Cualquier promotor de visibilidad");
 
     };
 
@@ -37095,7 +37175,7 @@ body[data-vista="ruta"] #avisoBar {
             '<thead><tr>' +
               '<th>Cliente</th><th>Estado</th><th>Camionero</th><th>Llegada</th><th>Entrega</th>' +
               (esHoy ? '<th>Importe</th>' : '') +
-              '<th>Reponedor</th><th>Reposición</th>' +
+              '<th>Promotor de visibilidad</th><th>Reposición</th>' +
               (esHoy ? '<th></th>' : '') +
             '</tr></thead>' +
             '<tbody>' +
@@ -37229,7 +37309,7 @@ body[data-vista="ruta"] #avisoBar {
         : '<div class="dash-empty">' +
             (
               esHoy
-                ? 'No hay clientes con entrega ni reposición hoy. Asigná camionero, reponedor y días editando cada cliente (sección «Logística») o con «Asignación masiva».'
+                ? 'No hay clientes con entrega ni reposición hoy. Asigná camionero, promotor de visibilidad y días editando cada cliente (sección «Logística») o con «Asignación masiva».'
                 : 'No hay entregas ni reposiciones registradas ese día.'
             ) +
           '</div>';
@@ -37303,7 +37383,7 @@ body[data-vista="ruta"] #avisoBar {
                 ? '<div class="ops-head-acciones">' +
                     '<label class="ops-fecha">Ordenar por ' +
                       '<select class="mov-sel" data-ops-orden="1">' +
-                        [["cliente", "Cliente"], ["camionero", "Camionero"], ["reponedor", "Reponedor"], ["estado", "Estado"]].map(
+                        [["cliente", "Cliente"], ["camionero", "Camionero"], ["reponedor", "Promotor de visibilidad"], ["estado", "Estado"]].map(
                           function (o) {
 
                             return '<option value="' + o[0] + '"' + (o[0] === modoOrden ? " selected" : "") + '>' + o[1] + '</option>';
@@ -37396,7 +37476,7 @@ body[data-vista="ruta"] #avisoBar {
   function iconoPersona(L, p) {
 
     return L.divIcon({
-      className: "persona-pin" + (p.rol === "reponedor" ? " promotor" : ""),
+      className: "persona-pin" + (esPromotorRol(p.rol) ? " promotor" : ""),
       html: '<span>' + (p.rol === "camionero" ? "&#128666;" : "&#129523;") + '</span>',
       iconSize: [34, 34],
       iconAnchor: [17, 17]
@@ -37836,7 +37916,7 @@ body[data-vista="ruta"] #avisoBar {
           '<div class="dash-card-head"><h2 class="dash-card-title">2. Qué asignar</h2></div>' +
           '<div class="ac-grid">' +
             '<div class="ac-field"><label>Camionero / repartidor</label><select data-asig-campo="camionero">' + personaSel("camionero", a.camionero, "Sin asignar") + '</select></div>' +
-            '<div class="ac-field"><label>Reponedor / promotor</label><select data-asig-campo="reponedor">' + personaSel("reponedor", a.reponedor, "Cualquier promotor") + '</select></div>' +
+            '<div class="ac-field"><label>Promotor de visibilidad</label><select data-asig-campo="reponedor">' + personaSel("reponedor", a.reponedor, "Cualquier promotor") + '</select></div>' +
             '<div class="ac-field"><label>Prioridad</label><select data-asig-campo="prioridad"><option value="">— No cambiar —</option>' +
               PRIORIDADES.map(function (p) { return '<option value="' + p[0] + '"' + (String(p[0]) === String(a.prioridad) ? " selected" : "") + '>' + p[1] + '</option>'; }).join("") +
             '</select></div>' +
@@ -38683,7 +38763,7 @@ body[data-vista="ruta"] #avisoBar {
           '</div>' +
 
           '<div class="field">' +
-            '<label>Reponedor / promotor</label>' +
+            '<label>Promotor de visibilidad</label>' +
             '<select class="grupo-select" id="logiReponedor">' + opciones("reponedor", l.reponedorId, "Cualquier promotor") + '</select>' +
           '</div>' +
 
@@ -38697,7 +38777,7 @@ body[data-vista="ruta"] #avisoBar {
 
         (
           !usuariosConRol("camionero").length || !usuariosConRol("reponedor").length
-            ? '<div class="custom-hint">Para asignar, primero creá usuarios con rol Camionero y Reponedor en <strong>Usuarios</strong>.</div>'
+            ? '<div class="custom-hint">Para asignar, primero creá usuarios con rol Camionero y Promotor de visibilidad en <strong>Usuarios</strong>.</div>'
             : '<div class="custom-hint">Los días de entrega, el cliente entra en la ruta del camionero; cuando entrega, pasa a la ruta del promotor.</div>'
         ) +
 
@@ -40426,7 +40506,7 @@ body[data-vista="ruta"] #avisoBar {
 
     return (
       enPestanaRuta() ||
-      (state.canEdit && state.opsView && !state.asignacionView)
+      (puede("ver_operaciones") && state.opsView && !state.asignacionView)
     );
 
   }
@@ -41522,7 +41602,7 @@ body[data-vista="ruta"] #avisoBar {
         var clave = el.getAttribute("data-cuenta-cliente") + "|" + fin;
 
 
-        if (resta < 0 && !cuentasAvisadas[clave] && rolActual() === "reponedor") {
+        if (resta < 0 && !cuentasAvisadas[clave] && esPromotorRol(rolActual()) && enPestanaRuta()) {
 
           cuentasAvisadas[clave] = true;
 
@@ -41557,7 +41637,7 @@ body[data-vista="ruta"] #avisoBar {
 
   function avisosAdminTiempo(ahora) {
 
-    if (rolActual() !== "admin" || !state.loaded || ahora - ultimoChequeoAdmin < 15000) {
+    if (!esGestorRol(rolActual()) || !state.loaded || ahora - ultimoChequeoAdmin < 15000) {
 
       return;
 
@@ -41621,7 +41701,7 @@ body[data-vista="ruta"] #avisoBar {
 
   function avisarExtensiones() {
 
-    if (rolActual() !== "admin" || !state.loaded) {
+    if (!esGestorRol(rolActual()) || !state.loaded) {
 
       extensionesVistas = null;
 
@@ -44686,7 +44766,7 @@ body[data-vista="ruta"] #avisoBar {
     if (
       sesion === "admin" ||
       (
-        (sesion === "lectura" || sesion === "camionero" || sesion === "reponedor") &&
+        (sesion === "lectura" || sesion === "camionero" || sesion === "reponedor" || sesion === "supervisor") &&
         safeSession("get", "vendedorId")
       )
     ) {
