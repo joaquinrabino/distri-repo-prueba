@@ -7277,6 +7277,28 @@ body[data-vista="ruta"] #avisoBar {
 }
 
 
+.op-tabla tr.op-grupo td {
+
+  background: var(--accent-soft);
+
+  color: var(--ink);
+
+  font-size: 13.5px;
+
+  padding: 8px 10px;
+
+  border-bottom: 1px solid var(--border);
+
+}
+
+
+.ops-tabla-ayuda {
+
+  margin: -4px 0 8px;
+
+}
+
+
 .tarj-dia {
 
   display: inline-flex;
@@ -33597,6 +33619,40 @@ body[data-vista="ruta"] #avisoBar {
     }
 
 
+    /* orden de la tabla de la jornada (y ver solo los de una persona) */
+    if (target.matches("[data-ops-orden]") || target.matches("[data-ops-ver]")) {
+
+      if (target.matches("[data-ops-orden]")) {
+
+        state.opsOrden = target.value;
+
+        state.opsVer = null;
+
+
+        try {
+
+          localStorage.setItem("opsOrden", target.value);
+
+        } catch (e) {
+
+          /* sin almacenamiento: queda solo por esta vez */
+
+        }
+
+      } else {
+
+        state.opsVer = target.value === "__todos" ? null : target.value;
+
+      }
+
+
+      renderOperaciones();
+
+      return true;
+
+    }
+
+
     /* filtros de la lista de movimientos (Operaciones) */
     if (target.matches("[data-mov-filtro]") || target.matches("[data-mov-alertas]")) {
 
@@ -33633,6 +33689,26 @@ body[data-vista="ruta"] #avisoBar {
   state.opsFecha = "";
 
   state.opsVerRuta = null;
+
+
+  /* orden de la tabla de la jornada (se recuerda en este navegador) */
+  state.opsOrden =
+    (function () {
+
+      try {
+
+        return localStorage.getItem("opsOrden") || "cliente";
+
+      } catch (e) {
+
+        return "cliente";
+
+      }
+
+    })();
+
+
+  state.opsVer = null;
 
   state.asignacionView = false;
 
@@ -34070,7 +34146,9 @@ body[data-vista="ruta"] #avisoBar {
         JSON.stringify(jornadaHoy().estados).length,
         state.movFiltro,
         state.movSoloAlertas,
-        JSON.stringify(state.planes.dias || {}).length
+        JSON.stringify(state.planes.dias || {}).length,
+        state.opsOrden || "",
+        state.opsVer === null || state.opsVer === undefined ? "-" : state.opsVer
       ]);
 
 
@@ -34126,6 +34204,115 @@ body[data-vista="ruta"] #avisoBar {
       filas.filter(function (f) { return !!f.entrega; }).length;
 
 
+    /* orden de la tabla: por cliente, camionero, reponedor o estado
+       (por camionero / reponedor quedan agrupados, con un título por persona) */
+    var modoOrden =
+      state.opsOrden || "cliente";
+
+
+    var porPersona =
+      modoOrden === "camionero" || modoOrden === "reponedor";
+
+
+    var grupoDe = function (f) {
+
+      return modoOrden === "camionero" ? (f.cam || "") : modoOrden === "reponedor" ? (f.rep || "") : "";
+
+    };
+
+
+    var nombreGrupo = function (uid) {
+
+      return uid
+        ? nombreUsuario(uid)
+        : (modoOrden === "camionero" ? "Sin camionero" : "Cualquier reponedor");
+
+    };
+
+
+    var ordenEstado = ["en_cliente", "pendiente_entrega", "postergado", "pendiente_reposicion", "no_entregado", "entregado", "completado"];
+
+
+    /* personas que aparecen (para elegir ver solo una) */
+    var personasTabla = {};
+
+
+    if (porPersona) {
+
+      filas.forEach(
+        function (f) {
+
+          var g = grupoDe(f);
+
+          personasTabla[g] = (personasTabla[g] || 0) + 1;
+
+        }
+      );
+
+    }
+
+
+    var verSolo =
+      porPersona && state.opsVer !== undefined && state.opsVer !== null && personasTabla.hasOwnProperty(state.opsVer)
+        ? state.opsVer
+        : null;
+
+
+    var filasVista =
+      filas
+        .filter(
+          function (f) {
+
+            return verSolo === null || grupoDe(f) === verSolo;
+
+          }
+        )
+        .sort(
+          function (a, b) {
+
+            var porNombre = (a.c.nombre || "").localeCompare(b.c.nombre || "", "es");
+
+
+            if (porPersona) {
+
+              var ga = grupoDe(a);
+
+              var gb = grupoDe(b);
+
+
+              /* los "sin asignar" al final */
+              if (!ga !== !gb) {
+
+                return ga ? -1 : 1;
+
+              }
+
+
+              return nombreGrupo(ga).localeCompare(nombreGrupo(gb), "es") || porNombre;
+
+            }
+
+
+            if (modoOrden === "estado") {
+
+              return ordenEstado.indexOf(a.clave) - ordenEstado.indexOf(b.clave) || porNombre;
+
+            }
+
+
+            return porNombre;
+
+          }
+        );
+
+
+    var columnas =
+      esHoy ? 9 : 7;
+
+
+    var grupoAnterior = null;
+
+
     var tabla =
       filas.length
         ? (
@@ -34137,8 +34324,27 @@ body[data-vista="ruta"] #avisoBar {
               (esHoy ? '<th></th>' : '') +
             '</tr></thead>' +
             '<tbody>' +
-              filas.map(
+              filasVista.map(
                 function (f) {
+
+                  /* título del grupo (al ordenar por camionero o reponedor) */
+                  var titulo = "";
+
+
+                  if (porPersona && grupoDe(f) !== grupoAnterior) {
+
+                    grupoAnterior = grupoDe(f);
+
+
+                    titulo =
+                      '<tr class="op-grupo"><td colspan="' + columnas + '">' +
+                        (modoOrden === "camionero" ? "&#128666; " : "&#129523; ") +
+                        '<strong>' + escapeHtml(nombreGrupo(grupoAnterior)) + '</strong> · ' +
+                        plural(personasTabla[grupoAnterior] || 0, "cliente", "clientes") +
+                      '</td></tr>';
+
+                  }
+
 
                   var acciones = "";
 
@@ -34209,6 +34415,7 @@ body[data-vista="ruta"] #avisoBar {
 
 
                   return (
+                    titulo +
                     '<tr>' +
                       '<td><button type="button" class="op-link" data-dash-client="' + cid + '">' + escapeHtml(f.c.nombre || "Sin nombre") + '</button>' +
                         (horarioTexto(f.c) ? '<br><small>Recibe ' + escapeHtml(horarioTexto(f.c)) + '</small>' : '') +
@@ -34313,8 +34520,42 @@ body[data-vista="ruta"] #avisoBar {
         '<div class="dash-card">' +
           '<div class="dash-card-head">' +
             '<h2 class="dash-card-title">' + (esHoy ? "Jornada de hoy" : "Historial del " + escapeHtml(fmtDate(fecha))) + '</h2>' +
-            '<span class="dash-card-hint">' + (esHoy ? "Se actualiza solo · el importe lo ve el camionero" : "Desde el historial de cada cliente") + '</span>' +
+            (
+              filas.length
+                ? '<div class="ops-head-acciones">' +
+                    '<label class="ops-fecha">Ordenar por ' +
+                      '<select class="mov-sel" data-ops-orden="1">' +
+                        [["cliente", "Cliente"], ["camionero", "Camionero"], ["reponedor", "Reponedor"], ["estado", "Estado"]].map(
+                          function (o) {
+
+                            return '<option value="' + o[0] + '"' + (o[0] === modoOrden ? " selected" : "") + '>' + o[1] + '</option>';
+
+                          }
+                        ).join("") +
+                      '</select>' +
+                    '</label>' +
+                    (
+                      porPersona
+                        ? '<select class="mov-sel" data-ops-ver="1" aria-label="Ver solo los de">' +
+                            '<option value="__todos"' + (verSolo === null ? " selected" : "") + '>Todos</option>' +
+                            Object.keys(personasTabla)
+                              .sort(function (a, b) { return (!a) - (!b) || nombreGrupo(a).localeCompare(nombreGrupo(b), "es"); })
+                              .map(
+                                function (u) {
+
+                                  return '<option value="' + escapeHtml(u) + '"' + (verSolo === u ? " selected" : "") + '>' +
+                                    escapeHtml(nombreGrupo(u)) + ' (' + personasTabla[u] + ')</option>';
+
+                                }
+                              ).join("") +
+                          '</select>'
+                        : ''
+                    ) +
+                  '</div>'
+                : '<span class="dash-card-hint">' + (esHoy ? "Se actualiza solo" : "Desde el historial de cada cliente") + '</span>'
+            ) +
           '</div>' +
+          (filas.length && esHoy ? '<p class="custom-hint ops-tabla-ayuda">Se actualiza solo · el importe lo ve el camionero</p>' : '') +
           tabla +
         '</div>' +
 
