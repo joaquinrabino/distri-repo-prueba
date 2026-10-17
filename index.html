@@ -3056,6 +3056,96 @@ button.dash-tile:focus-visible {
 
 
 
+/* tabla de productos en riesgo de vencimiento */
+.prod-tabla-wrap {
+
+  overflow-x: auto;
+
+}
+
+
+.op-tabla.prod-tabla {
+
+  min-width: 0;
+
+  font-size: 13px;
+
+}
+
+
+.op-tabla.prod-tabla th,
+.op-tabla.prod-tabla td {
+
+  padding: 8px 6px;
+
+}
+
+
+.prod-tabla td:first-child,
+.prod-tabla th:first-child {
+
+  padding-left: 0;
+
+}
+
+
+.prod-tabla thead th {
+
+  position: sticky;
+
+  top: 0;
+
+  background: var(--surface);
+
+  z-index: 1;
+
+}
+
+
+.prod-tr {
+
+  cursor: pointer;
+
+}
+
+
+.prod-tr:hover td {
+
+  background: var(--surface-2);
+
+}
+
+
+.prod-num {
+
+  font-variant-numeric: tabular-nums;
+
+  font-weight: 600;
+
+}
+
+
+.prod-dias {
+
+  display: inline-block;
+
+  padding: 3px 10px;
+
+  border-radius: 99px;
+
+  border: 1px solid;
+
+  font-size: 12.5px;
+
+  font-weight: 700;
+
+  white-space: normal;
+
+  line-height: 1.3;
+
+}
+
+
 .dash-scroll:focus-visible {
 
   box-shadow: 0 0 0 2px var(--accent-soft);
@@ -8362,6 +8452,108 @@ body[data-vista="ruta"] #avisoBar {
 }
 
 
+/* ---------- faltas ---------- */
+
+.falta-lista {
+
+  display: flex;
+
+  flex-direction: column;
+
+}
+
+
+.falta-item {
+
+  display: flex;
+
+  flex-wrap: wrap;
+
+  align-items: center;
+
+  gap: 6px 10px;
+
+  padding: 8px 4px;
+
+  border-bottom: 1px solid var(--border);
+
+  font-size: 14px;
+
+}
+
+
+.falta-item small {
+
+  color: var(--ink-soft);
+
+}
+
+
+.falta-item .hist-more {
+
+  margin-left: auto;
+
+}
+
+
+.falta-chip {
+
+  display: inline-block;
+
+  padding: 2px 9px;
+
+  border-radius: 99px;
+
+  font-size: 12px;
+
+  font-weight: 800;
+
+  letter-spacing: 0.03em;
+
+  background: var(--vencido-bg);
+
+  color: var(--vencido);
+
+  white-space: nowrap;
+
+}
+
+
+.falta-chip.pendiente {
+
+  background: var(--porvencer-bg);
+
+  color: var(--porvencer);
+
+  font-weight: 700;
+
+  letter-spacing: 0;
+
+}
+
+
+.falta-chip.justificada {
+
+  background: var(--surface-2);
+
+  color: var(--ink-soft);
+
+  font-weight: 700;
+
+  letter-spacing: 0;
+
+}
+
+
+.op-tabla.falta-tabla {
+
+  min-width: 0;
+
+  font-size: 13.5px;
+
+}
+
+
 /* ---------- tareas ---------- */
 
 .tareas-local {
@@ -11500,6 +11692,150 @@ body[data-vista="ruta"] #avisoBar {
 
 
 
+  /* Tabla de productos del panel: cliente, producto, cantidad, vencimiento
+     y días que quedan, con orden a elección (se recuerda en el navegador) */
+
+  var ORDENES_PRODUCTOS = [
+    ["vence", "Vence primero"],
+    ["vence_desc", "Vence último"],
+    ["cliente", "Cliente (A-Z)"],
+    ["producto", "Producto (A-Z)"],
+    ["cantidad", "Más cantidad"]
+  ];
+
+
+
+  function ordenProductos() {
+
+    if (!state.prodOrden) {
+
+      try {
+
+        state.prodOrden = localStorage.getItem("prodOrden") || "vence";
+
+      } catch (e) {
+
+        state.prodOrden = "vence";
+
+      }
+
+    }
+
+
+    return state.prodOrden;
+
+  }
+
+
+
+  function productosTablaHtml(lista) {
+
+    var orden = ordenProductos();
+
+
+    var dias = function (it) {
+
+      return it.dias === null ? 99999 : it.dias;
+
+    };
+
+
+    var porNombre = function (a, b) {
+
+      return (a || "").localeCompare(b || "", "es");
+
+    };
+
+
+    var filas =
+      lista.slice().sort(
+        function (a, b) {
+
+          if (orden === "vence_desc") {
+
+            return dias(b) - dias(a);
+
+          }
+
+
+          if (orden === "cliente") {
+
+            return porNombre(a.c.nombre, b.c.nombre) || dias(a) - dias(b);
+
+          }
+
+
+          if (orden === "producto") {
+
+            return porNombre(a.p.nombre, b.p.nombre) || dias(a) - dias(b);
+
+          }
+
+
+          if (orden === "cantidad") {
+
+            return (Number(b.p.cantidad) || 0) - (Number(a.p.cantidad) || 0) || dias(a) - dias(b);
+
+          }
+
+
+          return dias(a) - dias(b);
+
+        }
+      );
+
+
+    return (
+      '<div class="prod-tabla-wrap dash-scroll" tabindex="0" aria-label="Productos en riesgo de vencimiento">' +
+        '<table class="op-tabla prod-tabla">' +
+          '<thead><tr><th>Cliente</th><th>Producto</th><th>Cantidad</th><th>Vence</th><th>Días que quedan</th></tr></thead>' +
+          '<tbody>' +
+            filas.map(
+              function (it) {
+
+                var col = colorProducto(it.dias);
+
+
+                var quedan =
+                  it.dias === null
+                    ? "Sin fecha"
+                    : it.dias < 0
+                      ? "Vencido hace " + plural(-it.dias, "día", "días")
+                      : it.dias === 0
+                        ? "Vence hoy"
+                        : plural(it.dias, "día", "días");
+
+
+                var borra =
+                  it.dias !== null && it.dias < 0 && PROD_DIAS_BORRADO + it.dias >= 0
+                    ? "se borra en " + plural(PROD_DIAS_BORRADO + it.dias, "día", "días")
+                    : "";
+
+
+                return (
+                  '<tr class="prod-tr" data-prod-abrir="' + escapeHtml(it.c.id) + '" title="' + escapeHtml("Abrir " + (it.c.nombre || "cliente")) + '">' +
+                    '<td><strong>' + escapeHtml(it.c.nombre || "Sin nombre") + '</strong></td>' +
+                    '<td>' + escapeHtml(it.p.nombre) + (it.p.ubicacion ? '<br><small>' + escapeHtml(it.p.ubicacion) + '</small>' : '') + '</td>' +
+                    '<td class="prod-num">' + (it.p.cantidad !== null && it.p.cantidad !== undefined ? escapeHtml(String(it.p.cantidad)) : '—') + '</td>' +
+                    '<td>' + escapeHtml(it.p.vence ? fmtDate(it.p.vence) : "—") + '</td>' +
+                    '<td>' +
+                      '<span class="prod-dias" style="background:' + col.bg + ';color:' + col.texto + ';border-color:' + col.borde + '">' + escapeHtml(quedan) + '</span>' +
+                      (borra ? '<br><small>' + escapeHtml(borra) + '</small>' : '') +
+                    '</td>' +
+                  '</tr>'
+                );
+
+              }
+            ).join("") +
+          '</tbody>' +
+        '</table>' +
+      '</div>'
+    );
+
+  }
+
+
+
   /* Abre el cliente y baja hasta sus productos */
 
   function abrirProductosDe(clientId) {
@@ -14520,9 +14856,7 @@ body[data-vista="ruta"] #avisoBar {
 
     var productosHtml =
       productosTodos.length
-        ? '<div class="prod-lista dash-scroll" tabindex="0" aria-label="Productos en riesgo de vencimiento">' +
-            productosTodos.map(productoFilaHtml).join("") +
-          '</div>'
+        ? productosTablaHtml(productosTodos)
         : '<div class="dash-empty">' +
             'No hay productos cargados. Se agregan desde cada cliente, en "Productos por vencer" (al final de la ficha).' +
           '</div>';
@@ -15229,14 +15563,27 @@ body[data-vista="ruta"] #avisoBar {
 
           '<div class="dash-card-head">' +
             '<h2 class="dash-card-title">Productos en riesgo de vencimiento</h2>' +
-            '<span class="dash-card-hint">' +
-              (
-                productosTodos.length
-                  ? productosTodos.length + " en total · más rojo = más cerca de vencer"
-                  : ""
-              ) +
-            '</span>' +
+            (
+              productosTodos.length
+                ? '<label class="ops-fecha">Ordenar por ' +
+                    '<select class="mov-sel" data-prod-orden="1">' +
+                      ORDENES_PRODUCTOS.map(
+                        function (o) {
+
+                          return '<option value="' + o[0] + '"' + (o[0] === ordenProductos() ? " selected" : "") + '>' + o[1] + '</option>';
+
+                        }
+                      ).join("") +
+                    '</select>' +
+                  '</label>'
+                : ''
+            ) +
           '</div>' +
+          (
+            productosTodos.length
+              ? '<p class="custom-hint ops-tabla-ayuda">' + productosTodos.length + ' en total · más rojo = más cerca de vencer · tocá una fila para abrir el cliente</p>'
+              : ''
+          ) +
 
           productosHtml +
 
@@ -29108,6 +29455,8 @@ body[data-vista="ruta"] #avisoBar {
 
   state.tarjeteroAbierto = null;
 
+  state.tarjeteroJustificadas = {};
+
 
 
   var MARCAS = {
@@ -29297,7 +29646,7 @@ body[data-vista="ruta"] #avisoBar {
             }
 
 
-            tx.set(ref, { mes: mes, marcas: marcas.concat([marca]) });
+            tx.set(ref, { mes: mes, marcas: marcas.concat([marca]) }, { merge: true });
 
           }
         );
@@ -29638,6 +29987,475 @@ body[data-vista="ruta"] #avisoBar {
 
 
 
+  /* ========================================================
+     FALTAS
+     Un promotor que no marcó nada un día de lunes a viernes tiene
+     FALTA (se le descuenta el día). Hoy cuenta como falta recién
+     cuando termina la jornada. No cuentan los días antes de que se
+     creara el usuario. El administrador puede justificarla (certificado,
+     feriado…): queda en clientes/_tarjetero_AAAA-MM → justificadas.
+  ======================================================== */
+
+  function justificacionDe(uid, fecha) {
+
+    return (state.tarjeteroJustificadas && state.tarjeteroJustificadas[fecha.slice(0, 7)] || []).find(
+      function (j) {
+
+        return j.uid === uid && j.fecha === fecha;
+
+      }
+    ) || null;
+
+  }
+
+
+
+  /* desde qué día se le cuentan faltas: desde que se empezó a usar el
+     tarjetero (la primera marca de cualquiera) o desde que se creó el
+     usuario, lo que sea más tarde */
+  function inicioFaltas(u) {
+
+    var primera = "";
+
+
+    Object.keys(state.tarjetero || {}).forEach(
+      function (mes) {
+
+        (state.tarjetero[mes] || []).forEach(
+          function (m) {
+
+            if (m.fecha && (!primera || m.fecha < primera)) {
+
+              primera = m.fecha;
+
+            }
+
+          }
+        );
+
+      }
+    );
+
+
+    var creado =
+      u.creado ? isoDia(new Date(u.creado)) : "";
+
+
+    return primera && creado > primera ? creado : primera;
+
+  }
+
+
+
+  /* null si no corresponde; si no: { estado: "falta" | "pendiente" | "justificada", motivo } */
+  function faltaDe(u, fecha) {
+
+    var hoy = hoyIso();
+
+    var dia = new Date(fecha + "T12:00:00").getDay();
+
+    var desde = inicioFaltas(u);
+
+
+    if (fecha > hoy || dia === 0 || dia === 6 || !desde || fecha < desde) {
+
+      return null;
+
+    }
+
+
+    if (marcasDe(u.id, fecha).length) {
+
+      return null;
+
+    }
+
+
+    var j = justificacionDe(u.id, fecha);
+
+
+    if (j) {
+
+      return { estado: "justificada", motivo: j.motivo || "", por: j.por || "" };
+
+    }
+
+
+    /* hoy todavía puede marcar hasta que termina la jornada */
+    if (fecha === hoy && minutosAhora() < aMinutos(INICIO_PROMOTOR) + JORNADA_PROMOTOR_MIN) {
+
+      return { estado: "pendiente" };
+
+    }
+
+
+    return { estado: "falta" };
+
+  }
+
+
+
+  function faltasDelDia(fecha) {
+
+    var out = [];
+
+
+    usuariosConRol("reponedor").forEach(
+      function (u) {
+
+        var f = faltaDe(u, fecha);
+
+
+        if (f) {
+
+          out.push(Object.assign({ uid: u.id, nombre: u.nombre, fecha: fecha }, f));
+
+        }
+
+      }
+    );
+
+
+    return out.sort(
+      function (a, b) {
+
+        return a.nombre.localeCompare(b.nombre, "es");
+
+      }
+    );
+
+  }
+
+
+
+  /* todas las del mes (hasta hoy), sin las "pendientes" */
+  function faltasDelMes(mes) {
+
+    var partes = mes.split("-").map(Number);
+
+    var ultimo = new Date(partes[0], partes[1], 0).getDate();
+
+    var out = [];
+
+
+    for (var d = 1; d <= ultimo; d++) {
+
+      var fecha = mes + "-" + (d < 10 ? "0" : "") + d;
+
+
+      if (fecha > hoyIso()) {
+
+        break;
+
+      }
+
+
+      faltasDelDia(fecha).forEach(
+        function (f) {
+
+          if (f.estado !== "pendiente") {
+
+            out.push(f);
+
+          }
+
+        }
+      );
+
+    }
+
+
+    return out;
+
+  }
+
+
+
+  /* Solo administrador: justifica (o quita la justificación de) una falta.
+     uid vacío = a todos los promotores que faltaron ese día (feriado) */
+  function justificarFalta(uid, fecha, quitar) {
+
+    if (!puede("deshacer")) {
+
+      return;
+
+    }
+
+
+    var uids =
+      uid
+        ? [uid]
+        : faltasDelDia(fecha)
+            .filter(
+              function (f) {
+
+                return f.estado !== "justificada";
+
+              }
+            )
+            .map(
+              function (f) {
+
+                return f.uid;
+
+              }
+            );
+
+
+    if (!uids.length) {
+
+      return;
+
+    }
+
+
+    var motivo = "";
+
+
+    if (!quitar) {
+
+      motivo = prompt(
+        uid
+          ? "Motivo de la falta de " + nombreUsuario(uid) + " el " + fmtDate(fecha) + " (certificado, feriado, licencia…):"
+          : "Motivo para justificar a todos los que faltaron el " + fmtDate(fecha) + ":",
+        uid ? "Certificado médico" : "Feriado"
+      );
+
+
+      if (motivo === null) {
+
+        return;
+
+      }
+
+
+      motivo = String(motivo).trim() || "Justificada";
+
+    }
+    else if (!confirm("¿Quitar la justificación? Vuelve a contar como falta y se descuenta el día.")) {
+
+      return;
+
+    }
+
+
+    var mes = fecha.slice(0, 7);
+
+    var ref = state.db.doc("clientes/" + TARJ_PREFIX + mes);
+
+
+    state.db.runTransaction(
+      function (tx) {
+
+        return tx.get(ref).then(
+          function (snap) {
+
+            var lista =
+              (snap.exists && Array.isArray(snap.data().justificadas)) ? snap.data().justificadas : [];
+
+
+            /* se saca la que hubiera de esa persona y día, y se pone la nueva */
+            lista = lista.filter(
+              function (j) {
+
+                return !(j.fecha === fecha && uids.indexOf(j.uid) !== -1);
+
+              }
+            );
+
+
+            if (!quitar) {
+
+              uids.forEach(
+                function (id) {
+
+                  lista.push({ uid: id, fecha: fecha, motivo: motivo, por: quienSoy(), at: Date.now() });
+
+                }
+              );
+
+            }
+
+
+            tx.set(ref, { mes: mes, justificadas: lista }, { merge: true });
+
+          }
+        );
+
+      }
+    )
+      .then(
+        function () {
+
+          showToast(quitar ? "Se quitó la justificación: cuenta como falta." : (uids.length > 1 ? plural(uids.length, "falta justificada", "faltas justificadas") + "." : "Falta justificada."));
+
+        }
+      )
+      .catch(
+        function (err) {
+
+          avisarError(err, "No se pudo guardar.");
+
+        }
+      );
+
+  }
+
+
+
+  function faltasHtml(fecha, mes) {
+
+    var delDia = faltasDelDia(fecha);
+
+    var delMes = faltasDelMes(mes);
+
+    var admin = puede("deshacer");
+
+
+    var dia =
+      delDia.length
+        ? '<div class="falta-lista">' +
+            delDia.map(
+              function (f) {
+
+                var chip =
+                  f.estado === "falta"
+                    ? '<span class="falta-chip">FALTA</span>'
+                    : f.estado === "pendiente"
+                      ? '<span class="falta-chip pendiente">Todavía no marcó</span>'
+                      : '<span class="falta-chip justificada">Justificada</span>';
+
+
+                return (
+                  '<div class="falta-item">' +
+                    chip +
+                    '<strong>' + escapeHtml(f.nombre) + '</strong>' +
+                    (f.estado === "falta" ? '<small class="op-rojo">no marcó el tarjetero: se descuenta el día</small>' : '') +
+                    (f.estado === "justificada" ? '<small>' + escapeHtml(f.motivo) + (f.por ? ' · ' + escapeHtml(f.por) : '') + '</small>' : '') +
+                    (
+                      admin && f.estado === "falta"
+                        ? '<button type="button" class="hist-more" data-falta-just="' + escapeHtml(f.uid) + '" data-fecha="' + fecha + '">Justificar</button>'
+                        : admin && f.estado === "justificada"
+                          ? '<button type="button" class="hist-more" data-falta-quitar="' + escapeHtml(f.uid) + '" data-fecha="' + fecha + '">Quitar justificación</button>'
+                          : ''
+                    ) +
+                  '</div>'
+                );
+
+              }
+            ).join("") +
+          '</div>'
+        : '<div class="dash-empty">' +
+            (new Date(fecha + "T12:00:00").getDay() % 6 === 0 ? 'Fin de semana: no se cuentan faltas.' : 'Sin faltas: todos los promotores marcaron.') +
+          '</div>';
+
+
+    var faltasSinJust =
+      delDia.filter(
+        function (f) {
+
+          return f.estado === "falta";
+
+        }
+      ).length;
+
+
+    /* resumen del mes por promotor */
+    var porUid = {};
+
+
+    delMes.forEach(
+      function (f) {
+
+        var r = porUid[f.uid] = porUid[f.uid] || { nombre: f.nombre, faltas: [], justificadas: 0 };
+
+
+        if (f.estado === "falta") {
+
+          r.faltas.push(f.fecha);
+
+        }
+        else {
+
+          r.justificadas++;
+
+        }
+
+      }
+    );
+
+
+    var uidsMes =
+      Object.keys(porUid).sort(
+        function (a, b) {
+
+          return porUid[a].nombre.localeCompare(porUid[b].nombre, "es");
+
+        }
+      );
+
+
+    var resumen =
+      uidsMes.length
+        ? '<div class="op-tabla-wrap"><table class="op-tabla falta-tabla">' +
+            '<thead><tr><th>Promotor</th><th>Faltas (se descuentan)</th><th>Justificadas</th><th>Días</th></tr></thead>' +
+            '<tbody>' +
+              uidsMes.map(
+                function (id) {
+
+                  var r = porUid[id];
+
+
+                  return (
+                    '<tr>' +
+                      '<td><strong>' + escapeHtml(r.nombre) + '</strong></td>' +
+                      '<td>' + (r.faltas.length ? '<strong class="op-rojo">' + r.faltas.length + '</strong>' : '0') + '</td>' +
+                      '<td>' + r.justificadas + '</td>' +
+                      '<td><small>' +
+                        r.faltas.map(
+                          function (fe) {
+
+                            return '<button type="button" class="hist-more" data-falta-ir="' + fe + '">' + escapeHtml(fmtDate(fe)) + '</button>';
+
+                          }
+                        ).join(" ") +
+                      '</small></td>' +
+                    '</tr>'
+                  );
+
+                }
+              ).join("") +
+            '</tbody>' +
+          '</table></div>'
+        : '<div class="dash-empty">Ningún promotor faltó este mes.</div>';
+
+
+    return (
+      '<div class="dash-card">' +
+        '<div class="dash-card-head">' +
+          '<h2 class="dash-card-title">Faltas del día' + (faltasSinJust ? ' <span class="falta-chip">' + faltasSinJust + '</span>' : '') + '</h2>' +
+          (
+            admin && faltasSinJust > 1
+              ? '<button type="button" class="btn btn-ghost op-mini" data-falta-just="" data-fecha="' + fecha + '" title="Por ejemplo, si fue feriado">Justificar a todos</button>'
+              : '<span class="dash-card-hint">Promotores que no marcaron el tarjetero (lunes a viernes)</span>'
+          ) +
+        '</div>' +
+        dia +
+      '</div>' +
+
+      '<div class="dash-card">' +
+        '<div class="dash-card-head">' +
+          '<h2 class="dash-card-title">Faltas del mes</h2>' +
+          '<span class="dash-card-hint">' + escapeHtml(new Date(mes + "-15T12:00:00").toLocaleDateString("es-UY", { month: "long", year: "numeric" })) + ' · tocá una fecha para ir a ese día</span>' +
+        '</div>' +
+        resumen +
+      '</div>'
+    );
+
+  }
+
+
+
   function renderTarjetero() {
 
     /* se busca por día (el Excel sigue bajando el mes entero) */
@@ -29817,6 +30635,8 @@ body[data-vista="ruta"] #avisoBar {
           ) +
         '</div>' +
 
+        faltasHtml(fecha, mes) +
+
       '</div>';
 
 
@@ -29967,7 +30787,7 @@ body[data-vista="ruta"] #avisoBar {
 
                 }
               )
-            });
+            }, { merge: true });
 
           }
         );
@@ -30085,6 +30905,75 @@ body[data-vista="ruta"] #avisoBar {
           XLSX.utils.book_append_sheet(libro, XLSX.utils.aoa_to_sheet(datos), "Horas");
 
           XLSX.utils.book_append_sheet(libro, XLSX.utils.aoa_to_sheet(detalle), "Marcas");
+
+
+          /* faltas: resumen por promotor y el detalle de cada día */
+          var faltas = faltasDelMes(mes);
+
+          var resumen = {};
+
+
+          usuariosConRol("reponedor").forEach(
+            function (u) {
+
+              resumen[u.id] = { nombre: u.nombre, trabajados: 0, faltas: 0, justificadas: 0 };
+
+            }
+          );
+
+
+          filas.forEach(
+            function (f) {
+
+              if (resumen[f.uid]) {
+
+                resumen[f.uid].trabajados++;
+
+              }
+
+            }
+          );
+
+
+          faltas.forEach(
+            function (f) {
+
+              if (resumen[f.uid]) {
+
+                resumen[f.uid][f.estado === "falta" ? "faltas" : "justificadas"]++;
+
+              }
+
+            }
+          );
+
+
+          var hojaFaltas = [
+            ["Promotor", "Días trabajados", "Faltas (se descuentan)", "Faltas justificadas"]
+          ].concat(
+            Object.keys(resumen).map(
+              function (id) {
+
+                var r = resumen[id];
+
+                return [r.nombre, r.trabajados, r.faltas, r.justificadas];
+
+              }
+            )
+          ).concat(
+            [[], ["Fecha", "Promotor", "Estado", "Motivo", "Justificada por"]]
+          ).concat(
+            faltas.map(
+              function (f) {
+
+                return [f.fecha, f.nombre, f.estado === "falta" ? "FALTA" : "Justificada", f.motivo || "", f.por || ""];
+
+              }
+            )
+          );
+
+
+          XLSX.utils.book_append_sheet(libro, XLSX.utils.aoa_to_sheet(hojaFaltas), "Faltas");
 
 
           XLSX.writeFile(libro, "tarjetero-" + mes + ".xlsx");
@@ -34078,6 +34967,43 @@ body[data-vista="ruta"] #avisoBar {
     }
 
 
+    /* orden de la tabla de productos del panel */
+    if (target.matches("[data-prod-orden]")) {
+
+      state.prodOrden = target.value;
+
+
+      try {
+
+        localStorage.setItem("prodOrden", target.value);
+
+      } catch (e) {
+
+        /* sin almacenamiento: queda solo por esta vez */
+
+      }
+
+
+      var vieja =
+        target.closest(".dash-card") && target.closest(".dash-card").querySelector(".prod-tabla-wrap");
+
+
+      if (vieja) {
+
+        var tmp = document.createElement("div");
+
+        tmp.innerHTML = productosTablaHtml(todosLosProductos());
+
+        vieja.replaceWith(tmp.firstChild);
+
+      }
+
+
+      return true;
+
+    }
+
+
     /* orden de la tabla de la jornada (y ver solo los de una persona) */
     if (target.matches("[data-ops-orden]") || target.matches("[data-ops-ver]")) {
 
@@ -36739,6 +37665,39 @@ body[data-vista="ruta"] #avisoBar {
     if ((el = e.target.closest("[data-tarj-fin]"))) {
 
       cargarFinOlvidado(el.getAttribute("data-tarj-fin"), el.getAttribute("data-fecha"));
+
+      return true;
+
+    }
+
+
+    if ((el = e.target.closest("[data-falta-just]"))) {
+
+      justificarFalta(el.getAttribute("data-falta-just"), el.getAttribute("data-fecha"), false);
+
+      return true;
+
+    }
+
+
+    if ((el = e.target.closest("[data-falta-quitar]"))) {
+
+      justificarFalta(el.getAttribute("data-falta-quitar"), el.getAttribute("data-fecha"), true);
+
+      return true;
+
+    }
+
+
+    if ((el = e.target.closest("[data-falta-ir]"))) {
+
+      state.tarjeteroFecha = el.getAttribute("data-falta-ir");
+
+      state.tarjeteroAbierto = null;
+
+      renderTarjetero();
+
+      els.mainInner.parentNode.scrollTop = 0;
 
       return true;
 
@@ -42401,6 +43360,8 @@ body[data-vista="ruta"] #avisoBar {
 
         var tarjetero = {};
 
+        var justificadas = {};
+
         var tareas = [];
 
         var planes = {};
@@ -42419,6 +43380,8 @@ body[data-vista="ruta"] #avisoBar {
 
               tarjetero[doc.id.slice(TARJ_PREFIX.length)] = Array.isArray(d.marcas) ? d.marcas : [];
 
+              justificadas[doc.id.slice(TARJ_PREFIX.length)] = Array.isArray(d.justificadas) ? d.justificadas : [];
+
             } else if (doc.id === TAREAS_DOC_ID) {
 
               tareas = Array.isArray((doc.data() || {}).tareas) ? doc.data().tareas : [];
@@ -42436,6 +43399,8 @@ body[data-vista="ruta"] #avisoBar {
         state.posiciones = posiciones;
 
         state.tarjetero = tarjetero;
+
+        state.tarjeteroJustificadas = justificadas;
 
         state.tareas = tareas;
 
