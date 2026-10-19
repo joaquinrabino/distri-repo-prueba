@@ -6367,7 +6367,9 @@ body:not(.logged-out) .login-screen {
 
 /* pestaña "Mi ruta": pantalla completa (sin lista de clientes ni avisos) */
 body[data-vista="ruta"] .sidebar,
-body[data-vista="ruta"] #avisoBar {
+body[data-vista="ruta"] #avisoBar,
+body[data-vista="manual"] .sidebar,
+body[data-vista="manual"] #avisoBar {
 
   display: none !important;
 
@@ -8448,6 +8450,1672 @@ body[data-vista="ruta"] #avisoBar {
   padding: 4px 0;
 
   font-size: 13.5px;
+
+}
+
+
+/* ---------- manual de ejecución (pensado para el celular) ---------- */
+
+.manual-view {
+
+  --man-lila: #4f2683;
+
+  --man-naranja: #e8782a;
+
+  max-width: 760px;
+
+  margin: 0 auto;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 18px;
+
+  color: var(--ink);
+
+}
+
+
+.man-portada {
+
+  border-radius: 16px;
+
+  overflow: hidden;
+
+  background: var(--man-lila);
+
+  color: #fff;
+
+}
+
+
+.man-portada img {
+
+  display: block;
+
+  width: 100%;
+
+  height: auto;
+
+}
+
+
+.man-portada-txt {
+
+  padding: 14px 18px 18px;
+
+}
+
+
+.man-portada-txt h1 {
+
+  margin: 4px 0 6px;
+
+  font-family: var(--font-display);
+
+  font-size: 26px;
+
+}
+
+
+.man-portada-txt p {
+
+  margin: 0;
+
+  font-size: 15px;
+
+  line-height: 1.45;
+
+  opacity: 0.95;
+
+}
+
+
+.man-portada .man-ambiente {
+
+  background: var(--man-naranja);
+
+  color: #fff;
+
+}
+
+
+.man-nav {
+
+  position: sticky;
+
+  top: 0;
+
+  z-index: 5;
+
+  display: flex;
+
+  gap: 8px;
+
+  overflow-x: auto;
+
+  padding: 10px 2px;
+
+  background: var(--bg);
+
+  scrollbar-width: none;
+
+}
+
+
+.man-nav::-webkit-scrollbar {
+
+  display: none;
+
+}
+
+
+.man-chip {
+
+  flex: none;
+
+  font: inherit;
+
+  font-size: 14px;
+
+  font-weight: 600;
+
+  padding: 8px 14px;
+
+  border-radius: 99px;
+
+  border: 1px solid var(--border-strong);
+
+  background: var(--surface);
+
+  color: var(--man-lila);
+
+  cursor: pointer;
+
+  min-height: 40px;
+
+}
+
+
+.man-herramientas {
+
+  display: grid;
+
+  grid-template-columns: repeat(2, 1fr);
+
+  gap: 10px;
+
+}
+
+
+.man-herramientas div {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 2px;
+
+  padding: 12px;
+
+  border-radius: 12px;
+
+  background: var(--surface);
+
+  border: 1px solid var(--border);
+
+}
+
+
+.man-herramientas span {
+
+  font-size: 22px;
+
+}
+
+
+.man-herramientas strong {
+
+  color: var(--man-lila);
+
+  font-size: 14px;
+
+}
+
+
+.man-herramientas small {
+
+  color: var(--ink-soft);
+
+  font-size: 12.5px;
+
+}
+
+
+.man-sec {
+
+  scroll-margin-top: 64px;
+
+  background: var(--surface);
+
+  border: 1px solid var(--border);
+
+  border-radius: 16px;
+
+  padding: 18px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 14px;
+
+}
+
+
+.man-ambiente {
+
+  align-self: flex-start;
+
+  display: inline-block;
+
+  font-size: 12px;
+
+  font-weight: 800;
+
+  letter-spacing: 0.04em;
+
+  text-transform: uppercase;
+
+  padding: 4px 10px;
+
+  border-radius: 6px;
+
+  background: var(--man-lila);
+
+  color: #fff;
+
+}
+
+
+.man-h2 {
+
+  margin: -4px 0 0;
+
+  font-family: var(--font-display);
+
+  font-size: 22px;
+
+  color: var(--man-lila);
+
+  line-height: 1.2;
+
+}
+
+
+.man-sub {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 12px;
+
+  padding-top: 14px;
+
+  border-top: 1px dashed var(--border-strong);
+
+}
+
+
+.man-h3 {
+
+  margin: 0;
+
+  font-size: 17px;
+
+  color: var(--man-naranja);
+
+}
+
+
+.man-h4 {
+
+  margin: 0;
+
+  font-size: 15px;
+
+  color: var(--man-lila);
+
+}
+
+
+.man-p {
+
+  margin: 0;
+
+  font-size: 15px;
+
+  line-height: 1.5;
+
+}
+
+
+.man-frase {
+
+  margin: 0;
+
+  padding: 12px 14px;
+
+  border-radius: 12px;
+
+  background: var(--man-lila);
+
+  color: #fff;
+
+  font-size: 18px;
+
+  text-align: center;
+
+}
+
+
+.man-frase.chica {
+
+  font-size: 15px;
+
+}
+
+
+.man-lista {
+
+  margin: 0;
+
+  padding: 0;
+
+  list-style: none;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 10px;
+
+}
+
+
+.man-lista li {
+
+  position: relative;
+
+  padding-left: 24px;
+
+  font-size: 15px;
+
+  line-height: 1.5;
+
+}
+
+
+.man-lista li::before {
+
+  content: "";
+
+  position: absolute;
+
+  left: 2px;
+
+  top: 6px;
+
+  border-left: 11px solid var(--man-naranja);
+
+  border-top: 6px solid transparent;
+
+  border-bottom: 6px solid transparent;
+
+}
+
+
+.man-fig {
+
+  margin: 0;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 6px;
+
+}
+
+
+.man-img-btn {
+
+  position: relative;
+
+  display: block;
+
+  width: 100%;
+
+  padding: 0;
+
+  border: 1px solid var(--border);
+
+  border-radius: 12px;
+
+  overflow: hidden;
+
+  background: #f1eff6;
+
+  cursor: zoom-in;
+
+}
+
+
+.man-img-btn img {
+
+  display: block;
+
+  width: 100%;
+
+  height: auto;
+
+}
+
+
+.man-fig.ancha .man-img-btn {
+
+  overflow-x: auto;
+
+}
+
+
+.man-fig.ancha .man-img-btn img {
+
+  width: auto;
+
+  min-width: 100%;
+
+  height: 260px;
+
+  max-width: none;
+
+}
+
+
+.man-lupa {
+
+  position: absolute;
+
+  right: 8px;
+
+  bottom: 8px;
+
+  width: 34px;
+
+  height: 34px;
+
+  border-radius: 50%;
+
+  background: rgba(0, 0, 0, 0.55);
+
+  color: #fff;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  font-size: 16px;
+
+}
+
+
+.man-fig figcaption {
+
+  font-size: 13px;
+
+  color: var(--ink-soft);
+
+  text-align: center;
+
+}
+
+
+.man-desliza {
+
+  font-size: 13px;
+
+  color: var(--ink-soft);
+
+}
+
+
+.man-dos {
+
+  display: grid;
+
+  grid-template-columns: 1fr 1fr;
+
+  gap: 10px;
+
+  align-items: start;
+
+}
+
+
+/* niveles de la góndola */
+.man-niveles {
+
+  display: flex;
+
+  flex-direction: column;
+
+  border-radius: 12px;
+
+  overflow: hidden;
+
+  border: 1px solid var(--border);
+
+}
+
+
+.man-nivel {
+
+  display: grid;
+
+  grid-template-columns: 72px 1fr auto;
+
+  align-items: center;
+
+  gap: 10px;
+
+  padding: 10px 12px;
+
+  border-bottom: 1px solid var(--border);
+
+  font-size: 14px;
+
+}
+
+
+.man-nivel:last-child {
+
+  border-bottom: 0;
+
+}
+
+
+.man-nivel-parte {
+
+  font-weight: 800;
+
+  text-transform: uppercase;
+
+  font-size: 12.5px;
+
+  color: var(--man-lila);
+
+}
+
+
+.man-nivel-info {
+
+  display: flex;
+
+  flex-direction: column;
+
+}
+
+
+.man-nivel-info small {
+
+  color: var(--ink-soft);
+
+}
+
+
+.man-nivel-valor {
+
+  font-size: 12px;
+
+  font-weight: 800;
+
+  padding: 4px 8px;
+
+  border-radius: 99px;
+
+  text-align: center;
+
+  max-width: 110px;
+
+}
+
+
+.man-nivel.n3 {
+
+  background: #e4f6f7;
+
+}
+
+
+.man-nivel.n3 .man-nivel-valor {
+
+  background: #1aa5ad;
+
+  color: #fff;
+
+}
+
+
+.man-nivel.n1 .man-nivel-valor {
+
+  background: #bfe6e8;
+
+  color: #145e63;
+
+}
+
+
+.man-nivel.n0 .man-nivel-valor {
+
+  background: var(--surface-2);
+
+  color: var(--ink-soft);
+
+}
+
+
+/* sentido de circulación */
+.man-circ {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 8px;
+
+}
+
+
+.man-circ-gondola {
+
+  display: grid;
+
+  grid-template-columns: 1fr 2fr 1fr;
+
+  border-radius: 10px;
+
+  overflow: hidden;
+
+  font-size: 13px;
+
+  font-weight: 700;
+
+  text-align: center;
+
+}
+
+
+.man-circ-gondola span {
+
+  padding: 18px 6px;
+
+}
+
+
+.man-circ-gondola .ciego {
+
+  background: repeating-linear-gradient(45deg, #ececf2, #ececf2 8px, #dcdbe5 8px, #dcdbe5 16px);
+
+  color: var(--ink-soft);
+
+}
+
+
+.man-circ-gondola .bloque {
+
+  background: var(--man-lila);
+
+  color: #fff;
+
+}
+
+
+.man-circ-flecha {
+
+  text-align: center;
+
+  font-weight: 800;
+
+  color: var(--man-lila);
+
+  border-top: 3px solid var(--man-lila);
+
+  padding-top: 6px;
+
+  font-size: 14px;
+
+}
+
+
+/* foco de productos */
+.man-foco {
+
+  display: flex;
+
+  flex-wrap: wrap;
+
+  gap: 6px;
+
+  align-items: center;
+
+}
+
+
+.man-foco strong {
+
+  width: 100%;
+
+  font-size: 14px;
+
+  color: var(--man-lila);
+
+}
+
+
+.man-foco span {
+
+  font-size: 13.5px;
+
+  padding: 5px 10px;
+
+  border-radius: 99px;
+
+  background: #f1ecfa;
+
+  color: var(--man-lila);
+
+  font-weight: 600;
+
+}
+
+
+/* meta de participación */
+.man-meta {
+
+  padding: 12px 14px;
+
+  border-radius: 12px;
+
+  background: #fff4ea;
+
+  border: 1px solid #f6d3b5;
+
+}
+
+
+.man-meta-txt {
+
+  font-size: 15px;
+
+  margin-bottom: 8px;
+
+}
+
+
+.man-meta-txt strong {
+
+  color: var(--man-naranja);
+
+  font-size: 18px;
+
+}
+
+
+.man-meta-barra {
+
+  position: relative;
+
+  height: 14px;
+
+  border-radius: 99px;
+
+  background: #f2e3d6;
+
+}
+
+
+.man-meta-rango {
+
+  position: absolute;
+
+  top: 0;
+
+  bottom: 0;
+
+  border-radius: 99px;
+
+  background: var(--man-naranja);
+
+  min-width: 6px;
+
+}
+
+
+.man-meta-marca {
+
+  position: absolute;
+
+  top: -3px;
+
+  bottom: -3px;
+
+  width: 2px;
+
+  background: rgba(0, 0, 0, 0.25);
+
+}
+
+
+.man-meta-escala {
+
+  display: flex;
+
+  justify-content: space-between;
+
+  font-size: 11.5px;
+
+  color: var(--ink-faint);
+
+  margin-top: 4px;
+
+}
+
+
+/* mueble compartido entre 3 */
+.man-mueble {
+
+  display: grid;
+
+  grid-template-columns: 1fr 1fr 1fr;
+
+  border-radius: 10px;
+
+  overflow: hidden;
+
+  text-align: center;
+
+  font-size: 13px;
+
+  font-weight: 700;
+
+}
+
+
+.man-mueble span {
+
+  padding: 16px 4px;
+
+  background: #e6e5ec;
+
+  color: var(--ink-soft);
+
+}
+
+
+.man-mueble .nuestro {
+
+  background: #1f9a4e;
+
+  color: #fff;
+
+}
+
+
+.man-tarjetas {
+
+  display: grid;
+
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+
+  gap: 10px;
+
+}
+
+
+.man-tarjetas div {
+
+  padding: 12px 14px;
+
+  border-radius: 12px;
+
+  background: var(--man-lila);
+
+  color: #fff;
+
+  font-size: 14px;
+
+  line-height: 1.45;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 4px;
+
+}
+
+
+.man-tarjetas strong {
+
+  font-size: 15px;
+
+  color: #ffd3ad;
+
+}
+
+
+.man-bloques {
+
+  margin: 0;
+
+  padding: 0;
+
+  list-style: none;
+
+  counter-reset: bloque;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 6px;
+
+}
+
+
+.man-bloques li {
+
+  counter-increment: bloque;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  padding: 10px 12px;
+
+  border-radius: 10px;
+
+  background: #f1ecfa;
+
+  font-size: 15px;
+
+  font-weight: 600;
+
+}
+
+
+.man-bloques li::before {
+
+  content: counter(bloque);
+
+  flex: none;
+
+  width: 26px;
+
+  height: 26px;
+
+  border-radius: 50%;
+
+  background: var(--man-lila);
+
+  color: #fff;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  font-size: 13px;
+
+}
+
+
+/* % de primaria */
+.man-objetivos {
+
+  display: grid;
+
+  grid-template-columns: repeat(2, 1fr);
+
+  gap: 8px;
+
+}
+
+
+.man-objetivos div {
+
+  display: flex;
+
+  flex-direction: column;
+
+  padding: 10px 12px;
+
+  border-radius: 10px;
+
+  background: #fff4ea;
+
+  border: 1px solid #f6d3b5;
+
+  font-size: 14px;
+
+}
+
+
+.man-objetivos span {
+
+  font-size: 18px;
+
+  font-weight: 800;
+
+  color: var(--man-naranja);
+
+}
+
+
+.man-calc {
+
+  display: grid;
+
+  grid-template-columns: 1fr 1fr 1fr;
+
+  gap: 10px;
+
+}
+
+
+.man-calc label {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 4px;
+
+  font-size: 12.5px;
+
+  color: var(--ink-soft);
+
+}
+
+
+.man-calc input,
+.man-calc select {
+
+  font: inherit;
+
+  font-size: 16px;
+
+  padding: 10px;
+
+  border: 1px solid var(--border-strong);
+
+  border-radius: 8px;
+
+  background: var(--surface);
+
+  color: var(--ink);
+
+  min-width: 0;
+
+  width: 100%;
+
+  box-sizing: border-box;
+
+}
+
+
+.man-regla {
+
+  display: flex;
+
+  flex-direction: column;
+
+  max-width: 340px;
+
+  border-radius: 10px;
+
+  overflow: hidden;
+
+  border: 1px solid var(--border);
+
+  font-variant-numeric: tabular-nums;
+
+}
+
+
+.man-regla-fila {
+
+  display: grid;
+
+  grid-template-columns: 1fr 1fr;
+
+  background: #ebe9f2;
+
+  font-weight: 700;
+
+  color: var(--man-lila);
+
+}
+
+
+.man-regla-fila span {
+
+  padding: 8px 12px;
+
+}
+
+
+.man-regla-cuenta {
+
+  padding: 10px 12px;
+
+  font-size: 15px;
+
+}
+
+
+.man-resultado {
+
+  margin: 0;
+
+  padding: 12px 14px;
+
+  border-radius: 10px;
+
+  background: #f1ecfa;
+
+  border-left: 4px solid var(--man-lila);
+
+  font-size: 15px;
+
+}
+
+
+.man-tramos {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 4px;
+
+}
+
+
+.man-tramos-fila {
+
+  display: flex;
+
+  gap: 3px;
+
+}
+
+
+.man-tramo {
+
+  flex: 1;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  padding: 8px 2px;
+
+  border-radius: 6px;
+
+  background: #a99bd3;
+
+  color: #fff;
+
+}
+
+
+.man-tramo small {
+
+  font-size: 10.5px;
+
+  opacity: 0.9;
+
+}
+
+
+.man-tramo strong {
+
+  font-size: 16px;
+
+}
+
+
+.man-nota {
+
+  color: var(--ink-soft);
+
+  font-size: 12.5px;
+
+}
+
+
+.man-estantes {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 4px;
+
+  max-width: 360px;
+
+}
+
+
+.man-estante {
+
+  display: grid;
+
+  grid-template-columns: 76px 1fr;
+
+  align-items: center;
+
+  font-size: 13px;
+
+}
+
+
+.man-estante i {
+
+  height: 18px;
+
+  border-radius: 4px;
+
+  border: 1px solid var(--border-strong);
+
+  background: var(--surface);
+
+}
+
+
+.man-estante.nuestro i {
+
+  background: #a99bd3;
+
+  border-color: #8f7fc4;
+
+}
+
+
+/* LPI */
+.man-seg {
+
+  display: flex;
+
+  gap: 6px;
+
+  overflow-x: auto;
+
+  scrollbar-width: none;
+
+}
+
+
+.man-seg::-webkit-scrollbar {
+
+  display: none;
+
+}
+
+
+.man-seg-btn {
+
+  flex: none;
+
+  font: inherit;
+
+  font-size: 14px;
+
+  font-weight: 600;
+
+  padding: 9px 14px;
+
+  border-radius: 10px;
+
+  border: 1px solid var(--border-strong);
+
+  background: var(--surface);
+
+  color: var(--ink);
+
+  cursor: pointer;
+
+  min-height: 42px;
+
+}
+
+
+.man-seg-btn.activo {
+
+  background: var(--man-lila);
+
+  border-color: var(--man-lila);
+
+  color: #fff;
+
+}
+
+
+.man-lpi-grupos {
+
+  display: grid;
+
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+
+  gap: 14px;
+
+}
+
+
+.man-lpi-grupo h4 {
+
+  margin: 0 0 6px;
+
+  display: inline-block;
+
+  padding: 5px 12px;
+
+  border-radius: 8px;
+
+  background: var(--man-lila);
+
+  color: #fff;
+
+  font-size: 14px;
+
+  text-transform: uppercase;
+
+  letter-spacing: 0.03em;
+
+}
+
+
+.man-checks {
+
+  display: flex;
+
+  flex-direction: column;
+
+}
+
+
+.man-check {
+
+  display: flex;
+
+  align-items: flex-start;
+
+  gap: 10px;
+
+  padding: 9px 2px;
+
+  border-bottom: 1px solid var(--border);
+
+  font-size: 15px;
+
+  line-height: 1.35;
+
+  cursor: pointer;
+
+}
+
+
+.man-check input {
+
+  flex: none;
+
+  width: 22px;
+
+  height: 22px;
+
+  margin: 0;
+
+  accent-color: var(--man-lila);
+
+}
+
+
+.man-check input:checked + span {
+
+  color: var(--ink-faint);
+
+  text-decoration: line-through;
+
+}
+
+
+.man-original summary {
+
+  cursor: pointer;
+
+  font-size: 14px;
+
+  color: var(--man-lila);
+
+  font-weight: 600;
+
+  padding: 6px 0;
+
+}
+
+
+.man-kit {
+
+  display: grid;
+
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1fr);
+
+  gap: 14px;
+
+  align-items: start;
+
+}
+
+
+.man-kit > div {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 10px;
+
+}
+
+
+.man-sec > .btn,
+.man-kit .btn {
+
+  align-self: flex-start;
+
+}
+
+
+.man-descarga {
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  gap: 6px;
+
+  padding: 10px 0 30px;
+
+}
+
+
+.man-descarga-btn {
+
+  width: 100%;
+
+  max-width: 420px;
+
+  text-align: center;
+
+  text-decoration: none;
+
+  font-size: 17px;
+
+  padding: 15px 18px;
+
+  box-sizing: border-box;
+
+}
+
+
+.man-descarga small {
+
+  color: var(--ink-faint);
+
+}
+
+
+/* visor de imágenes */
+.man-zoom {
+
+  position: fixed;
+
+  inset: 0;
+
+  z-index: 1000;
+
+  background: rgba(15, 10, 30, 0.94);
+
+  display: flex;
+
+  flex-direction: column;
+
+}
+
+
+.man-zoom-barra {
+
+  flex: none;
+
+  display: flex;
+
+  justify-content: space-between;
+
+  gap: 10px;
+
+  padding: 10px 12px;
+
+}
+
+
+.man-zoom-btn {
+
+  font: inherit;
+
+  font-size: 15px;
+
+  font-weight: 600;
+
+  padding: 10px 14px;
+
+  border-radius: 10px;
+
+  border: 0;
+
+  background: rgba(255, 255, 255, 0.15);
+
+  color: #fff;
+
+  cursor: pointer;
+
+  min-height: 44px;
+
+}
+
+
+.man-zoom-area {
+
+  flex: 1;
+
+  overflow: auto;
+
+  display: flex;
+
+  align-items: center;
+
+  -webkit-overflow-scrolling: touch;
+
+}
+
+
+.man-zoom-area img {
+
+  display: block;
+
+  width: 100%;
+
+  height: auto;
+
+  margin: auto;
+
+}
+
+
+.man-zoom.grande .man-zoom-area {
+
+  align-items: flex-start;
+
+}
+
+
+.man-zoom.grande .man-zoom-area img {
+
+  width: 250%;
+
+  max-width: none;
+
+}
+
+
+@media (max-width: 620px) {
+
+  .manual-view {
+
+    gap: 14px;
+
+  }
+
+  .man-sec {
+
+    padding: 14px;
+
+    border-radius: 14px;
+
+  }
+
+  .man-h2 {
+
+    font-size: 20px;
+
+  }
+
+  .man-calc {
+
+    grid-template-columns: 1fr;
+
+  }
+
+  .man-kit {
+
+    grid-template-columns: 1fr;
+
+  }
+
+  body[data-vista="manual"] .main {
+
+    overflow: visible;
+
+  }
+
+  .man-kit .man-fig {
+
+    max-width: 260px;
+
+    margin: 0 auto;
+
+  }
+
+  .man-nivel {
+
+    grid-template-columns: 58px 1fr auto;
+
+    gap: 8px;
+
+    font-size: 13.5px;
+
+  }
 
 }
 
@@ -11182,6 +12850,8 @@ body[data-vista="ruta"] #avisoBar {
     state.tarjeteroView = false;
 
     state.tareasView = false;
+
+    state.manualView = false;
 
     state.tareaForm = null;
 
@@ -14474,6 +16144,16 @@ body[data-vista="ruta"] #avisoBar {
     }
 
 
+    /* manual de ejecución */
+    if (state.manualView) {
+
+      renderManual();
+
+      return;
+
+    }
+
+
     if (puede("ver_operaciones")) {
 
       if (state.opsView) {
@@ -16254,6 +17934,13 @@ body[data-vista="ruta"] #avisoBar {
         }
 
 
+        if (cambioManual(e.target)) {
+
+          return;
+
+        }
+
+
         if (cambioOperaciones(e.target)) {
 
           return;
@@ -16381,6 +18068,15 @@ body[data-vista="ruta"] #avisoBar {
           eliminarProducto(
             el.getAttribute("data-prod-del")
           );
+
+          return;
+
+        }
+
+
+        /* ---- Manual de ejecución ---- */
+
+        if (clicManual(e)) {
 
           return;
 
@@ -30124,6 +31820,1068 @@ body[data-vista="ruta"] #avisoBar {
 
 
   /* ========================================================
+     MANUAL DE EJECUCIÓN (Guía de ejecución Mondelez · Invierno 2026)
+     Toda la guía en una pestaña pensada para el celular: claves de
+     exhibición, planogramas por ambiente (con las imágenes del PDF),
+     cálculo del % de primaria, productos imprescindibles (LPI), kit y
+     checklist. Las imágenes y el PDF están en la carpeta /manual.
+  ======================================================== */
+
+  var MANUAL_PDF = "manual/guia-ejecucion-invierno-2026.pdf";
+
+  var MANUAL_IMG = "manual/";
+
+
+  /* tamaño real de cada imagen (reserva el lugar y no salta la página al cargar) */
+  var MANUAL_TAM = {
+    "portada.jpg": [1100, 1100], "alturas.jpg": [1100, 454], "kiosco.jpg": [748, 980], "jugos.jpg": [798, 726],
+    "premezcla.jpg": [1015, 641], "checkout-100.jpg": [553, 587], "checkout-33-50.jpg": [1100, 422],
+    "pasaje-caja.jpg": [1068, 521], "pasaje-frente.jpg": [467, 571], "galletas-full.jpg": [1800, 739],
+    "chocolates-primaria.jpg": [1100, 760], "kit.jpg": [780, 1119], "marcas.jpg": [900, 900], "lpi.jpg": [1247, 1247],
+    "maxi-chocolates.jpg": [822, 721], "maxi-galletas-dulces.jpg": [1100, 490], "maxi-dulce-reducido.jpg": [734, 523],
+    "maxi-saladas.jpg": [561, 561], "tradicional.jpg": [782, 1041], "auto-dulce-reducido.jpg": [732, 694],
+    "auto-saladas-reducido.jpg": [441, 641]
+  };
+
+  state.manualView = false;
+
+
+
+  /* productos imprescindibles por ambiente y categoría */
+  var MANUAL_LPI = [
+    {
+      id: "kiosco",
+      nombre: "Kiosco",
+      grupos: [
+        ["Caramelera", [
+          "Beldent Base (sabor 1)", "Beldent Base (sabor 2)", "Beldent Infinit (1 sabor)", "Halls (1 sabor)",
+          "Mini Oreo o Mini Pepitos", "Milka Oreo Bombón", "Tabletas Milka 150-155",
+          "Tabletas Milka / Cadbury impulso (20 a 82 g)", "Alfajor Milka - Oreo - Pepitos - Shot", "Alfajores Terrabusi"
+        ]]
+      ]
+    },
+    {
+      id: "maxi",
+      nombre: "Maxikiosco y estaciones",
+      grupos: [
+        ["Caramelera", [
+          "Beldent Base (sabor 1)", "Beldent Base (sabor 2)", "Beldent Base (sabor 3)", "Beldent Infinit",
+          "Halls (sabor 1)", "Halls (sabor 2)", "Halls (sabor 3)", "Cerealitas saladas (Clásica - Arroz)",
+          "Oreo regular (118 g - Pandora - Mini 50)", "Tabletas Milka - Cadbury (150-155 / 162)", "Tabletas Shot 90 - 170",
+          "Tabletas Milka / Cadbury o Shot de impulso (20 a 82 g)", "Milka Oreo Bombón",
+          "Alfajores Milka - Oreo - Pepitos - Shot", "Alfajores Terrabusi"
+        ]]
+      ]
+    },
+    {
+      id: "tradicional",
+      nombre: "Tradicional",
+      grupos: [
+        ["Galletas dulces", ["Oreo 118 g (todos los sabores)", "Lulu 115 g", "Solar 195", "Sensación"]],
+        ["Galletas saladas", ["Agua 420 (con y sin sal)", "Salvado 400 (con y sin sal)", "Arroz"]],
+        ["Jugos", ["Tang Naranja", "Tang Naranja Dulce", "Clight Naranja Dulce", "Clight Manzana Deliciosa"]],
+        ["Premezclas", ["Polvo 30 / 100", "Salsa blanca 35 / 75", "Gelatina / postre Royarina 8P", "Gelatina / postre Royal"]],
+        ["Mostrador", [
+          "Beldent Base (sabor 1)", "Beldent Infinit (1 sabor)", "Halls (1 sabor)", "Milka Oreo Bombón",
+          "Tabletas Milka (150-155)", "Tabletas Milka / Cadbury o Shot de impulso (20 a 82 g)", "Alfajores cualquier presentación"
+        ]]
+      ]
+    },
+    {
+      id: "auto",
+      nombre: "Autoservicios",
+      grupos: [
+        ["Galletas dulces", ["Oreo 118 g (todos los sabores)", "Oreo Reg 354 g", "Oreo Gluten Free 95 g", "Lulu 115 g (todos los sabores)", "Solar 195 g", "Sensación 180 g"]],
+        ["Galletas saladas", ["Agua Famosa 420 g (con y sin sal)", "Salvado Famosa 400 g (con y sin sal)", "Cerealitas Tost Arroz 160 g"]],
+        ["Jugos", ["Tang Naranja", "Tang Naranja Dulce", "Tang Multifruta", "Clight Naranja Dulce", "Clight Manzana Deliciosa", "Clight Naranja Durazno"]],
+        ["Checkout", [
+          "Beldent Base (sabor 1)", "Beldent Base (sabor 2)", "Beldent Infinit (1 sabor)", "Halls (1 sabor)",
+          "Milka 55 / Leger 45", "Mini Oreo - Mini Pepitos", "Alfajor Milka - Oreo - Pepitos - Shot", "Milka Oreo Bombón"
+        ]],
+        ["Premezclas", ["Polvo 200 / 100 / 30", "Salsa blanca 75 g", "Gelatina / postre Royarina 8P", "Gelatina / postre Royal"]],
+        ["Chocolate primaria", ["Tabletas Milka 150-155", "Tabletas Cadbury 162 g", "Tabletas Shot"]]
+      ]
+    },
+    {
+      id: "auto4",
+      nombre: "Autoservicios 4 cajas o más",
+      grupos: [
+        ["Galletas dulces", ["Oreo 118 g (todos los sabores)", "Oreo Reg 354 g", "Oreo Reg UY 182,5 g", "Oreo Gluten Free 95 g", "Pepitos Reg UY 119 g", "Sensación 180 g", "Solar 195 g", "Lulu 115 g (todos los sabores)"]],
+        ["Galletas saladas", ["Agua Famosa 420 g (con y sin sal)", "Salvado Famosa 400 g (con y sin sal)", "Cerealitas Tost Arroz", "Cerealitas Clásicas 212"]],
+        ["Jugos", ["Tang Naranja", "Tang Naranja Dulce", "Tang Multifruta", "Tang Manzana", "Clight Naranja Dulce", "Clight Manzana Deliciosa", "Clight Naranja Durazno", "Clight Naranja"]],
+        ["Checkout", [
+          "Beldent Base (sabor 1)", "Beldent Base (sabor 2)", "Beldent Base (sabor 3)", "Beldent Infinit (1 sabor)", "Halls (1 sabor)",
+          "Milka 55 / Leger 45", "Mini Oreo - Mini Pepitos", "Alfajor Milka - Oreo - Pepitos - Shot", "Alfajores Terrabusi", "Milka Oreo Bombón"
+        ]],
+        ["Premezclas", ["Polvo Royal 200 / 100 / 30", "Salsa blanca 75 g", "Gelatina / postre Royarina 8P", "Chantilly Royal 100 g", "Gelatina / postre Royal"]],
+        ["Chocolate primaria", ["Tabletas Milka 150-155", "Tabletas Cadbury 162 g", "Tabletas Shot"]]
+      ]
+    }
+  ];
+
+
+  var MANUAL_KIT = [
+    "Lista de precios", "Lapicera", "Permanente negro", "Trincheta", "Block de notas", "Cinta adhesiva",
+    "Precintos", "Carteles de precios / oferta", "Cenefas", "Tijera", "Franela / pulverizador",
+    "Foto de éxito", "Catálogo", "Información de porcentajes de espacios contratados"
+  ];
+
+
+  var MANUAL_CHECK = [
+    "Identifiqué el sentido de circulación y apliqué el planograma en función de él",
+    "Los productos están EN BLOQUE (sin frentes separados)",
+    "Exhibición VERTICAL en todos los estantes, con las marcas de frente para que se lean",
+    "Lo más importante está a la altura de los ojos y de las manos",
+    "El bloque está en el medio del pasillo, sin puntos ciegos",
+    "Están los productos del LPI de este ambiente",
+    "Se cumple el % de primaria de cada categoría",
+    "Conseguí alguna exhibición secundaria (entrada, línea de caja o heladeras)",
+    "Precio comunicado y material POP vigente colocado",
+    "Todas las categorías de Mondelez quedaron bien comunicadas",
+    "Saqué la foto del éxito"
+  ];
+
+
+
+  /* tildes guardados en el celular (LPI, kit y checklist) */
+  function manualTildes() {
+
+    try {
+
+      return JSON.parse(localStorage.getItem("manualTildes") || "{}") || {};
+
+    } catch (e) {
+
+      return {};
+
+    }
+
+  }
+
+
+
+  function guardarManualTildes(t) {
+
+    try {
+
+      localStorage.setItem("manualTildes", JSON.stringify(t));
+
+    } catch (e) {
+
+      /* sin almacenamiento: los tildes quedan hasta recargar */
+
+    }
+
+  }
+
+
+
+  function abrirManual() {
+
+    if (
+      (state.editing || state.creating) &&
+      !confirm("Tenés cambios sin guardar. ¿Querés descartarlos?")
+    ) {
+
+      return;
+
+    }
+
+
+    resetPendingPhotos();
+
+
+    state.editing = false;
+
+    state.creating = false;
+
+    state.draft = null;
+
+    state.manualView = true;
+
+
+    render();
+
+
+    els.mainInner.parentNode.scrollTop = 0;
+
+    window.scrollTo(0, 0);
+
+  }
+
+
+
+  /* ---------- piezas del manual ---------- */
+
+  function manualImg(archivo, alt, pie, ancha) {
+
+    return (
+      '<figure class="man-fig' + (ancha ? ' ancha' : '') + '">' +
+        '<button type="button" class="man-img-btn" data-man-zoom="' + escapeHtml(MANUAL_IMG + archivo) + '" aria-label="Ampliar: ' + escapeHtml(alt) + '">' +
+          '<img src="' + escapeHtml(MANUAL_IMG + archivo) + '" alt="' + escapeHtml(alt) + '"' + (MANUAL_TAM[archivo] ? ' width="' + MANUAL_TAM[archivo][0] + '" height="' + MANUAL_TAM[archivo][1] + '"' : '') + ' loading="lazy">' +
+          '<span class="man-lupa" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21M10.5 7.5v6M7.5 10.5h6"/></svg></span>' +
+        '</button>' +
+        (pie ? '<figcaption>' + pie + '</figcaption>' : '') +
+      '</figure>'
+    );
+
+  }
+
+
+
+  function manualLista(items) {
+
+    return (
+      '<ul class="man-lista">' +
+        items.map(
+          function (t) {
+
+            return '<li>' + t + '</li>';
+
+          }
+        ).join("") +
+      '</ul>'
+    );
+
+  }
+
+
+
+  /* barra con el rango de participación que hay que lograr */
+  function manualMeta(desde, hasta, texto) {
+
+    return (
+      '<div class="man-meta">' +
+        '<div class="man-meta-txt"><strong>' + desde + '% a ' + hasta + '%</strong> ' + (texto || 'de participación') + '</div>' +
+        '<div class="man-meta-barra" role="img" aria-label="Entre ' + desde + ' y ' + hasta + ' por ciento">' +
+          '<span class="man-meta-rango" style="left:' + desde + '%;width:' + (hasta - desde) + '%"></span>' +
+          '<span class="man-meta-marca" style="left:50%"></span>' +
+        '</div>' +
+        '<div class="man-meta-escala"><span>0%</span><span>50%</span><span>100%</span></div>' +
+      '</div>'
+    );
+
+  }
+
+
+
+  function manualSeccion(id, ambiente, titulo, cuerpo) {
+
+    return (
+      '<section class="man-sec" id="man-' + id + '">' +
+        (ambiente ? '<span class="man-ambiente">' + ambiente + '</span>' : '') +
+        '<h2 class="man-h2">' + titulo + '</h2>' +
+        cuerpo +
+      '</section>'
+    );
+
+  }
+
+
+
+  function manualSub(titulo, cuerpo) {
+
+    return (
+      '<div class="man-sub">' +
+        '<h3 class="man-h3">' + titulo + '</h3>' +
+        cuerpo +
+      '</div>'
+    );
+
+  }
+
+
+
+  function manualChecks(clave, items) {
+
+    var t = manualTildes();
+
+
+    return (
+      '<div class="man-checks">' +
+        items.map(
+          function (txt, i) {
+
+            var k = clave + "|" + i;
+
+
+            return (
+              '<label class="man-check">' +
+                '<input type="checkbox" data-man-check="' + escapeHtml(k) + '"' + (t[k] ? ' checked' : '') + '>' +
+                '<span>' + escapeHtml(txt) + '</span>' +
+              '</label>'
+            );
+
+          }
+        ).join("") +
+      '</div>'
+    );
+
+  }
+
+
+
+  function manualLpiHtml(id) {
+
+    var amb =
+      MANUAL_LPI.find(
+        function (a) {
+
+          return a.id === id;
+
+        }
+      ) || MANUAL_LPI[0];
+
+
+    return (
+      '<div class="man-lpi-grupos">' +
+        amb.grupos.map(
+          function (g) {
+
+            return (
+              '<div class="man-lpi-grupo">' +
+                '<h4>' + escapeHtml(g[0]) + '</h4>' +
+                manualChecks("lpi-" + amb.id + "-" + g[0], g[1]) +
+              '</div>'
+            );
+
+          }
+        ).join("") +
+      '</div>'
+    );
+
+  }
+
+
+
+  /* cálculo de primaria: x = total × % / 100 */
+  function manualCalculo(total, pct, unidad) {
+
+    var x = Math.round(total * pct) / 100;
+
+    var entero = Math.floor(x + 1e-9);
+
+    var resto = Math.round((x - entero) * 100) / 100;
+
+
+    var texto =
+      unidad === "tramos" && resto > 0
+        ? entero + ' ' + (entero === 1 ? 'tramo' : 'tramos') + ' y ' + String(resto).replace(".", ",") + ' de otro'
+        : String(x).replace(".", ",") + ' ' + unidad;
+
+
+    return (
+      '<div class="man-regla">' +
+        '<div class="man-regla-fila"><span>' + String(total).replace(".", ",") + ' ' + unidad + '</span><span>100%</span></div>' +
+        '<div class="man-regla-fila"><span>x</span><span>' + String(pct).replace(".", ",") + '%</span></div>' +
+        '<div class="man-regla-cuenta">x = ' + String(total).replace(".", ",") + ' × ' + String(pct).replace(".", ",") + ' / 100 = <strong>' + String(x).replace(".", ",") + '</strong></div>' +
+      '</div>' +
+      '<p class="man-resultado">El <strong>' + String(pct).replace(".", ",") + '%</strong> de ' + String(total).replace(".", ",") + ' ' + unidad + ' es <strong>' + texto + '</strong>.</p>'
+    );
+
+  }
+
+
+
+  function manualTramos(n) {
+
+    var pct = Math.round(100 / n);
+
+
+    return (
+      '<div class="man-tramos">' +
+        '<div class="man-tramos-fila">' +
+          Array.apply(null, Array(n)).map(
+            function (x, i) {
+
+              return '<div class="man-tramo"><small>Tramo ' + (i + 1) + '</small><strong>' + pct + '%</strong></div>';
+
+            }
+          ).join("") +
+        '</div>' +
+        '<small class="man-nota">Si el 100% son ' + n + ' tramos, 1 tramo es el ' + pct + '%</small>' +
+      '</div>'
+    );
+
+  }
+
+
+
+  function renderManual() {
+
+    /* el manual no cambia con los datos en vivo: no se redibuja (no pierde el scroll ni los tildes) */
+    if (els.mainInner.querySelector(".manual-view")) {
+
+      return;
+
+    }
+
+
+    els.mainInner.classList.add("wide");
+
+
+    var lpiActual = "kiosco";
+
+
+    try {
+
+      lpiActual = localStorage.getItem("manualLpi") || "kiosco";
+
+    } catch (e) {
+
+      /* sin almacenamiento */
+
+    }
+
+
+    var nav = [
+      ["claves", "Claves"], ["kioscos", "Kioscos"], ["autoservicios", "Autoservicios"], ["cajas", "+4 cajas"],
+      ["maxi", "Maxikioscos y estaciones"], ["tradicional", "Tradicional"], ["primaria", "% de primaria"],
+      ["lpi", "LPI"], ["kit", "Kit"], ["checklist", "Checklist"], ["marcas", "Marcas"]
+    ];
+
+
+    var niveles = [
+      ["Cabeza", "Bandeja superior", "Difícil de alcanzar", "No vendedor", "n1"],
+      ["Ojos", "Bandeja central", "Máxima percepción", "Muy vendedora", "n3"],
+      ["Manos", "Bandejas inferiores", "Ofrece el producto de manera cómoda", "Muy vendedora", "n3"],
+      ["Suelo", "Última bandeja", "Escasa visibilidad", "El nivel menos vendedor", "n0"]
+    ];
+
+
+    var html =
+
+      '<div class="manual-view">' +
+
+        /* ---------- portada ---------- */
+        '<header class="man-portada">' +
+          '<img src="' + MANUAL_IMG + 'portada.jpg" width="1100" height="1100" alt="Guía de ejecución Mondelez Invierno 2026: Ejecutamos bien, vendemos mejor">' +
+          '<div class="man-portada-txt">' +
+            '<span class="man-ambiente">Invierno 2026</span>' +
+            '<h1>Guía de ejecución</h1>' +
+            '<p>Para promotores y vendedores. Toda la información para asegurar una <strong>ejecución de excelencia</strong> y lograr la <strong>foto del éxito</strong> en todos los PDV.</p>' +
+          '</div>' +
+        '</header>' +
+
+        '<nav class="man-nav" aria-label="Secciones del manual">' +
+          nav.map(
+            function (n) {
+
+              return '<button type="button" class="man-chip" data-man-ir="' + n[0] + '">' + escapeHtml(n[1]) + '</button>';
+
+            }
+          ).join("") +
+        '</nav>' +
+
+        manualSeccion("claves", "Claves para una mejor exhibición", "Recordá siempre",
+          '<p class="man-frase">Lo que no se ve, <strong>no se vende</strong>.</p>' +
+          manualLista([
+            'El lugar donde se exhiben los productos <strong>hace la diferencia</strong>.',
+            '<strong>Clave:</strong> identificar el <strong>sentido de circulación</strong> de la tienda y aplicar el planograma en función del mismo.',
+            'La alta visibilidad dada por una buena ubicación resulta estratégica para mejorar la rotación de nuestros productos.',
+            'Exhibir siempre <strong>EN BLOQUE</strong>, no permitir la separación de los frentes.',
+            'Priorizar la <strong>EXHIBICIÓN VERTICAL</strong> en todos los estantes. Buscar los estantes centrales a la altura de los <strong>ojos / manos</strong>. Las marcas siempre del lado frontal para que se lean.',
+            'Antes de salir del PDV chequear que todas las categorías de Mondelez estén bien comunicadas.',
+            'No olvides llevar material POP, elementos de limpieza, trincheta, tijera, cinta, etc.'
+          ]) +
+
+          manualSub("¿Qué estante vende más?",
+            '<div class="man-niveles">' +
+              niveles.map(
+                function (n) {
+
+                  return (
+                    '<div class="man-nivel ' + n[4] + '">' +
+                      '<div class="man-nivel-parte">' + n[0] + '</div>' +
+                      '<div class="man-nivel-info"><strong>' + n[1] + '</strong><small>' + n[2] + '</small></div>' +
+                      '<div class="man-nivel-valor">' + n[3] + '</div>' +
+                    '</div>'
+                  );
+
+                }
+              ).join("") +
+            '</div>' +
+            manualImg("alturas.jpg", "Niveles de la góndola: cabeza, ojos, manos y suelo", "Ojos y manos son las bandejas más vendedoras.")
+          ) +
+
+          manualSub("Sentido de circulación y puntos ciegos",
+            '<div class="man-circ" role="img" aria-label="Góndola con puntos ciegos al principio y al final; el bloque va en el medio">' +
+              '<div class="man-circ-gondola">' +
+                '<span class="ciego">Punto ciego</span>' +
+                '<span class="bloque">Nuestro bloque</span>' +
+                '<span class="ciego">Punto ciego</span>' +
+              '</div>' +
+              '<div class="man-circ-flecha">Sentido de circulación &#10132;</div>' +
+            '</div>' +
+            '<p class="man-p">Buscá armar el bloque en el <strong>medio del pasillo</strong>: donde empieza y donde termina la góndola son puntos ciegos.</p>'
+          )
+        ) +
+
+        /* ---------- kioscos y salones ---------- */
+        manualSeccion("kioscos", "FDE Kioscos y salones", "Chocolates, caramelos, chicles, galletitas y jugos",
+          manualImg("kiosco.jpg", "Planograma de kiosco: ventana con chicles y caramelos, galletas y jugos a la vista") +
+          manualSub("Lineamiento de ejecución",
+            manualLista([
+              'Exhibir <strong>debajo de la ventana</strong> chicles, caramelos y mancha lila.',
+              'Galletas y jugos en estantes a la <strong>altura de la vista y manos</strong>.'
+            ]) +
+            '<div class="man-foco"><strong>Foco galletas</strong>' +
+              ['Oreo 118', 'Mini Oreo', 'Mini Pepitos', 'Lulu 55 g', 'Pepitos', 'Solar', 'Sensación', 'Cerealitas', 'Club Social'].map(function (p) { return '<span>' + p + '</span>'; }).join("") +
+            '</div>' +
+            '<div class="man-foco"><strong>Foco jugos</strong>' +
+              ['Tang Naranja', 'Tang Multifruta', 'Clight Naranja Dulce', 'Clight Manzana Deliciosa'].map(function (p) { return '<span>' + p + '</span>'; }).join("") +
+            '</div>'
+          )
+        ) +
+
+        /* ---------- autoservicios ---------- */
+        manualSeccion("autoservicios", "FDE Autoservicios", "Autoservicios",
+          manualSub("Primaria jugos FULL",
+            manualImg("jugos.jpg", "Planograma de jugos Tang y Clight con bloque naranja en el centro") +
+            manualLista([
+              'Armar la exhibición primaria <strong>cerca de las aguas y gaseosas</strong>.',
+              'Exhibir nuestras marcas como <strong>único bloque</strong>.',
+              'Tang: ubicar <strong>NARANJA</strong> en los estantes principales.',
+              'Clight: ubicar <strong>NARANJA DULCE</strong> en los estantes principales.',
+              'Asegurar el <strong>centro con bloque naranja</strong>.',
+              'Conquistar alguna exhibición secundaria: ideal en la entrada, línea de caja o zona de heladeras. <strong>¡Sitios con mucho tránsito!</strong>'
+            ]) +
+            manualMeta(60, 70)
+          ) +
+          manualSub("Primaria premezcla",
+            manualImg("premezcla.jpg", "Planograma de premezclas Royal en bloque vertical entre la competencia") +
+            manualLista([
+              'Priorizar <strong>Polvo de Hornear de 30 g</strong> a la altura de los ojos y a la altura de la mano.',
+              'Utilizar <strong>Royarina como barrera</strong> vs la competencia.',
+              'Exhibir nuestras marcas en un <strong>único bloque vertical</strong>.'
+            ]) +
+            manualMeta(60, 70)
+          ) +
+          manualSub("Galletas dulces y saladas (espacio reducido)",
+            '<div class="man-dos">' +
+              manualImg("auto-dulce-reducido.jpg", "Galleta dulce reducido en autoservicio", "Galleta dulce reducido · <em>nueva fórmula</em> marcada") +
+              manualImg("auto-saladas-reducido.jpg", "Galletas saladas reducido en autoservicio", "Galletas saladas reducido") +
+            '</div>' +
+            manualLista([
+              'Asegurar bloque de <strong>Oreo y Pepitos</strong>.',
+              'Priorizar los estantes principales para productos del <strong>LPI</strong>.'
+            ]) +
+            manualMeta(35, 40)
+          )
+        ) +
+
+        /* ---------- autoservicios + 4 cajas ---------- */
+        manualSeccion("cajas", "FDE Autoservicios + de 4 cajas", "Autoservicios con más de 4 cajas",
+          manualSub("Check out",
+            manualImg("checkout-100.jpg", "Mueble de caja al 100% con Beldent, Halls y bombón sobre el mostrador", "Mueble al 100%") +
+            manualLista([
+              'Asegurar <strong>Beldent, Halls y Bombón Milka SOBRE el mostrador</strong>.',
+              'Luego armar abajo nuestro <strong>planograma vertical</strong>: gomas / galletas / bañados / Milka / Cadbury / Shot y <strong>alfajores en la línea inferior</strong>.'
+            ]) +
+            '<div class="man-mueble" role="img" aria-label="Mueble compartido entre tres: tomamos el 33% del centro">' +
+              '<span>Competencia</span><span class="nuestro">Nuestro 33%</span><span>Competencia</span>' +
+            '</div>' +
+            manualLista([
+              'Mueble <strong>compartido entre 3</strong>: tomamos el <strong>33% del centro</strong>.',
+              'Si tenemos el <strong>50%</strong>: el lugar depende de dónde esté la caja, <strong>donde se para el consumidor a pagar</strong>.'
+            ]) +
+            manualImg("checkout-33-50.jpg", "Muebles de caja compartidos al 33% y al 50%", "Mueble compartido: 33% y 50%")
+          ) +
+          manualSub("Criterio pasaje de caja",
+            manualImg("pasaje-caja.jpg", "Pasaje de caja: frente y pasaje, con lanzamientos arriba") +
+            manualLista([
+              'Elegir siempre las <strong>caras A</strong> (donde está el cajero de frente). Si tenemos solo el 50%, priorizar el armado en los <strong>primeros estantes de arriba</strong>.',
+              'Ubicar los <strong>lanzamientos en el estante superior</strong> del pasaje de caja.'
+            ]) +
+            manualImg("pasaje-frente.jpg", "Frente del pasaje de caja", "Frente del pasaje")
+          ) +
+          manualSub("Galletas FULL",
+            '<p class="man-p man-desliza">Deslizá la imagen o tocala para verla grande &#8596;</p>' +
+            manualImg("galletas-full.jpg", "Planograma completo de galletas: secas y rellenas al centro, nuevo producto y nueva fórmula marcados", "Rojo punteado: <strong>nuevo producto</strong> y <strong>nueva fórmula</strong>", true) +
+            manualLista([
+              'Bloque <strong>secas y rellenas en el centro</strong> de la góndola. Asegurar el bloque de <strong>Oreo y Pepitos</strong>.',
+              'Ubicar <strong>Solar original, Lulu 115 g (chant-frut) y Sensación</strong> en los estantes principales.',
+              'Bloque saladas: asegurar <strong>Agua, Salvado y Cerealitas</strong> (clásica y arroz) en los estantes principales.',
+              'Comunicar siempre el <strong>precio</strong> y colocar el <strong>material POP vigente</strong>.',
+              '<strong>Mini Oreo y Mini Pepitos</strong> deben ir además en exhibiciones secundarias (tiras, botaderos, etc.).',
+              'Buscar armar el bloque en el <strong>medio del pasillo</strong>, evitando los puntos ciegos (donde comienza o donde termina la góndola).'
+            ]) +
+            manualMeta(35, 40)
+          ) +
+          manualSub("Primaria chocolates",
+            manualImg("chocolates-primaria.jpg", "Planograma de chocolates: Milka al centro, Cadbury, bañados y Shot") +
+            '<div class="man-tarjetas">' +
+              '<div><strong>Único bloque</strong>Exhibir las marcas de Mondelez como un único bloque, <strong>liderando el centro</strong> de la góndola.</div>' +
+              '<div><strong>Milka de nexo</strong>Milka va entre tabletas Cadbury y bañados: genera mayor impacto de marca.</div>' +
+              '<div><strong>Shot de barrera</strong>Shot hace de barrera vs la competencia: la caída de Shot va del lado donde está la competencia.</div>' +
+            '</div>' +
+            manualMeta(40, 50)
+          )
+        ) +
+
+        /* ---------- maxikioscos y estaciones ---------- */
+        manualSeccion("maxi", "FDE Maxi kioskos y estaciones", "Maxikioscos y estaciones",
+          manualSub("Chocolates",
+            manualImg("maxi-chocolates.jpg", "Caramelera de maxikiosco con nuevos productos marcados") +
+            '<p class="man-frase chica">Nuestro espacio debe quedar en el <strong>centro de la caramelera</strong>, en la zona de “cobro”.</p>' +
+            manualLista([
+              'Ejecutar <strong>Beldent y Halls sobre el mostrador</strong>.',
+              'Exhibir el <strong>display de Milka Oreo bombón</strong> sobre el mostrador. Si no se puede, en la caída de bañados dentro del mostrador.',
+              'Los nuevos packs pueden exhibirse <strong>verticalmente</strong> para optimizar espacio.',
+              'La leyenda de las tabletas: priorizar que se <strong>distinga el sabor</strong>.',
+              'En invierno <strong>recuperamos el espacio para tabletas</strong>.'
+            ]) +
+            '<h4 class="man-h4">Orden de los bloques</h4>' +
+            '<ol class="man-bloques">' +
+              ['Chicles y gomas infantiles', 'Galletas individuales', 'Bañados', 'Tabletas Milka', 'Tabletas Cadbury', 'Tabletas Shot', 'Alfajores en el estante inferior'].map(
+                function (b) {
+
+                  return '<li>' + b + '</li>';
+
+                }
+              ).join("") +
+            '</ol>'
+          ) +
+          manualSub("Galletas dulces",
+            manualImg("maxi-galletas-dulces.jpg", "Planograma de galletas dulces para estaciones") +
+            manualLista([
+              'Asegurar el <strong>primer estante (el punto más caliente)</strong> con: Cerealitas nuevas, Solar original, Pepitos, Oreo Original 182, Oreo Original 118, Lulu chant-frut y Sensación.',
+              'A diferencia de autoservicios, <strong>tripack y bolsas grandes van al penúltimo estante</strong>.'
+            ])
+          ) +
+          manualSub("Galleta dulce reducido y galletas saladas",
+            '<div class="man-dos">' +
+              manualImg("maxi-dulce-reducido.jpg", "Galleta dulce en espacio reducido", "Galleta dulce reducido") +
+              manualImg("maxi-saladas.jpg", "Galletas saladas", "Galletas saladas") +
+            '</div>' +
+            manualLista([
+              'En la góndola dulce para espacios reducidos asegurar el <strong>primer estante</strong> igual que antes.',
+              'En la góndola salada asegurar los <strong>primeros 2 estantes</strong> con <strong>Cerealitas (Arroz, Clásica y Salvado) y Club Social</strong>.'
+            ])
+          )
+        ) +
+
+        /* ---------- tradicional ---------- */
+        manualSeccion("tradicional", "FDE Tradicional / almacenes", "Tradicional",
+          manualImg("tradicional.jpg", "Almacén tradicional: exhibidor de pie, mostrador y estantes detrás") +
+          manualSub("Lineamiento de exhibición",
+            manualLista([
+              'Exhibir <strong>Beldent y Halls sobre el mostrador</strong>.',
+              'Chocolates, alfajores y bombones en <strong>combito sobre el mostrador</strong> y/o en exhibidor de pie cerca de la caja.',
+              'Ejecutar el <strong>exhibidor de galletas pegado a la caja</strong>, con preferencia en <strong>Oreo 118, Lulu 115 y Pepitos 119</strong>.',
+              '<strong>Bloque vertical de galletas</strong> detrás del mostrador, a la vista de los ojos.',
+              '<strong>Bloque de jugos</strong> detrás del mostrador: priorizar productos del LPI.',
+              '<strong>Bloque de premezclas</strong> detrás del mostrador: priorizar productos del LPI.',
+              'Ubicar los productos de manera que sean <strong>visibles para el comprador</strong>.',
+              '<strong>Comunicar precio siempre.</strong>'
+            ])
+          )
+        ) +
+
+        /* ---------- % de primaria ---------- */
+        manualSeccion("primaria", "Herramientas", "¿Cómo calcular el % de primaria?",
+          '<p class="man-p">Para medir la primaria hay que entender cuál es el <strong>100% del TOTAL de la categoría</strong>. Las <strong>cabeceras no se cuentan</strong>: son exhibiciones secundarias.</p>' +
+          '<div class="man-objetivos">' +
+            '<div><strong>Jugos</strong><span>60 – 70%</span></div>' +
+            '<div><strong>Premezclas</strong><span>60 – 70%</span></div>' +
+            '<div><strong>Galletas</strong><span>35 – 40%</span></div>' +
+            '<div><strong>Chocolates</strong><span>40 – 50%</span></div>' +
+          '</div>' +
+
+          manualSub("Calculadora",
+            '<div class="man-calc">' +
+              '<label><span>Medís por</span>' +
+                '<select id="manCalcUnidad">' +
+                  '<option value="tramos">Tramos</option>' +
+                  '<option value="frentes">Frentes</option>' +
+                  '<option value="estantes">Estantes</option>' +
+                '</select>' +
+              '</label>' +
+              '<label><span>Total de la categoría (100%)</span><input type="number" id="manCalcTotal" inputmode="decimal" min="0" step="any" value="6"></label>' +
+              '<label><span>% que queremos</span><input type="number" id="manCalcPct" inputmode="decimal" min="0" max="100" step="any" value="35"></label>' +
+            '</div>' +
+            '<div id="manCalcRes">' + manualCalculo(6, 35, "tramos") + '</div>'
+          ) +
+
+          manualSub("Criterio 1: por tramos",
+            manualTramos(2) + manualTramos(3) + manualTramos(4) + manualTramos(5) +
+            '<p class="man-p">Con más de 5 tramos se hace la cuenta. Ejemplo: el 35% de 6 tramos.</p>' +
+            manualCalculo(6, 35, "tramos")
+          ) +
+
+          manualSub("Criterio 2: por frentes",
+            '<p class="man-p">Si el 100% está en <strong>un solo tramo</strong>, se calcula por <strong>frentes</strong>. Ejemplo: el total es 50 frentes y queremos el 60%.</p>' +
+            manualCalculo(50, 60, "frentes")
+          ) +
+
+          manualSub("Criterio 3: por estantes",
+            '<p class="man-p">Ejemplo: el 60% de 5 estantes.</p>' +
+            '<div class="man-estantes" role="img" aria-label="5 estantes, 3 son nuestros">' +
+              [1, 2, 3, 4, 5].map(
+                function (n) {
+
+                  return '<div class="man-estante' + (n <= 3 ? ' nuestro' : '') + '"><span>Estante ' + n + '</span><i></i></div>';
+
+                }
+              ).join("") +
+            '</div>' +
+            manualCalculo(5, 60, "estantes")
+          )
+        ) +
+
+        /* ---------- LPI ---------- */
+        manualSeccion("lpi", "Listado de productos imprescindibles", "LPI",
+          '<p class="man-p">Elegí el tipo de local y tildá lo que ya está en góndola.</p>' +
+          '<div class="man-seg" role="tablist">' +
+            MANUAL_LPI.map(
+              function (a) {
+
+                return '<button type="button" role="tab" class="man-seg-btn' + (a.id === lpiActual ? ' activo' : '') + '" aria-selected="' + (a.id === lpiActual) + '" data-man-lpi="' + a.id + '">' + escapeHtml(a.nombre) + '</button>';
+
+              }
+            ).join("") +
+          '</div>' +
+          '<div id="manLpi">' + manualLpiHtml(lpiActual) + '</div>' +
+          '<button type="button" class="btn btn-ghost op-mini" data-man-limpiar="lpi-">Destildar el LPI</button>' +
+          '<details class="man-original"><summary>Ver la hoja original del LPI</summary>' +
+            manualImg("lpi.jpg", "Hoja original del listado de productos imprescindibles") +
+          '</details>'
+        ) +
+
+        /* ---------- kit ---------- */
+        manualSeccion("kit", "No te olvides de nada", "Kit sugerido",
+          '<div class="man-kit">' +
+            manualImg("kit.jpg", "Mochila con el kit sugerido: carteles de oferta, tijera, lapiceras, pulverizador y guía") +
+            '<div>' +
+              manualChecks("kit", MANUAL_KIT) +
+              '<button type="button" class="btn btn-ghost op-mini" data-man-limpiar="kit|">Destildar el kit</button>' +
+            '</div>' +
+          '</div>'
+        ) +
+
+        /* ---------- checklist ---------- */
+        manualSeccion("checklist", "Antes de salir del PDV", "Checklist",
+          manualChecks("check", MANUAL_CHECK) +
+          '<button type="button" class="btn btn-ghost op-mini" data-man-limpiar="check|">Empezar de nuevo</button>'
+        ) +
+
+        /* ---------- marcas ---------- */
+        manualSeccion("marcas", "Mondelez International", "Nuestras marcas",
+          manualImg("marcas.jpg", "Marcas: Oreo, Milka, Cadbury, Shot, Toblerone, Halls, Tang, Clight, Beldent, Tita, Rhodesia y Famosa")
+        ) +
+
+        /* ---------- descarga ---------- */
+        '<div class="man-descarga">' +
+          '<a class="btn btn-primary man-descarga-btn" href="' + MANUAL_PDF + '" download="Guia de ejecucion Invierno 2026.pdf">&#11015; Descargar manual</a>' +
+          '<small>PDF original · 2,8 MB</small>' +
+        '</div>' +
+
+      '</div>';
+
+
+    els.mainInner.innerHTML = html;
+
+
+    /* el tipo de local elegido la última vez, visible en su fila */
+    var seg = els.mainInner.querySelector(".man-seg");
+
+    var activoSeg = els.mainInner.querySelector(".man-seg-btn.activo");
+
+
+    if (seg && activoSeg) {
+
+      seg.scrollLeft = Math.max(0, activoSeg.offsetLeft - seg.offsetLeft - 16);
+
+    }
+
+
+    /* la calculadora se actualiza mientras se escribe */
+    var calc = function () {
+
+      var unidad = document.getElementById("manCalcUnidad").value;
+
+      var total = Number(String(document.getElementById("manCalcTotal").value).replace(",", "."));
+
+      var pct = Number(String(document.getElementById("manCalcPct").value).replace(",", "."));
+
+      var res = document.getElementById("manCalcRes");
+
+
+      res.innerHTML =
+        total > 0 && pct >= 0 && pct <= 100
+          ? manualCalculo(total, pct, unidad)
+          : '<p class="man-resultado">Completá el total y el porcentaje (de 0 a 100).</p>';
+
+    };
+
+
+    ["manCalcUnidad", "manCalcTotal", "manCalcPct"].forEach(
+      function (id) {
+
+        var el = document.getElementById(id);
+
+
+        el.addEventListener("input", calc);
+
+        el.addEventListener("change", calc);
+
+      }
+    );
+
+  }
+
+
+
+  /* visor de imágenes a pantalla completa (se puede ampliar y deslizar) */
+  function abrirZoomManual(src, alt) {
+
+    var viejo = document.getElementById("manZoom");
+
+
+    if (viejo) {
+
+      viejo.remove();
+
+    }
+
+
+    var capa = document.createElement("div");
+
+
+    capa.id = "manZoom";
+
+    capa.className = "man-zoom";
+
+    capa.setAttribute("role", "dialog");
+
+    capa.setAttribute("aria-modal", "true");
+
+    capa.setAttribute("aria-label", alt || "Imagen");
+
+
+    capa.innerHTML =
+      '<div class="man-zoom-barra">' +
+        '<button type="button" class="man-zoom-btn" data-man-zoom-mas="1">&#128269; Ampliar</button>' +
+        '<button type="button" class="man-zoom-btn" data-man-zoom-cerrar="1" aria-label="Cerrar">&#10005; Cerrar</button>' +
+      '</div>' +
+      '<div class="man-zoom-area"><img src="' + escapeHtml(src) + '" alt="' + escapeHtml(alt || "") + '"></div>';
+
+
+    document.body.appendChild(capa);
+
+
+    var cerrar = function () {
+
+      capa.remove();
+
+      document.removeEventListener("keydown", tecla);
+
+    };
+
+
+    var tecla = function (e) {
+
+      if (e.key === "Escape") {
+
+        cerrar();
+
+      }
+
+    };
+
+
+    document.addEventListener("keydown", tecla);
+
+
+    capa.addEventListener(
+      "click",
+      function (e) {
+
+        if (e.target.closest("[data-man-zoom-cerrar]") || e.target === capa) {
+
+          cerrar();
+
+          return;
+
+        }
+
+
+        if (e.target.closest("[data-man-zoom-mas]") || e.target.tagName === "IMG") {
+
+          var grande = capa.classList.toggle("grande");
+
+          var b = capa.querySelector("[data-man-zoom-mas]");
+
+
+          b.innerHTML = grande ? "&#128270; Achicar" : "&#128269; Ampliar";
+
+        }
+
+      }
+    );
+
+
+    capa.querySelector("[data-man-zoom-cerrar]").focus();
+
+  }
+
+
+
+  function clicManual(e) {
+
+    var el;
+
+
+    if ((el = e.target.closest("[data-man-zoom]"))) {
+
+      var img = el.querySelector("img");
+
+
+      abrirZoomManual(el.getAttribute("data-man-zoom"), img ? img.alt : "");
+
+      return true;
+
+    }
+
+
+    if ((el = e.target.closest("[data-man-ir]"))) {
+
+      var sec = document.getElementById("man-" + el.getAttribute("data-man-ir"));
+
+
+      if (sec) {
+
+        sec.scrollIntoView({ block: "start", behavior: "smooth" });
+
+      }
+
+      return true;
+
+    }
+
+
+    if ((el = e.target.closest("[data-man-lpi]"))) {
+
+      var id = el.getAttribute("data-man-lpi");
+
+
+      try {
+
+        localStorage.setItem("manualLpi", id);
+
+      } catch (err) {
+
+        /* sin almacenamiento */
+
+      }
+
+
+      els.mainInner.querySelectorAll("[data-man-lpi]").forEach(
+        function (b) {
+
+          var activo = b === el;
+
+
+          b.classList.toggle("activo", activo);
+
+          b.setAttribute("aria-selected", String(activo));
+
+        }
+      );
+
+
+      document.getElementById("manLpi").innerHTML = manualLpiHtml(id);
+
+
+      /* que el botón elegido se vea entero en la fila */
+      el.scrollIntoView({ block: "nearest", inline: "nearest" });
+
+      return true;
+
+    }
+
+
+    if ((el = e.target.closest("[data-man-limpiar]"))) {
+
+      var prefijo = el.getAttribute("data-man-limpiar");
+
+      var t = manualTildes();
+
+
+      Object.keys(t).forEach(
+        function (k) {
+
+          if (k.indexOf(prefijo) === 0) {
+
+            delete t[k];
+
+          }
+
+        }
+      );
+
+
+      guardarManualTildes(t);
+
+
+      els.mainInner.querySelectorAll("[data-man-check]").forEach(
+        function (c) {
+
+          if (c.getAttribute("data-man-check").indexOf(prefijo) === 0) {
+
+            c.checked = false;
+
+          }
+
+        }
+      );
+
+      return true;
+
+    }
+
+
+    return false;
+
+  }
+
+
+
+  function cambioManual(target) {
+
+    if (target.matches("[data-man-check]")) {
+
+      var t = manualTildes();
+
+      var k = target.getAttribute("data-man-check");
+
+
+      if (target.checked) {
+
+        t[k] = true;
+
+      }
+      else {
+
+        delete t[k];
+
+      }
+
+
+      guardarManualTildes(t);
+
+      return true;
+
+    }
+
+
+    return false;
+
+  }
+
+
+
+  /* ========================================================
      TARJETERO VIRTUAL (promotores)
      Marcas: inicio de actividad (en el primer cliente), inicio y
      fin de descanso, fin de actividad. Se guardan por mes en
@@ -33479,6 +36237,7 @@ body[data-vista="ruta"] #avisoBar {
     return (
       (rol === "camionero" || esPromotorRol(rol)) &&
       state.pestana !== "clientes" &&
+      !state.manualView &&
       /* el supervisor puede estar en Operaciones, Tarjetero o Tareas */
       !(rol === "supervisor" && (state.opsView || state.tarjeteroView || state.tareasView))
     );
@@ -33489,7 +36248,9 @@ body[data-vista="ruta"] #avisoBar {
 
   function pestanaAdminActiva() {
 
-    return state.opsView
+    return state.manualView
+      ? "manual"
+      : state.opsView
       ? "operaciones"
       : state.tarjeteroView
         ? "tarjetero"
@@ -33517,19 +36278,19 @@ body[data-vista="ruta"] #avisoBar {
 
     var lista =
       rol === "admin"
-        ? [["clientes", "Clientes"], ["operaciones", "Operaciones"], ["tarjetero", "Tarjetero"], ["tareas", "Tareas"]]
+        ? [["clientes", "Clientes"], ["operaciones", "Operaciones"], ["tarjetero", "Tarjetero"], ["tareas", "Tareas"], ["manual", "Manual"]]
         : rol === "camionero"
           ? [["ruta", "Mi ruta de entregas"], ["clientes", "Clientes"]]
           : rol === "reponedor"
-            ? [["ruta", "Mi ruta de reposición"], ["clientes", "Clientes"]]
+            ? [["ruta", "Mi ruta de reposición"], ["clientes", "Clientes"], ["manual", "Manual"]]
             : rol === "supervisor"
-              ? [["ruta", "Mi ruta de reposición"], ["clientes", "Clientes"], ["operaciones", "Operaciones"], ["tarjetero", "Tarjetero"], ["tareas", "Tareas"]]
+              ? [["ruta", "Mi ruta de reposición"], ["clientes", "Clientes"], ["operaciones", "Operaciones"], ["tarjetero", "Tarjetero"], ["tareas", "Tareas"], ["manual", "Manual"]]
               : [];
 
 
     document.body.setAttribute(
       "data-vista",
-      enPestanaRuta() ? "ruta" : "clientes"
+      enPestanaRuta() ? "ruta" : state.manualView ? "manual" : "clientes"
     );
 
 
@@ -33545,7 +36306,7 @@ body[data-vista="ruta"] #avisoBar {
 
 
     var activa =
-      rol === "admin" || (rol === "supervisor" && pestanaAdminActiva() !== "clientes")
+      rol === "admin" || state.manualView || (rol === "supervisor" && pestanaAdminActiva() !== "clientes")
         ? pestanaAdminActiva()
         : (enPestanaRuta() ? "ruta" : "clientes");
 
@@ -33610,6 +36371,26 @@ body[data-vista="ruta"] #avisoBar {
 
 
   function cambiarPestana(p) {
+
+    /* manual de ejecución (promotores, supervisor y admin) */
+    if (p === "manual") {
+
+      abrirManual();
+
+      return;
+
+    }
+
+
+    /* al salir del manual se cierra (Mi ruta / Clientes) */
+    if (state.manualView && rolActual() !== "admin") {
+
+      resetPendingPhotos();
+
+      state.pestana = "";
+
+    }
+
 
     /* supervisor: Operaciones, Tarjetero y Tareas como el admin; Mi ruta y
        Clientes como un promotor */
