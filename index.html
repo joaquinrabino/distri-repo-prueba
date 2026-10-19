@@ -5725,22 +5725,582 @@ body:not(.logged-out) .login-screen {
 
 
 
+/* ---------- pantalla de ingreso: mundo Oreo ---------- */
+
 .login-screen {
 
+  --oreo-azul: #0548c4;
+
+  --oreo-azul-osc: #02308c;
+
+  --oreo-cacao: #2a1810;
+
+  position: relative;
+
   min-height: 100vh;
+
+  overflow: hidden;
+
+  display: grid;
+
+  grid-template-columns: minmax(0, 470px) minmax(0, 400px);
+
+  grid-template-areas:
+    "hero card"
+    "extra card";
+
+  align-content: center;
+
+  justify-content: center;
+
+  align-items: center;
+
+  column-gap: 56px;
+
+  row-gap: 10px;
+
+  padding: 24px 20px 96px;
+
+  color: #fff;
+
+  background:
+    radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.07) 1.5px, transparent 0) 0 0 / 26px 26px,
+    radial-gradient(ellipse at 30% 35%, #0b5fe0 0, transparent 60%),
+    radial-gradient(ellipse at 90% 10%, #0a52cf 0, transparent 50%),
+    linear-gradient(160deg, var(--oreo-azul) 0%, var(--oreo-azul-osc) 100%);
+
+}
+
+
+.login-screen .login-card {
+
+  grid-area: card;
+
+  position: relative;
+
+  z-index: 2;
+
+  color: var(--ink);
+
+  border-top-color: var(--oreo-azul);
+
+  box-shadow: 0 24px 60px rgba(0, 20, 70, 0.45);
+
+}
+
+
+/* ---------- decoración (galletitas y leche) ---------- */
+
+.login-deco {
+
+  position: absolute;
+
+  inset: 0;
+
+  pointer-events: none;
+
+  z-index: 0;
+
+}
+
+
+.login-galle {
+
+  position: absolute;
+
+  width: 90px;
+
+  height: 90px;
+
+  filter: drop-shadow(0 10px 14px rgba(0, 15, 60, 0.45));
+
+  animation: galleFlota 7s ease-in-out infinite alternate;
+
+}
+
+
+.login-galle.lado {
+
+  width: 110px;
+
+  height: 60px;
+
+}
+
+
+.login-galle.g1 { top: 4%; left: 2%; width: 110px; height: 110px; }
+
+.login-galle.g2 { top: 62%; left: 2%; width: 76px; height: 76px; animation-delay: -2s; opacity: 0.85; }
+
+.login-galle.g3 { top: 4%; right: 6%; width: 70px; height: 70px; animation-delay: -4s; opacity: 0.8; }
+
+.login-galle.g4 { top: 44%; right: 2%; animation-delay: -1s; }
+
+.login-galle.g5 { bottom: 150px; right: 22%; width: 54px; height: 54px; animation-delay: -3s; opacity: 0.7; }
+
+.login-galle.g6 { top: 28%; left: 40%; width: 44px; height: 44px; animation-delay: -5s; opacity: 0.45; filter: blur(1.5px); }
+
+.login-galle.g7 { bottom: 104px; right: 9%; animation-delay: -2.5s; }
+
+
+@keyframes galleFlota {
+
+  from { translate: 0 0; rotate: -6deg; }
+
+  to { translate: 0 -16px; rotate: 8deg; }
+
+}
+
+
+/* migas */
+.login-miga {
+
+  position: absolute;
+
+  width: 8px;
+
+  height: 6px;
+
+  border-radius: 40% 60% 50% 45%;
+
+  background: var(--oreo-cacao);
+
+  opacity: 0.55;
+
+}
+
+
+.login-leche {
+
+  position: absolute;
+
+  left: 0;
+
+  right: 0;
+
+  bottom: 0;
+
+  width: 100%;
+
+  height: 110px;
+
+}
+
+
+@media (prefers-reduced-motion: reduce) {
+
+  .login-galle {
+
+    animation: none;
+
+  }
+
+}
+
+
+/* ---------- columna izquierda ---------- */
+
+.login-hero {
+
+  grid-area: hero;
+
+  position: relative;
+
+  z-index: 1;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: flex-start;
+
+}
+
+
+.login-oreo-logo {
+
+  display: block;
+
+  width: 210px;
+
+  height: auto;
+
+  margin: 0 0 6px -8px;
+
+  filter: drop-shadow(0 6px 10px rgba(0, 10, 50, 0.35));
+
+}
+
+
+.login-hero-titulo {
+
+  margin: 0;
+
+  font-family: var(--font-display);
+
+  font-size: 40px;
+
+  line-height: 1.05;
+
+  font-weight: 800;
+
+  letter-spacing: -0.01em;
+
+  text-shadow: 0 3px 0 rgba(0, 20, 80, 0.35);
+
+}
+
+
+.login-hero-titulo span {
+
+  color: #bfe0ff;
+
+}
+
+
+.login-hero-sub {
+
+  margin: 10px 0 0;
+
+  font-size: 15px;
+
+  color: rgba(255, 255, 255, 0.85);
+
+}
+
+
+.login-hero-sub strong {
+
+  color: #fff;
+
+}
+
+
+/* ---------- galletita 3D ---------- */
+
+.login-3d {
+
+  position: relative;
+
+  width: 100%;
+
+  height: 270px;
+
+  margin-top: 4px;
+
+}
+
+
+.login-3d spline-viewer {
+
+  position: absolute;
+
+  inset: 0;
+
+  display: block;
+
+  width: 100%;
+
+  height: 100%;
+
+  opacity: 0;
+
+  transition: opacity 0.6s ease;
+
+}
+
+
+.login-3d.listo spline-viewer {
+
+  opacity: 1;
+
+}
+
+
+/* galletita dibujada mientras carga el 3D (o si no carga) */
+.login-3d-plato {
+
+  position: absolute;
+
+  left: 50%;
+
+  top: 50%;
+
+  width: 210px;
+
+  height: 210px;
+
+  transform: translate(-50%, -50%);
+
+  filter: drop-shadow(0 18px 24px rgba(0, 10, 50, 0.5));
+
+  transition: opacity 0.5s ease;
+
+}
+
+
+.login-3d.listo .login-3d-plato {
+
+  opacity: 0;
+
+}
+
+
+.login-3d-hint {
+
+  position: absolute;
+
+  left: 50%;
+
+  bottom: 6px;
+
+  transform: translateX(-50%);
+
+  white-space: nowrap;
+
+  font-size: 13px;
+
+  font-weight: 700;
+
+  color: var(--oreo-azul-osc);
+
+  background: #fff;
+
+  padding: 6px 14px;
+
+  border-radius: 99px;
+
+  box-shadow: 0 6px 16px rgba(0, 10, 50, 0.3);
+
+  pointer-events: none;
+
+  opacity: 0;
+
+  transition: opacity 0.6s ease;
+
+}
+
+
+.login-3d.listo .login-3d-hint {
+
+  opacity: 1;
+
+}
+
+
+/* ---------- tips y foto ---------- */
+
+.login-extra {
+
+  grid-area: extra;
+
+  position: relative;
+
+  z-index: 1;
 
   display: flex;
 
   align-items: center;
 
-  justify-content: center;
+  gap: 18px;
 
-  padding: 24px 16px;
+}
 
-  background:
-    radial-gradient(circle at 15% 10%, var(--accent-soft) 0, transparent 45%),
-    radial-gradient(circle at 85% 90%, var(--accent-soft) 0, transparent 40%),
-    var(--bg);
+
+.login-tips {
+
+  list-style: none;
+
+  margin: 0;
+
+  padding: 0;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 8px;
+
+  flex: 1;
+
+  min-width: 0;
+
+}
+
+
+.login-tips li {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  padding: 9px 12px;
+
+  border-radius: 12px;
+
+  background: rgba(255, 255, 255, 0.12);
+
+  border: 1px solid rgba(255, 255, 255, 0.18);
+
+  font-size: 14px;
+
+  line-height: 1.3;
+
+  backdrop-filter: blur(4px);
+
+}
+
+
+.login-tips svg {
+
+  flex: none;
+
+  width: 26px;
+
+  height: 26px;
+
+}
+
+
+.login-polaroid {
+
+  flex: none;
+
+  margin: 0;
+
+  width: 150px;
+
+  padding: 8px 8px 10px;
+
+  background: #fff;
+
+  border-radius: 6px;
+
+  transform: rotate(4deg);
+
+  box-shadow: 0 14px 30px rgba(0, 10, 50, 0.4);
+
+}
+
+
+.login-polaroid img {
+
+  display: block;
+
+  width: 100%;
+
+  height: auto;
+
+  border-radius: 3px;
+
+}
+
+
+.login-polaroid figcaption {
+
+  margin-top: 6px;
+
+  text-align: center;
+
+  font-family: var(--font-display);
+
+  font-weight: 700;
+
+  font-size: 13px;
+
+  color: var(--oreo-azul-osc);
+
+}
+
+
+/* ---------- celular ---------- */
+
+@media (max-width: 920px) {
+
+  .login-screen {
+
+    grid-template-columns: minmax(0, 420px);
+
+    grid-template-areas:
+      "hero"
+      "card"
+      "extra";
+
+    row-gap: 18px;
+
+    padding: 22px 16px 130px;
+
+  }
+
+  .login-hero {
+
+    align-items: center;
+
+    text-align: center;
+
+  }
+
+  .login-oreo-logo {
+
+    width: 170px;
+
+    margin: 0 auto 4px;
+
+  }
+
+  .login-hero-titulo {
+
+    font-size: 31px;
+
+  }
+
+  .login-3d {
+
+    height: 250px;
+
+  }
+
+  .login-3d-plato {
+
+    width: 170px;
+
+    height: 170px;
+
+  }
+
+  .login-galle.g1 { width: 84px; height: 84px; top: -26px; left: -22px; }
+
+  .login-galle.g3 { top: -18px; right: -14px; }
+
+  .login-galle.g4 { top: 36%; right: -30px; }
+
+  .login-galle.g2 { top: 30%; left: -26px; }
+
+  .login-galle.g6,
+  .login-galle.g5 {
+
+    display: none;
+
+  }
+
+}
+
+
+@media (max-width: 420px) {
+
+  .login-extra {
+
+    flex-direction: column;
+
+  }
+
+  .login-polaroid {
+
+    width: 170px;
+
+  }
 
 }
 
@@ -11802,6 +12362,127 @@ body[data-vista="manual"] #avisoBar {
   id="loginScreen"
   class="login-screen"
 >
+
+  <!-- galletitas dibujadas (se reusan en toda la pantalla) -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <defs>
+      <radialGradient id="galleBrillo" cx="38%" cy="32%" r="75%">
+        <stop offset="0" stop-color="#4a2c1d" />
+        <stop offset="0.55" stop-color="#2a1810" />
+        <stop offset="1" stop-color="#170c07" />
+      </radialGradient>
+      <linearGradient id="galleCrema" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#ffffff" />
+        <stop offset="1" stop-color="#e9e4dc" />
+      </linearGradient>
+      <!-- vista de arriba -->
+      <symbol id="galleArriba" viewBox="0 0 100 100">
+        <circle cx="50" cy="50" r="47" fill="url(#galleBrillo)" />
+        <circle cx="50" cy="50" r="46" fill="none" stroke="#3b2316" stroke-width="5" stroke-dasharray="2.2 3.4" stroke-linecap="round" />
+        <circle cx="50" cy="50" r="37" fill="none" stroke="#45291b" stroke-width="2" />
+        <circle cx="50" cy="50" r="33" fill="none" stroke="#1c0f09" stroke-width="1.2" stroke-dasharray="3 3" />
+        <ellipse cx="50" cy="50" rx="17" ry="10" fill="none" stroke="#4a2c1d" stroke-width="2.4" />
+        <ellipse cx="50" cy="50" rx="11" ry="5" fill="none" stroke="#1c0f09" stroke-width="1.4" />
+        <g fill="none" stroke="#4a2c1d" stroke-width="1.8">
+          <path d="M50 17 l2.5 4.5 -2.5 4.5 -2.5 -4.5z" />
+          <path d="M50 74 l2.5 4.5 -2.5 4.5 -2.5 -4.5z" />
+          <path d="M17 50 l4.5 2.5 4.5 -2.5 -4.5 -2.5z" />
+          <path d="M74 50 l4.5 2.5 4.5 -2.5 -4.5 -2.5z" />
+          <circle cx="27" cy="27" r="3" />
+          <circle cx="73" cy="27" r="3" />
+          <circle cx="27" cy="73" r="3" />
+          <circle cx="73" cy="73" r="3" />
+        </g>
+      </symbol>
+      <!-- vista de costado (con crema) -->
+      <symbol id="galleLado" viewBox="0 0 110 60">
+        <rect x="4" y="4" width="102" height="18" rx="9" fill="url(#galleBrillo)" />
+        <rect x="9" y="22" width="92" height="14" rx="4" fill="url(#galleCrema)" />
+        <rect x="4" y="36" width="102" height="18" rx="9" fill="url(#galleBrillo)" />
+        <path d="M10 8 h90 M10 50 h90" stroke="#3b2316" stroke-width="3" stroke-dasharray="2 3" stroke-linecap="round" />
+      </symbol>
+    </defs>
+  </svg>
+
+
+  <!-- decoración de fondo -->
+  <div class="login-deco" aria-hidden="true">
+    <svg class="login-galle g1"><use href="#galleArriba" /></svg>
+    <svg class="login-galle g2"><use href="#galleArriba" /></svg>
+    <svg class="login-galle g3"><use href="#galleArriba" /></svg>
+    <svg class="login-galle lado g4" viewBox="0 0 110 60"><use href="#galleLado" /></svg>
+    <svg class="login-galle g5"><use href="#galleArriba" /></svg>
+    <svg class="login-galle g6"><use href="#galleArriba" /></svg>
+    <svg class="login-galle lado g7" viewBox="0 0 110 60"><use href="#galleLado" /></svg>
+    <span class="login-miga" style="top:18%;left:22%"></span>
+    <span class="login-miga" style="top:70%;left:9%;transform:rotate(30deg)"></span>
+    <span class="login-miga" style="top:12%;right:18%;width:6px;height:5px"></span>
+    <span class="login-miga" style="top:58%;right:12%;transform:rotate(-20deg)"></span>
+    <span class="login-miga" style="bottom:170px;left:46%;width:5px;height:4px"></span>
+    <!-- leche -->
+    <svg class="login-leche" viewBox="0 0 1440 140" preserveAspectRatio="none">
+      <path d="M0 62 C 120 30 240 30 360 58 S 600 92 720 60 S 960 22 1080 52 S 1320 90 1440 56 V140 H0 Z" fill="#ffffff" opacity="0.35" />
+      <path d="M0 84 C 160 52 300 60 420 82 S 660 112 800 84 S 1040 50 1180 76 S 1380 104 1440 86 V140 H0 Z" fill="#ffffff" />
+      <circle cx="300" cy="44" r="7" fill="#ffffff" />
+      <circle cx="318" cy="30" r="4" fill="#ffffff" />
+      <circle cx="1110" cy="38" r="6" fill="#ffffff" />
+      <circle cx="1126" cy="24" r="3.5" fill="#ffffff" />
+    </svg>
+  </div>
+
+
+  <!-- Oreo: logo, título y galletita 3D -->
+  <div class="login-hero">
+
+    <img
+      class="login-oreo-logo"
+      src="ingreso/oreo-logo.png"
+      width="640"
+      height="254"
+      alt="Oreo"
+    />
+
+    <h2 class="login-hero-titulo">
+      Todo el equipo,<br><span>en la misma ruta.</span>
+    </h2>
+
+    <p class="login-hero-sub">
+      <strong>Distrishop</strong> · La plataforma de vendedores, promotores y camioneros
+    </p>
+
+    <!-- modelo 3D interactivo (se carga solo, ver cargarModelo3d) -->
+    <div
+      id="login3d"
+      class="login-3d"
+    >
+      <svg class="login-3d-plato" viewBox="0 0 100 100" aria-hidden="true"><use href="#galleArriba" /></svg>
+      <span class="login-3d-hint">&#128070; Arrastrá para girar la galletita</span>
+    </div>
+
+  </div>
+
+
+  <!-- qué hace cada rol en la plataforma y foto de la góndola -->
+  <div class="login-extra">
+
+    <ul class="login-tips">
+      <li><svg viewBox="0 0 100 100" aria-hidden="true"><use href="#galleArriba" /></svg><span><strong>Camioneros:</strong> la ruta de entregas del día, ordenada y en el mapa</span></li>
+      <li><svg viewBox="0 0 100 100" aria-hidden="true"><use href="#galleArriba" /></svg><span><strong>Promotores:</strong> reposición, tarjetero y tareas desde el celular</span></li>
+      <li><svg viewBox="0 0 100 100" aria-hidden="true"><use href="#galleArriba" /></svg><span><strong>Vendedores:</strong> clientes, espacios y estado de cada cuenta</span></li>
+    </ul>
+
+    <figure class="login-polaroid">
+      <img
+        src="ingreso/oreo-gondola.jpg"
+        width="316"
+        height="292"
+        alt="Bloque de Oreo en la góndola"
+      />
+      <figcaption>Góndolas que venden</figcaption>
+    </figure>
+
+  </div>
+
 
   <div class="login-card">
 
@@ -27164,6 +27845,9 @@ body[data-vista="manual"] #avisoBar {
     );
 
 
+    descargarModelo3d();
+
+
     render();
 
   }
@@ -27187,14 +27871,232 @@ body[data-vista="manual"] #avisoBar {
     els.loginPass.value = "";
 
 
+    /* avisos que quedaron abiertos de la sesión anterior */
+    document.querySelectorAll(".prod-alerta-modal").forEach(
+      function (m) {
+
+        m.remove();
+
+      }
+    );
+
+
     setTimeout(
       function () {
 
-        els.loginUser.focus();
+        /* sin mover la página: en el celular se ve primero la portada Oreo */
+        els.loginUser.focus({ preventScroll: true });
 
       },
       0
     );
+
+
+    cargarModelo3d();
+
+  }
+
+
+
+  /* ========================================================
+     MODELO 3D DEL INGRESO (Spline)
+     Se carga solo en la pantalla de ingreso y cuando el formulario
+     ya está listo; si el celular ahorra datos o falla la carga, queda
+     la galletita dibujada y el ingreso funciona igual.
+  ======================================================== */
+
+  var SPLINE_VIEWER_URL = "https://unpkg.com/@splinetool/viewer@2.0.95/build/spline-viewer.js";
+
+  var SPLINE_ESCENA = "https://prod.spline.design/NN3xm7Lx2cNmeRhZ/scene.splinecode";
+
+  var modelo3dPedido = false;
+
+
+
+  function cargarModelo3d() {
+
+    var panel = document.getElementById("login3d");
+
+
+    if (!panel || modelo3dPedido) {
+
+      return;
+
+    }
+
+
+    var conexion = navigator.connection || {};
+
+
+    /* ahorro de datos o conexión muy lenta: sin 3D */
+    if (conexion.saveData || /(^|-)2g$/.test(conexion.effectiveType || "")) {
+
+      return;
+
+    }
+
+
+    modelo3dPedido = true;
+
+
+    var crearVisor = function () {
+
+      /* si ya entró a la app mientras se cargaba, no se crea */
+      if (!document.body.classList.contains("logged-out") || panel.querySelector("spline-viewer")) {
+
+        return;
+
+      }
+
+
+      var visor = document.createElement("spline-viewer");
+
+
+      visor.setAttribute("url", SPLINE_ESCENA);
+
+      visor.setAttribute("loading-anim-type", "none");
+
+      /* fondo transparente: la galletita flota sobre el azul de la pantalla */
+      visor.setAttribute("background", "rgba(0,0,0,0)");
+
+
+      visor.addEventListener(
+        "load-complete",
+        function () {
+
+          panel.classList.add("listo");
+
+        }
+      );
+
+
+      panel.insertBefore(visor, panel.firstChild);
+
+
+      /* por si el evento no llega: se muestra igual a los pocos segundos */
+      setTimeout(
+        function () {
+
+          if (visor.isConnected) {
+
+            panel.classList.add("listo");
+
+          }
+
+        },
+        6000
+      );
+
+    };
+
+
+    var cargar = function () {
+
+      /* el visor ya se había cargado (por ejemplo, después de cerrar sesión) */
+      if (window.customElements && customElements.get("spline-viewer")) {
+
+        crearVisor();
+
+        return;
+
+      }
+
+
+      var s = document.createElement("script");
+
+
+      s.type = "module";
+
+      s.src = SPLINE_VIEWER_URL;
+
+      s.onload = crearVisor;
+
+
+      s.onerror = function () {
+
+        /* queda la galletita dibujada; se puede volver a intentar más tarde */
+        modelo3dPedido = false;
+
+        s.remove();
+
+      };
+
+
+      document.head.appendChild(s);
+
+    };
+
+
+    /* después de que la página terminó de cargar, cuando el navegador está libre */
+    var cuandoLibre = function () {
+
+      if (window.requestIdleCallback) {
+
+        window.requestIdleCallback(cargar, { timeout: 2500 });
+
+      }
+      else {
+
+        setTimeout(cargar, 600);
+
+      }
+
+    };
+
+
+    if (document.readyState === "complete") {
+
+      cuandoLibre();
+
+    }
+    else {
+
+      window.addEventListener("load", cuandoLibre, { once: true });
+
+    }
+
+  }
+
+
+
+  /* Al entrar a la app se saca el 3D: oculto seguiría dibujando y gastando batería */
+  function descargarModelo3d() {
+
+    var panel = document.getElementById("login3d");
+
+    var visor = panel && panel.querySelector("spline-viewer");
+
+
+    if (visor) {
+
+      try {
+
+        if (typeof visor.unload === "function") {
+
+          visor.unload();
+
+        }
+
+      } catch (e) {
+
+        /* se saca igual */
+
+      }
+
+
+      visor.remove();
+
+    }
+
+
+    if (panel) {
+
+      panel.classList.remove("listo");
+
+    }
+
+
+    modelo3dPedido = false;
 
   }
 
