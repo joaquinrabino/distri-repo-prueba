@@ -29280,7 +29280,7 @@ body[data-vista="manual"] #avisoBar {
 
     if (accion === "reponer") {
 
-      return esGestorRol(rol) || (rol === "reponedor" && !!c && (!reponedorHoy(c) || reponedorHoy(c) === yo));
+      return esGestorRol(rol) || (rol === "reponedor" && !!c && (!reponedorHoy(c) || reponedorHoy(c) === yo || promotoresExtraHoy(c).indexOf(yo) !== -1));
 
     }
 
@@ -29626,8 +29626,245 @@ body[data-vista="manual"] #avisoBar {
       camioneroId: l.camioneroId || "",
       reponedorId: l.reponedorId || "",
       dias: Array.isArray(l.dias) ? l.dias : [],
-      diasReposicion: Array.isArray(l.diasReposicion) ? l.diasReposicion : []
+      diasReposicion: Array.isArray(l.diasReposicion) ? l.diasReposicion : [],
+
+      /* visitas del promotor por semana (0.5 = cada 15 días); 0 = sin dato */
+      visitasSemana: Number(l.visitasSemana) > 0 ? Number(l.visitasSemana) : 0,
+
+      /* "no lleva reposición" */
+      sinReposicion: !!l.sinReposicion,
+
+      /* lleva reposición pero sin promotor fijo: es relleno de la jornada */
+      relleno: !!l.relleno,
+
+      /* otros promotores que también van ciertos días: [{ uid, dias }] */
+      promotoresExtra:
+        Array.isArray(l.promotoresExtra)
+          ? l.promotoresExtra.filter(
+              function (p) {
+
+                return p && p.uid;
+
+              }
+            ).map(
+              function (p) {
+
+                return { uid: p.uid, dias: Array.isArray(p.dias) ? p.dias : [] };
+
+              }
+            )
+          : []
     };
+
+  }
+
+
+
+  /* ---------- frecuencia de visita del promotor ---------- */
+
+  /* un local de relleno (sin promotor fijo) se visita al menos cada 21 días */
+  var RELLENO_CADA_DIAS = 21;
+
+  /* y no antes de 14 días de la visita anterior */
+  var RELLENO_MIN_DIAS = 14;
+
+
+
+  /* fecha (AAAA-MM-DD) de la última reposición registrada del cliente, o "" */
+  function ultimaReposicion(c) {
+
+    var ultima = "";
+
+
+    (c && Array.isArray(c.operaciones) ? c.operaciones : []).forEach(
+      function (o) {
+
+        if (o && o.tipo === "reposicion" && o.fecha > ultima) {
+
+          ultima = o.fecha;
+
+        }
+
+      }
+    );
+
+
+    var e = estadoGuardado(c);
+
+
+    if (e.reposicion && hoyIso() > ultima) {
+
+      ultima = hoyIso();
+
+    }
+
+
+    return ultima;
+
+  }
+
+
+
+  /* días desde la última reposición (Infinity si nunca se repuso) */
+  function diasSinReponer(c) {
+
+    var u = ultimaReposicion(c);
+
+
+    if (!u) {
+
+      return Infinity;
+
+    }
+
+
+    var a = new Date(u + "T12:00:00");
+
+    var b = new Date(hoyIso() + "T12:00:00");
+
+
+    return Math.round((b - a) / 86400000);
+
+  }
+
+
+
+  /* texto de la frecuencia: 0.5 → "cada 15 días", 1 → "1 vez por semana"… */
+  function frecuenciaRepTexto(v) {
+
+    if (!v) {
+
+      return "";
+
+    }
+
+
+    if (v < 1) {
+
+      return "Cada " + Math.round(7 / v + 1) + " días";
+
+    }
+
+
+    return v === 1 ? "1 vez por semana" : String(v).replace(".", ",") + " veces por semana";
+
+  }
+
+
+
+  /* Con menos de una visita por semana, el día que le toca solo va si ya
+     pasó el tiempo (0.5 = cada 15 días: si se repuso hace menos de 11 días, esa semana no) */
+  function tocaPorFrecuencia(c) {
+
+    var v = logisticaDe(c).visitasSemana;
+
+
+    if (!v || v >= 1) {
+
+      return true;
+
+    }
+
+
+    return diasSinReponer(c) >= Math.round(7 / v) - 3;
+
+  }
+
+
+
+  /* Promotores extra que van hoy a este local (además del fijo) */
+  function promotoresExtraHoy(c) {
+
+    var dia = diaSemanaHoy();
+
+
+    return logisticaDe(c).promotoresExtra
+      .filter(
+        function (p) {
+
+          return p.dias.indexOf(dia) !== -1;
+
+        }
+      )
+      .map(
+        function (p) {
+
+          return p.uid;
+
+        }
+      );
+
+  }
+
+
+
+  /* ¿Este promotor comparte hoy el local con otro? (van los dos juntos) */
+  function compartidoHoyCon(c, uid) {
+
+    var extras = promotoresExtraHoy(c);
+
+    var fijo = reponedorHoy(c);
+
+
+    return extras.length > 0 && (fijo === uid || extras.indexOf(uid) !== -1);
+
+  }
+
+
+
+  /* Local de relleno disponible hoy: lleva reposición, no tiene promotor
+     fijo, no se repuso en los últimos 14 días y no espera al camión */
+  function rellenoDisponible(c) {
+
+    var l = logisticaDe(c);
+
+
+    if (!l.relleno || l.sinReposicion || l.reponedorId) {
+
+      return false;
+
+    }
+
+
+    var e = estadoGuardado(c);
+
+
+    if (e.reposicion || (e.visitaRep && e.visitaRep.llegada)) {
+
+      return false;
+
+    }
+
+
+    /* si hoy tiene entrega, primero tiene que pasar el camión */
+    if (tieneEntregaHoy(c) && !e.entrega && !(e.noEntrega && e.noEntrega.motivo === "no_recibio")) {
+
+      return false;
+
+    }
+
+
+    return diasSinReponer(c) >= RELLENO_MIN_DIAS;
+
+  }
+
+
+
+  function diasSinVisitaTexto(c) {
+
+    var d = diasSinReponer(c);
+
+
+    return d === Infinity ? "sin visitas registradas" : d === 0 ? "repuesto hoy" : "hace " + d + " " + (d === 1 ? "día" : "días") + " sin visita";
+
+  }
+
+
+
+  /* ya le toca sí o sí (21 días o más sin visita) */
+  function rellenoAtrasado(c) {
+
+    return diasSinReponer(c) >= RELLENO_CADA_DIAS;
 
   }
 
@@ -30221,20 +30458,53 @@ body[data-vista="manual"] #avisoBar {
 
     var pl = enPlanHoy(c);
 
+    var e = estadoGuardado(c);
+
+
+    /* si ya se repuso o hay un promotor trabajando, hoy cuenta */
+    if (e.reposicion || (e.visitaRep && e.visitaRep.llegada)) {
+
+      return true;
+
+    }
+
 
     if (pl) {
 
-      return pl.entrada.conReposicion !== false || !!estadoGuardado(c).reposicion;
+      return pl.entrada.conReposicion !== false && !l.sinReposicion;
+
+    }
+
+
+    /* "no lleva reposición" */
+    if (l.sinReposicion) {
+
+      return false;
+
+    }
+
+
+    /* relleno (sin promotor fijo): no tiene día; entra como local extra
+       de la jornada cuando le toca (ver rellenoDisponible) */
+    if (l.relleno && !l.reponedorId) {
+
+      return false;
+
+    }
+
+
+    /* un promotor extra va hoy (por ejemplo, los viernes van dos) */
+    if (promotoresExtraHoy(c).length) {
+
+      return true;
 
     }
 
 
     return (
-      (
-        diasReposicionDe(l).indexOf(diaSemanaHoy()) !== -1 &&
-        !(l.camioneroId && camioneroConPlanHoy(l.camioneroId) && !l.diasReposicion.length)
-      ) ||
-      !!estadoGuardado(c).reposicion
+      diasReposicionDe(l).indexOf(diaSemanaHoy()) !== -1 &&
+      !(l.camioneroId && camioneroConPlanHoy(l.camioneroId) && !l.diasReposicion.length) &&
+      tocaPorFrecuencia(c)
     );
 
   }
@@ -36840,6 +37110,20 @@ body[data-vista="manual"] #avisoBar {
     state.clients.forEach(
       function (c) {
 
+        /* relleno (sin promotor fijo, le toca por días sin visita): se ofrece como extra */
+        if (rellenoDisponible(c)) {
+
+          if (!destinoDeOtroPromotor(c, uid)) {
+
+            libres.push(c);
+
+          }
+
+          return;
+
+        }
+
+
         if (!tieneReposicionHoy(c)) {
 
           return;
@@ -36854,7 +37138,8 @@ body[data-vista="manual"] #avisoBar {
         var v = e.visitaRep && e.visitaRep.llegada ? e.visitaRep : null;
 
 
-        if (rep === uid) {
+        /* su local, o uno donde hoy va como segundo promotor */
+        if (rep === uid || promotoresExtraHoy(c).indexOf(uid) !== -1) {
 
           mios.push(c);
 
@@ -36899,13 +37184,14 @@ body[data-vista="manual"] #avisoBar {
     );
 
 
-    /* local en el que está trabajando otro promotor */
+    /* local en el que está trabajando otro promotor (si lo comparten hoy, no molesta) */
     var otroEnElLocal = function (c) {
 
       var v = estadoGuardado(c).visitaRep;
 
 
-      return !!(v && v.llegada && v.llegada.porId !== uid && !estadoGuardado(c).reposicion);
+      return !!(v && v.llegada && v.llegada.porId !== uid && !estadoGuardado(c).reposicion) &&
+        !compartidoHoyCon(c, uid);
 
     };
 
@@ -37141,7 +37427,14 @@ body[data-vista="manual"] #avisoBar {
         .sort(
           function (a, b) {
 
-            return a.costo - b.costo || prioridadDe(a.c) - prioridadDe(b.c);
+            /* primero los que ya pasaron 21 días sin visita (o nunca se visitaron),
+               después el resto; dentro de cada grupo, el más cercano */
+            var ua = logisticaDe(a.c).relleno && !rellenoAtrasado(a.c) ? 1 : 0;
+
+            var ub = logisticaDe(b.c).relleno && !rellenoAtrasado(b.c) ? 1 : 0;
+
+
+            return ua - ub || a.costo - b.costo || prioridadDe(a.c) - prioridadDe(b.c);
 
           }
         );
@@ -37703,9 +37996,31 @@ body[data-vista="manual"] #avisoBar {
 
     var editable = uid === miUsuarioId() || esGestorRol(rolActual());
 
-    var v = visitaDe(c);
-
     var cid = escapeHtml(c.id);
+
+    var compartido = compartidoHoyCon(c, uid);
+
+
+    /* local compartido: si la otra promotora ya llegó, esta se suma a la visita */
+    var unirse = !!visitaDe(c) && compartido && !enLaVisita(visitaDe(c), uid) && !esGestorRol(rolActual());
+
+    var v = unirse ? null : visitaDe(c);
+
+
+    /* con quién lo comparte hoy */
+    var companeros =
+      compartido
+        ? [reponedorHoy(c)].concat(promotoresExtraHoy(c))
+            .filter(
+              function (id) {
+
+                return id && id !== uid;
+
+              }
+            )
+            .map(nombreUsuario)
+            .join(" y ")
+        : "";
 
 
     /* en el local: cuenta regresiva, +10 min y terminar */
@@ -37716,12 +38031,17 @@ body[data-vista="manual"] #avisoBar {
             '<button type="button" class="btn op-btn-grande btn-ghost" data-op="extender" data-cliente="' + cid + '">&#9203; +' + MINUTOS_EXTENSION + ' min</button>' +
           '</div>'
         : '<button type="button" class="btn op-btn-grande op-btn-ok op-btn-ancho" data-op="llegada-rep" data-cliente="' + cid + '">' +
-            '&#128205; Llegué al local' +
+            '&#128205; Llegué al local' + (unirse ? ' (me sumo a ' + escapeHtml(visitaDe(c).llegada.porNombre) + ')' : '') +
           '</button>';
 
 
     return tarjetaDestinoHtml(c, {
-      etiqueta: (v ? "Estás reponiendo en este local" : "Próximo destino") + (esExtra(c) ? " · extra (sin promotor fijo)" : "") + (cubreA(c) ? " · cubrís a " + nombreUsuario(cubreA(c)) : ""),
+      etiqueta:
+        (v ? "Estás reponiendo en este local" : "Próximo destino") +
+        (companeros ? " · hoy lo hacés con " + companeros : "") +
+        (esExtra(c) ? " · extra (sin promotor fijo)" : "") +
+        (logisticaDe(c).relleno && !v ? " · " + diasSinVisitaTexto(c) : "") +
+        (cubreA(c) ? " · cubrís a " + nombreUsuario(cubreA(c)) : ""),
       estado: est,
       distancia: v ? "" : tramo(r.origen, c),
       eta: v ? null : r.plan.llegadas[c.id],
@@ -38822,7 +39142,7 @@ body[data-vista="manual"] #avisoBar {
     }
 
 
-    if (!esAdmin && visitaDe(c).llegada.porId !== miUsuarioId()) {
+    if (!esAdmin && !enLaVisita(visitaDe(c), miUsuarioId())) {
 
       showToast("Este local lo está reponiendo " + visitaDe(c).llegada.porNombre + ".");
 
@@ -40710,7 +41030,7 @@ body[data-vista="manual"] #avisoBar {
           var l = logisticaDe(c);
 
 
-          var nueva = {
+          var nueva = Object.assign({}, l, {
             camioneroId: a.camionero === "__" ? l.camioneroId : a.camionero,
             reponedorId: a.reponedor === "__" ? l.reponedorId : a.reponedor,
             dias:
@@ -40723,7 +41043,7 @@ body[data-vista="manual"] #avisoBar {
                 : a.repModo === "visita" ? (c.diasVisita || []).slice()
                   : a.repModo === "ninguno" ? []
                     : a.diasRep.slice()
-          };
+          });
 
 
           var datos = {
@@ -40977,13 +41297,30 @@ body[data-vista="manual"] #avisoBar {
     var l = logisticaDe(c);
 
 
+    /* reposición: fija, relleno o sin reposición */
+    var reposicionTexto =
+      l.sinReposicion
+        ? " · No lleva reposición"
+        : l.relleno && !l.reponedorId
+          ? " · Reposición: sin promotor fijo (relleno, al menos cada " + RELLENO_CADA_DIAS + " días · " + diasSinVisitaTexto(c) + ")"
+          : " · Reposición: " + (diasTexto(diasReposicionDe(l)) || "sin días") +
+            (l.visitasSemana ? " (" + frecuenciaRepTexto(l.visitasSemana).toLowerCase() + ")" : "") +
+            " · Promotor: " + (nombreUsuario(l.reponedorId) || "cualquiera") +
+            l.promotoresExtra.map(
+              function (p) {
+
+                return " · " + nombreUsuario(p.uid) + " también va " + (diasTexto(p.dias) || "sin días");
+
+              }
+            ).join("");
+
+
     var programacion =
-      l.camioneroId || l.dias.length || l.diasReposicion.length
+      l.camioneroId || l.dias.length || l.diasReposicion.length || l.sinReposicion || l.relleno
         ? (
           "Entrega: " + (diasTexto(l.dias) || "sin días") +
           " · Camionero: " + (nombreUsuario(l.camioneroId) || "sin asignar") +
-          " · Reposición: " + (diasTexto(diasReposicionDe(l)) || "sin días") +
-          " · Promotor: " + (nombreUsuario(l.reponedorId) || "cualquiera")
+          reposicionTexto
         )
         : "Sin camionero, promotor ni días asignados.";
 
@@ -41363,6 +41700,39 @@ body[data-vista="manual"] #avisoBar {
         '<label class="logi-label">Días de reposición <small>(si no marcás ninguno, se repone los mismos días de la entrega)</small></label>' +
         diasCheckboxesHtml("data-logi-rep", l.diasReposicion) +
 
+        '<div class="field-row">' +
+          '<div class="field">' +
+            '<label>Reposición</label>' +
+            '<select class="grupo-select" id="logiTipoRep">' +
+              '<option value="fijo"' + (!l.sinReposicion && !(l.relleno && !l.reponedorId) ? ' selected' : '') + '>Lleva reposición</option>' +
+              '<option value="relleno"' + (!l.sinReposicion && l.relleno && !l.reponedorId ? ' selected' : '') + '>Sin promotor fijo (relleno, al menos cada ' + RELLENO_CADA_DIAS + ' días)</option>' +
+              '<option value="no"' + (l.sinReposicion ? ' selected' : '') + '>No lleva reposición</option>' +
+            '</select>' +
+          '</div>' +
+          '<div class="field">' +
+            '<label>Visitas del promotor</label>' +
+            '<select class="grupo-select" id="logiVisitas">' +
+              [["", "Según los días marcados"], ["0.5", "Cada 15 días (0,5 por semana)"], ["1", "1 vez por semana"], ["2", "2 veces por semana"], ["3", "3 veces por semana"], ["4", "4 veces por semana"], ["5", "Todos los días hábiles"]].map(
+                function (o) {
+
+                  return '<option value="' + o[0] + '"' + (String(l.visitasSemana || "") === o[0] ? ' selected' : '') + '>' + o[1] + '</option>';
+
+                }
+              ).join("") +
+            '</select>' +
+          '</div>' +
+        '</div>' +
+
+        '<div class="field-row">' +
+          '<div class="field">' +
+            '<label>Segundo promotor <small>(algunos días van dos)</small></label>' +
+            '<select class="grupo-select" id="logiExtra">' + opciones("reponedor", l.promotoresExtra[0] ? l.promotoresExtra[0].uid : "", "Ninguno") + '</select>' +
+          '</div>' +
+        '</div>' +
+
+        '<label class="logi-label">Días que va el segundo promotor</label>' +
+        diasCheckboxesHtml("data-logi-extra", l.promotoresExtra[0] ? l.promotoresExtra[0].dias : []) +
+
         (
           !usuariosConRol("camionero").length || !usuariosConRol("reponedor").length
             ? '<div class="custom-hint">Para asignar, primero creá usuarios con rol Camionero y Promotor de visibilidad en <strong>Usuarios</strong>.</div>'
@@ -41405,11 +41775,23 @@ body[data-vista="manual"] #avisoBar {
 
     var leer = function () {
 
+      var tipoRep = document.getElementById("logiTipoRep").value;
+
+      var extraUid = document.getElementById("logiExtra").value;
+
+      var extraDias = leerDias("data-logi-extra");
+
+
       draft.logistica = {
         camioneroId: cam.value,
-        reponedorId: document.getElementById("logiReponedor").value,
+        /* el relleno no tiene promotor fijo */
+        reponedorId: tipoRep === "relleno" ? "" : document.getElementById("logiReponedor").value,
         dias: leerDias("data-logi-dia"),
-        diasReposicion: leerDias("data-logi-rep")
+        diasReposicion: leerDias("data-logi-rep"),
+        visitasSemana: Number(document.getElementById("logiVisitas").value) || 0,
+        sinReposicion: tipoRep === "no",
+        relleno: tipoRep === "relleno",
+        promotoresExtra: extraUid && extraDias.length ? [{ uid: extraUid, dias: extraDias }] : []
       };
 
 
@@ -41438,6 +41820,7 @@ body[data-vista="manual"] #avisoBar {
     Array.prototype.forEach.call(
       els.mainInner.querySelectorAll(
         "#logiCamionero, #logiReponedor, [data-logi-dia], [data-logi-rep], " +
+        "#logiTipoRep, #logiVisitas, #logiExtra, [data-logi-extra], " +
         "#dvVendedor, #dvPrioridad, #dvFrecuencia, #dvTiempo, #dvDesde, #dvHasta, [data-dv-dia]"
       ),
       function (x) {
@@ -43281,7 +43664,11 @@ body[data-vista="manual"] #avisoBar {
         camioneroId: la.camioneroId || lb.camioneroId || "",
         reponedorId: la.reponedorId || lb.reponedorId || "",
         dias: (la.dias || []).length ? la.dias : (lb.dias || []),
-        diasReposicion: (la.diasReposicion || []).length ? la.diasReposicion : (lb.diasReposicion || [])
+        diasReposicion: (la.diasReposicion || []).length ? la.diasReposicion : (lb.diasReposicion || []),
+        visitasSemana: la.visitasSemana || lb.visitasSemana || 0,
+        sinReposicion: !!(la.sinReposicion && (lb.sinReposicion || !lb.reponedorId)),
+        relleno: !!((la.relleno || lb.relleno) && !(la.reponedorId || lb.reponedorId)),
+        promotoresExtra: (la.promotoresExtra || []).length ? la.promotoresExtra : (lb.promotoresExtra || [])
       };
 
     }
@@ -43796,6 +44183,21 @@ body[data-vista="manual"] #avisoBar {
 
 
 
+  /* ¿Este promotor está en la visita? (el que llegó primero o uno que se sumó) */
+  function enLaVisita(v, uid) {
+
+    return !!(
+      v && v.llegada &&
+      (
+        v.llegada.porId === uid ||
+        (Array.isArray(v.equipo) && v.equipo.some(function (x) { return x.porId === uid; }))
+      )
+    );
+
+  }
+
+
+
   function visitaDe(c) {
 
     var v = estadoGuardado(c).visitaRep;
@@ -43836,7 +44238,7 @@ body[data-vista="manual"] #avisoBar {
       var e = estados[ids[i]];
 
 
-      if (e && e.visitaRep && e.visitaRep.llegada && e.visitaRep.llegada.porId === uid && !e.reposicion) {
+      if (e && e.visitaRep && e.visitaRep.llegada && enLaVisita(e.visitaRep, uid) && !e.reposicion) {
 
         return clientePorId(ids[i]) || null;
 
@@ -43909,7 +44311,7 @@ body[data-vista="manual"] #avisoBar {
 
             if (
               id !== clientId && o && o.visitaRep && o.visitaRep.llegada &&
-              o.visitaRep.llegada.porId === f.porId && !o.reposicion
+              enLaVisita(o.visitaRep, f.porId) && !o.reposicion
             ) {
 
               var otro = clientePorId(id);
@@ -43931,6 +44333,34 @@ body[data-vista="manual"] #avisoBar {
         if (e.reposicion) {
 
           throw errorDeValidacion("Este local ya está repuesto.");
+
+        }
+
+
+        /* local compartido hoy (van dos promotores): el segundo se suma a la visita */
+        if (
+          e.visitaRep && e.visitaRep.llegada &&
+          e.visitaRep.llegada.porId !== f.porId &&
+          compartidoHoyCon(c, f.porId)
+        ) {
+
+          var equipo = Array.isArray(e.visitaRep.equipo) ? e.visitaRep.equipo : [];
+
+
+          if (!equipo.some(function (x) { return x.porId === f.porId; })) {
+
+            equipo.push({ porId: f.porId, porNombre: f.porNombre, at: f.at });
+
+          }
+
+
+          e.visitaRep.equipo = equipo;
+
+          data.estados[clientId] = e;
+
+          data.destinos[f.porId] = clientId;
+
+          return;
 
         }
 
