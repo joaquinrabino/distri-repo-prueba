@@ -11475,6 +11475,111 @@ body[data-vista="manual"] #avisoBar {
 }
 
 
+/* replicar acuerdo */
+.replicar-modal .modal-card {
+
+  max-width: 620px;
+
+}
+
+
+.rep-partes {
+
+  display: grid;
+
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+
+  gap: 6px 14px;
+
+  margin-top: 10px;
+
+  font-size: 14px;
+
+}
+
+
+.rep-barra {
+
+  display: flex;
+
+  flex-wrap: wrap;
+
+  align-items: center;
+
+  gap: 8px 14px;
+
+  margin-top: 8px;
+
+}
+
+
+.rep-cuenta {
+
+  margin-left: auto;
+
+  font-size: 13px;
+
+  font-weight: 700;
+
+  color: var(--accent);
+
+}
+
+
+.rep-item {
+
+  display: flex;
+
+  align-items: flex-start;
+
+  gap: 10px;
+
+  padding: 8px 10px;
+
+  border: 1px solid var(--border);
+
+  border-radius: 8px;
+
+  cursor: pointer;
+
+  font-size: 14px;
+
+}
+
+
+.rep-item input {
+
+  flex: none;
+
+  width: 18px;
+
+  height: 18px;
+
+  margin-top: 2px;
+
+}
+
+
+.rep-item span {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 2px;
+
+  min-width: 0;
+
+}
+
+
+.rep-item small {
+
+  color: var(--ink-soft);
+
+}
+
+
 .fusion-item {
 
   display: flex;
@@ -18943,9 +19048,14 @@ body[data-vista="manual"] #avisoBar {
                 'Editar' +
               '</button>' +
 
+              '<button class="btn btn-ghost" data-replicar="' + escapeHtml(c.id) + '" ' +
+                'title="Copiar el acuerdo de este cliente (grupo, vigencia, espacios, archivos…) a otros locales, por ejemplo a todos los Farmashop">' +
+                'Replicar acuerdo' +
+              '</button>' +
+
               '<button class="btn btn-ghost" data-fusionar="' + escapeHtml(c.id) + '" ' +
-                'title="Unir este cliente con otro que esté duplicado (por ejemplo, el mismo local cargado a mano y desde el Excel)">' +
-                'Fusionar' +
+                'title="Unir con otro cliente que es el MISMO local cargado dos veces. El otro se borra.">' +
+                'Unir duplicado' +
               '</button>' +
 
               '<button class="btn btn-danger" id="deleteBtn">' +
@@ -29870,13 +29980,13 @@ body[data-vista="manual"] #avisoBar {
 
 
 
-  /* Días de reposición: si no se cargaron, son los mismos de la entrega */
+  /* Días de reposición: solo los cargados (ya no se toman los de entrega) */
 
   function diasReposicionDe(l) {
 
     return l.diasReposicion.length
       ? l.diasReposicion
-      : (l.camioneroId ? l.dias : []);
+      : [];
 
   }
 
@@ -30431,18 +30541,13 @@ body[data-vista="manual"] #avisoBar {
 
   function tieneEntregaHoy(c) {
 
-    var l = logisticaDe(c);
-
     var e = estadoGuardado(c);
 
 
+    /* la jornada del camionero sale solo de la ruta cargada desde el
+       archivo (los días de entrega de la ficha no la arman solos) */
     return (
       !!enPlanHoy(c) ||
-      (
-        !!l.camioneroId &&
-        !camioneroConPlanHoy(l.camioneroId) &&
-        l.dias.indexOf(diaSemanaHoy()) !== -1
-      ) ||
       !!(e.entrega || e.noEntrega || e.llegada || e.postergado)
     );
 
@@ -41697,7 +41802,7 @@ body[data-vista="manual"] #avisoBar {
         '<label class="logi-label">Días de entrega</label>' +
         diasCheckboxesHtml("data-logi-dia", l.dias) +
 
-        '<label class="logi-label">Días de reposición <small>(si no marcás ninguno, se repone los mismos días de la entrega)</small></label>' +
+        '<label class="logi-label">Días de reposición <small>(los días que va el promotor)</small></label>' +
         diasCheckboxesHtml("data-logi-rep", l.diasReposicion) +
 
         '<div class="field-row">' +
@@ -41736,7 +41841,7 @@ body[data-vista="manual"] #avisoBar {
         (
           !usuariosConRol("camionero").length || !usuariosConRol("reponedor").length
             ? '<div class="custom-hint">Para asignar, primero creá usuarios con rol Camionero y Promotor de visibilidad en <strong>Usuarios</strong>.</div>'
-            : '<div class="custom-hint">Los días de entrega, el cliente entra en la ruta del camionero; cuando entrega, pasa a la ruta del promotor.</div>'
+            : '<div class="custom-hint">La ruta del camionero sale del archivo que se carga cada día en Operaciones (los días de entrega son informativos). Cuando entrega, el local pasa a la ruta del promotor.</div>'
         ) +
 
       '</div>'
@@ -42249,6 +42354,15 @@ body[data-vista="manual"] #avisoBar {
     if ((el = e.target.closest("[data-fusionar]"))) {
 
       abrirFusion(el.getAttribute("data-fusionar"));
+
+      return true;
+
+    }
+
+
+    if ((el = e.target.closest("[data-replicar]"))) {
+
+      abrirReplicarAcuerdo(el.getAttribute("data-replicar"));
 
       return true;
 
@@ -44006,9 +44120,11 @@ body[data-vista="manual"] #avisoBar {
 
     bd.innerHTML =
       '<div class="modal-card" role="dialog" aria-modal="true">' +
-        '<h2 class="modal-title">Fusionar «' + escapeHtml(c.nombre) + '»</h2>' +
-        '<p class="modal-sub">Elegí el cliente duplicado. Queda <strong>' + escapeHtml(c.nombre) + '</strong> con los datos de los dos ' +
-          '(acuerdos, espacios, datos del sistema, historial) y el otro se borra.</p>' +
+        '<h2 class="modal-title">Unir duplicado de «' + escapeHtml(c.nombre) + '»</h2>' +
+        '<p class="modal-sub">Solo para el <strong>mismo local cargado dos veces</strong> (por ejemplo, a mano y desde el Excel). ' +
+          'Queda <strong>' + escapeHtml(c.nombre) + '</strong> con los datos de los dos y <strong>el otro se borra</strong>.</p>' +
+        '<p class="modal-sub">¿Querés copiar este acuerdo a otros locales (por ejemplo, a toda una cadena)? ' +
+          'Usá <button type="button" class="hist-more" data-ir-replicar="1">Replicar acuerdo</button>: no borra nada.</p>' +
         '<input type="search" class="fusion-buscar" placeholder="Buscar por nombre, razón social o número…">' +
         '<div class="fusion-lista"></div>' +
         '<div class="op-confirm-botones"><button type="button" class="btn btn-ghost op-btn-grande" data-r="no">Cancelar</button></div>' +
@@ -44105,6 +44221,17 @@ body[data-vista="manual"] #avisoBar {
         }
 
 
+        if (e.target.closest("[data-ir-replicar]")) {
+
+          bd.remove();
+
+          abrirReplicarAcuerdo(c.id);
+
+          return;
+
+        }
+
+
         var b = e.target.closest("[data-fusion-con]");
 
 
@@ -44125,15 +44252,28 @@ body[data-vista="manual"] #avisoBar {
         }
 
 
+        /* dos números distintos del sistema = dos locales distintos: no se unen */
+        if (c.codigo && otro.codigo && String(c.codigo).trim() !== String(otro.codigo).trim()) {
+
+          showToast(
+            "No se puede: son dos locales distintos del sistema (#" + c.codigo + " y #" + otro.codigo + "). " +
+            "Para copiar el acuerdo usá «Replicar acuerdo»."
+          );
+
+          return;
+
+        }
+
+
         bd.remove();
 
 
         confirmarAccion(
-          "¿Fusionar estos dos clientes?",
-          "Queda <strong>" + escapeHtml(c.nombre) + "</strong> con los datos de los dos y se borra <strong>" +
+          "¿Unir estos dos clientes?",
+          "Queda <strong>" + escapeHtml(c.nombre) + "</strong> con los datos de los dos y <strong>se BORRA " +
             escapeHtml(otro.nombre) + (otro.codigo ? " (#" + escapeHtml(otro.codigo) + ")" : "") + "</strong>. " +
-            "Las fotos y archivos se conservan.",
-          "Sí, fusionar"
+            "Hacelo solo si es el mismo local cargado dos veces. Las fotos y archivos se conservan.",
+          "Sí, es el mismo local"
         ).then(
           function (ok) {
 
@@ -44162,6 +44302,472 @@ body[data-vista="manual"] #avisoBar {
 
           }
         );
+
+      }
+    );
+
+  }
+
+
+
+  /* ========================================================
+     REPLICAR ACUERDO
+     Copia el acuerdo de un cliente (grupo de compra, vigencia,
+     espacios, textos del acuerdo, archivos firmados y notas) a
+     muchos locales a la vez, por ejemplo a todos los Farmashop.
+     No borra ningún cliente. Los archivos no se duplican: todos
+     apuntan al mismo PDF y no se borra mientras alguno lo use
+     (ver archivoEnUsoPorOtro).
+  ======================================================== */
+
+  var PARTES_ACUERDO = [
+    ["grupo", "Grupo de compra"],
+    ["vigencia", "Vigencia (inicio y fin)"],
+    ["espacios", "Espacios acordados (reemplaza los del local; sin fotos)"],
+    ["textos", "Textos del acuerdo comercial"],
+    ["archivos", "Archivos del acuerdo firmado (PDF)"],
+    ["notas", "Notas"]
+  ];
+
+
+
+  /* datos a escribir en un local según las partes elegidas */
+  function datosReplica(origen, destino, partes) {
+
+    var d = {};
+
+
+    if (partes.grupo) {
+
+      d.grupoCompra = origen.grupoCompra || "";
+
+    }
+
+
+    if (partes.vigencia) {
+
+      d.vigenciaInicio = origen.vigenciaInicio || "";
+
+      d.vigenciaFin = origen.vigenciaFin || "";
+
+    }
+
+
+    if (partes.espacios) {
+
+      var esp = {};
+
+
+      Object.keys(origen.espacios || {}).forEach(
+        function (k) {
+
+          /* la foto es de cada local: no se copia */
+          esp[k] = Object.assign({}, origen.espacios[k], { fotoUrl: "", fotoPath: "" });
+
+        }
+      );
+
+
+      d.espacios = esp;
+
+    }
+
+
+    if (partes.textos && origen.acuerdoComercial) {
+
+      d.acuerdoComercial = Object.assign({}, origen.acuerdoComercial, { email: "", telefono: "" });
+
+    }
+
+
+    if (partes.archivos) {
+
+      /* se suman a los que ya tenga el local (sin repetir) */
+      var actuales = Array.isArray(destino.acuerdosFirmados) ? destino.acuerdosFirmados : [];
+
+
+      d.acuerdosFirmados =
+        actuales.concat(
+          (origen.acuerdosFirmados || []).filter(
+            function (a) {
+
+              return a && a.path && !actuales.some(function (b) { return b.path === a.path; });
+
+            }
+          )
+        );
+
+    }
+
+
+    if (partes.notas) {
+
+      d.notas = origen.notas || "";
+
+    }
+
+
+    return d;
+
+  }
+
+
+
+  function abrirReplicarAcuerdo(origenId) {
+
+    var origen = clientePorId(origenId);
+
+
+    if (!origen || !state.canEdit) {
+
+      return;
+
+    }
+
+
+    var elegidos = {};
+
+
+    var bd = document.createElement("div");
+
+
+    bd.className = "modal-backdrop op-confirm fusion-modal replicar-modal";
+
+
+    bd.innerHTML =
+      '<div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="repTitulo">' +
+        '<h2 class="modal-title" id="repTitulo">Replicar el acuerdo de «' + escapeHtml(origen.nombre) + '»</h2>' +
+        '<p class="modal-sub">Elegí qué copiar y a qué locales. No se borra ningún cliente.</p>' +
+        '<div class="rep-partes">' +
+          PARTES_ACUERDO.map(
+            function (p) {
+
+              return '<label class="tarea-check"><input type="checkbox" data-rep-parte="' + p[0] + '" checked> ' + escapeHtml(p[1]) + '</label>';
+
+            }
+          ).join("") +
+        '</div>' +
+        '<input type="search" class="fusion-buscar" placeholder="Buscar locales: nombre, razón social, número o grupo (ej: farmashop)…">' +
+        '<div class="rep-barra">' +
+          '<button type="button" class="hist-more" data-rep-todos="1">Tildar los que se ven</button>' +
+          '<button type="button" class="hist-more" data-rep-ninguno="1">Destildar todo</button>' +
+          '<span class="rep-cuenta"></span>' +
+        '</div>' +
+        '<div class="fusion-lista rep-lista"></div>' +
+        '<div class="op-confirm-botones">' +
+          '<button type="button" class="btn btn-ghost op-btn-grande" data-r="no">Cancelar</button>' +
+          '<button type="button" class="btn btn-primary op-btn-grande" data-rep-ok="1" disabled>Replicar</button>' +
+        '</div>' +
+      '</div>';
+
+
+    document.body.appendChild(bd);
+
+
+    var lista = bd.querySelector(".rep-lista");
+
+    var buscar = bd.querySelector(".fusion-buscar");
+
+    var cuenta = bd.querySelector(".rep-cuenta");
+
+    var ok = bd.querySelector("[data-rep-ok]");
+
+    var visibles = [];
+
+
+    var actualizarCuenta = function () {
+
+      var n = Object.keys(elegidos).length;
+
+
+      cuenta.textContent = n ? plural(n, "local elegido", "locales elegidos") : "";
+
+      ok.disabled = !n;
+
+      ok.textContent = n ? "Replicar a " + plural(n, "local", "locales") : "Replicar";
+
+    };
+
+
+    var pintar = function () {
+
+      var q = normalizarTexto(buscar.value);
+
+
+      visibles =
+        state.clients
+          .filter(
+            function (x) {
+
+              return x.id !== origen.id && (
+                !q ||
+                normalizarTexto([x.nombre, x.razonSocial, x.codigo, x.grupoCompra].join(" ")).indexOf(q) !== -1
+              );
+
+            }
+          )
+          .sort(
+            function (m, n) {
+
+              return (m.nombre || "").localeCompare(n.nombre || "", "es");
+
+            }
+          );
+
+
+      lista.innerHTML =
+        visibles.length
+          ? visibles.slice(0, 400).map(
+              function (x) {
+
+                return (
+                  '<label class="rep-item">' +
+                    '<input type="checkbox" data-rep-cli="' + escapeHtml(x.id) + '"' + (elegidos[x.id] ? ' checked' : '') + '>' +
+                    '<span><strong>' + (x.codigo ? '<span class="client-row-num">#' + escapeHtml(x.codigo) + '</span> ' : '') + escapeHtml(x.nombre) + '</strong>' +
+                      '<small>' + escapeHtml([x.razonSocial, x.grupoCompra ? "grupo " + x.grupoCompra : "", x.vigenciaFin ? "contrato hasta " + fmtDate(x.vigenciaFin) : "sin contrato"].filter(Boolean).join(" · ")) + '</small>' +
+                    '</span>' +
+                  '</label>'
+                );
+
+              }
+            ).join("") +
+            (visibles.length > 400 ? '<div class="hist-empty">Hay ' + visibles.length + ': buscá para achicar la lista.</div>' : '')
+          : '<div class="hist-empty">No hay locales con ese texto.</div>';
+
+    };
+
+
+    pintar();
+
+    actualizarCuenta();
+
+
+    buscar.addEventListener("input", pintar);
+
+
+    setTimeout(function () { buscar.focus(); }, 30);
+
+
+    bd.addEventListener(
+      "change",
+      function (e) {
+
+        var cli = e.target.getAttribute && e.target.getAttribute("data-rep-cli");
+
+
+        if (cli) {
+
+          if (e.target.checked) {
+
+            elegidos[cli] = true;
+
+          }
+          else {
+
+            delete elegidos[cli];
+
+          }
+
+
+          actualizarCuenta();
+
+        }
+
+      }
+    );
+
+
+    bd.addEventListener(
+      "click",
+      function (e) {
+
+        if (e.target === bd || e.target.closest('[data-r="no"]')) {
+
+          bd.remove();
+
+          return;
+
+        }
+
+
+        if (e.target.closest("[data-rep-todos]")) {
+
+          visibles.slice(0, 400).forEach(function (x) { elegidos[x.id] = true; });
+
+          pintar();
+
+          actualizarCuenta();
+
+          return;
+
+        }
+
+
+        if (e.target.closest("[data-rep-ninguno]")) {
+
+          elegidos = {};
+
+          pintar();
+
+          actualizarCuenta();
+
+          return;
+
+        }
+
+
+        if (!e.target.closest("[data-rep-ok]")) {
+
+          return;
+
+        }
+
+
+        var partes = {};
+
+
+        bd.querySelectorAll("[data-rep-parte]").forEach(
+          function (x) {
+
+            if (x.checked) {
+
+              partes[x.getAttribute("data-rep-parte")] = true;
+
+            }
+
+          }
+        );
+
+
+        if (!Object.keys(partes).length) {
+
+          showToast("Elegí qué partes del acuerdo copiar.");
+
+          return;
+
+        }
+
+
+        var ids = Object.keys(elegidos);
+
+
+        var queCopia =
+          PARTES_ACUERDO.filter(function (p) { return partes[p[0]]; })
+            .map(function (p) { return p[1].replace(/ \(.*\)$/, "").toLowerCase(); })
+            .join(", ");
+
+
+        bd.remove();
+
+
+        confirmarAccion(
+          "¿Replicar el acuerdo a " + plural(ids.length, "local", "locales") + "?",
+          "Se copia <strong>" + escapeHtml(queCopia) + "</strong> de <strong>" + escapeHtml(origen.nombre) + "</strong>. " +
+            (partes.espacios ? "Los espacios de esos locales se reemplazan por los de este acuerdo. " : "") +
+            "Queda anotado en el historial de cada local.",
+          "Sí, replicar"
+        ).then(
+          function (si) {
+
+            if (!si) {
+
+              return;
+
+            }
+
+
+            replicarAcuerdo(origen, ids, partes)
+              .then(
+                function (n) {
+
+                  showToast("Listo: acuerdo replicado a " + plural(n, "local", "locales") + ".");
+
+                }
+              )
+              .catch(
+                function (err) {
+
+                  avisarError(err, "No se pudo replicar el acuerdo. Revisá tu conexión.");
+
+                }
+              );
+
+          }
+        );
+
+      }
+    );
+
+  }
+
+
+
+  /* escribe en lotes (Firestore acepta hasta 500 escrituras por lote) */
+  function replicarAcuerdo(origen, ids, partes) {
+
+    var usuario = usuarioActual();
+
+    var ahora = Date.now();
+
+    var cambios = "Acuerdo replicado de «" + (origen.nombre || "") + "»" + (origen.codigo ? " (#" + origen.codigo + ")" : "");
+
+    var lotes = [];
+
+
+    for (var i = 0; i < ids.length; i += 400) {
+
+      lotes.push(ids.slice(i, i + 400));
+
+    }
+
+
+    var hechos = 0;
+
+
+    return lotes.reduce(
+      function (p, lote) {
+
+        return p.then(
+          function () {
+
+            var b = state.db.batch();
+
+
+            lote.forEach(
+              function (id) {
+
+                var destino = clientePorId(id) || {};
+
+
+                b.update(
+                  state.db.doc("clientes/" + id),
+                  Object.assign(datosReplica(origen, destino, partes), {
+                    updatedAt: ahora,
+                    historial: firebase.firestore.FieldValue.arrayUnion({ fecha: ahora, usuario: usuario, cambios: [cambios] })
+                  })
+                );
+
+              }
+            );
+
+
+            return b.commit().then(
+              function () {
+
+                hechos += lote.length;
+
+              }
+            );
+
+          }
+        );
+
+      },
+      Promise.resolve()
+    ).then(
+      function () {
+
+        return hechos;
 
       }
     );
