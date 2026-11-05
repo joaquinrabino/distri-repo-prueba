@@ -5537,6 +5537,231 @@ button.dash-tile:focus-visible {
 
 
 
+/* ---------- promotores y sus clientes ---------- */
+
+.prom-filtros {
+
+  display: flex;
+
+  flex-wrap: wrap;
+
+  gap: 10px;
+
+  margin: 0 0 16px;
+
+}
+
+
+.prom-filtros input[type=search] {
+
+  flex: 1 1 260px;
+
+  padding: 9px 12px;
+
+  border: 1px solid var(--border-strong);
+
+  border-radius: 9px;
+
+  background: var(--surface);
+
+  font: inherit;
+
+}
+
+
+.prom-filtros select {
+
+  flex: 0 1 280px;
+
+}
+
+
+.prom-card > summary {
+
+  cursor: pointer;
+
+  list-style: none;
+
+}
+
+
+.prom-card > summary::-webkit-details-marker {
+
+  display: none;
+
+}
+
+
+.prom-card > summary .dash-card-title::before {
+
+  content: "▸ ";
+
+  color: var(--ink-faint);
+
+}
+
+
+.prom-card[open] > summary .dash-card-title::before {
+
+  content: "▾ ";
+
+}
+
+
+.prom-num {
+
+  display: inline-block;
+
+  min-width: 24px;
+
+  padding: 1px 8px;
+
+  border-radius: 99px;
+
+  background: var(--accent-soft);
+
+  color: var(--accent);
+
+  font-size: 13px;
+
+  text-align: center;
+
+}
+
+
+.prom-tabla td {
+
+  vertical-align: middle;
+
+}
+
+
+.prom-tabla td:last-child {
+
+  white-space: nowrap;
+
+}
+
+
+.prom-cli {
+
+  min-width: 170px;
+
+}
+
+
+.prom-sel {
+
+  min-width: 150px;
+
+  padding-top: 6px;
+
+  padding-bottom: 6px;
+
+}
+
+
+.prom-dias {
+
+  display: flex;
+
+  gap: 3px;
+
+}
+
+
+.prom-dias label {
+
+  position: relative;
+
+  cursor: pointer;
+
+}
+
+
+.prom-dias input {
+
+  position: absolute;
+
+  opacity: 0;
+
+  width: 1px;
+
+  height: 1px;
+
+}
+
+
+.prom-dias span {
+
+  display: grid;
+
+  place-items: center;
+
+  width: 26px;
+
+  height: 26px;
+
+  border-radius: 7px;
+
+  border: 1px solid var(--border-strong);
+
+  font-size: 12px;
+
+  font-weight: 700;
+
+  color: var(--ink-soft);
+
+  background: var(--surface);
+
+}
+
+
+.prom-dias input:checked + span {
+
+  background: var(--accent);
+
+  border-color: var(--accent);
+
+  color: #fff;
+
+}
+
+
+.prom-dias input:focus-visible + span {
+
+  outline: 2px solid var(--accent);
+
+  outline-offset: 2px;
+
+}
+
+
+.prom-dias input:disabled + span {
+
+  opacity: 0.4;
+
+  cursor: default;
+
+}
+
+
+.prom-min {
+
+  width: 70px;
+
+  padding: 6px 8px;
+
+  border: 1px solid var(--border-strong);
+
+  border-radius: 7px;
+
+  font: inherit;
+
+}
+
+
+
 .modal-backdrop {
 
   position: fixed;
@@ -13576,6 +13801,8 @@ body[data-vista="manual"] #avisoBar {
 
     state.manualView = false;
 
+    state.promotoresView = false;
+
     state.tareaForm = null;
 
     state.importView = false;
@@ -16871,6 +17098,16 @@ body[data-vista="manual"] #avisoBar {
     if (state.manualView) {
 
       renderManual();
+
+      return;
+
+    }
+
+
+    /* promotores y sus clientes */
+    if (state.promotoresView && puede("asignar")) {
+
+      renderPromotores();
 
       return;
 
@@ -33699,6 +33936,562 @@ body[data-vista="manual"] #avisoBar {
 
 
   /* ========================================================
+     PROMOTORES Y SUS CLIENTES (administrador y supervisor)
+     Cada promotor con sus locales; desde acá se cambia el promotor,
+     los días de reposición, las visitas por semana y el tiempo de
+     cada local. Cada cambio se guarda al momento.
+  ======================================================== */
+
+  state.promotoresView = false;
+
+  state.promBuscar = "";
+
+  state.promFiltro = "";
+
+
+  var PROM_VISITAS = [
+    ["", "Según los días"], ["0.5", "Cada 15 días"], ["1", "1 por semana"], ["2", "2 por semana"],
+    ["3", "3 por semana"], ["4", "4 por semana"], ["5", "Todos los días"]
+  ];
+
+
+
+  function abrirPromotores() {
+
+    if (!puede("asignar")) {
+
+      return;
+
+    }
+
+
+    if (
+      (state.editing || state.creating) &&
+      !confirm("Tenés cambios sin guardar. ¿Querés descartarlos?")
+    ) {
+
+      return;
+
+    }
+
+
+    resetPendingPhotos();
+
+
+    state.editing = false;
+
+    state.creating = false;
+
+    state.draft = null;
+
+    state.promotoresView = true;
+
+
+    render();
+
+
+    els.mainInner.parentNode.scrollTop = 0;
+
+  }
+
+
+
+  /* grupo de cada cliente: el uid del promotor, "relleno", "sin" o "no" */
+  function grupoPromotor(c) {
+
+    var l = logisticaDe(c);
+
+
+    if (l.sinReposicion) {
+
+      return "no";
+
+    }
+
+
+    if (l.reponedorId && usuarioPorId(l.reponedorId)) {
+
+      return l.reponedorId;
+
+    }
+
+
+    return l.relleno && !l.reponedorId ? "relleno" : "sin";
+
+  }
+
+
+
+  /* minutos por semana que lleva un local (tiempo × visitas) */
+  function minutosSemanaLocal(c) {
+
+    var l = logisticaDe(c);
+
+    var visitas = l.visitasSemana || l.diasReposicion.length || 1;
+
+
+    return tiempoAsignadoDe(c, MIN_LOCAL_DEFECTO) * visitas;
+
+  }
+
+
+
+  function filaPromotorHtml(c, opcionesProm) {
+
+    var l = logisticaDe(c);
+
+    var g = grupoPromotor(c);
+
+    var id = escapeHtml(c.id);
+
+    var valorProm = g === "no" ? "__no" : g === "relleno" ? "__relleno" : g === "sin" ? "" : g;
+
+    var conRep = g !== "no";
+
+
+    return (
+      '<tr data-prom-fila="' + id + '">' +
+        '<td class="prom-cli">' +
+          '<button type="button" class="op-link" data-dash-client="' + id + '">' + escapeHtml(c.nombre || "Sin nombre") + '</button>' +
+          (c.codigo ? ' <small>#' + escapeHtml(c.codigo) + '</small>' : '') +
+        '</td>' +
+        '<td>' +
+          '<select class="grupo-select prom-sel" data-prom-campo="promotor" aria-label="Promotor de ' + escapeHtml(c.nombre || "") + '">' +
+            opcionesProm.map(
+              function (o) {
+
+                return '<option value="' + escapeHtml(o[0]) + '"' + (o[0] === valorProm ? ' selected' : '') + '>' + escapeHtml(o[1]) + '</option>';
+
+              }
+            ).join("") +
+          '</select>' +
+        '</td>' +
+        '<td>' +
+          '<div class="prom-dias">' +
+            DIAS_SEMANA.map(
+              function (d) {
+
+                return (
+                  '<label title="' + d[1] + '">' +
+                    '<input type="checkbox" data-prom-dia="' + d[0] + '"' + (l.diasReposicion.indexOf(d[0]) !== -1 ? ' checked' : '') + (conRep ? '' : ' disabled') + '>' +
+                    '<span>' + d[1].charAt(0) + '</span>' +
+                  '</label>'
+                );
+
+              }
+            ).join("") +
+          '</div>' +
+        '</td>' +
+        '<td>' +
+          '<select class="grupo-select prom-sel" data-prom-campo="visitas"' + (conRep ? '' : ' disabled') + '>' +
+            PROM_VISITAS.map(
+              function (o) {
+
+                return '<option value="' + o[0] + '"' + (String(l.visitasSemana || "") === o[0] ? ' selected' : '') + '>' + o[1] + '</option>';
+
+              }
+            ).join("") +
+          '</select>' +
+        '</td>' +
+        '<td>' +
+          '<input type="number" class="prom-min" data-prom-campo="tiempo" min="0" max="600" step="5" inputmode="numeric" ' +
+            'value="' + (Number(c.tiempoAsignado) > 0 ? Number(c.tiempoAsignado) : "") + '" placeholder="' + MIN_LOCAL_DEFECTO + '"' + (conRep ? '' : ' disabled') + '> <small>min</small>' +
+        '</td>' +
+      '</tr>'
+    );
+
+  }
+
+
+
+  function renderPromotores(forzar) {
+
+    var vista = els.mainInner.querySelector(".prom-view");
+
+
+    /* no se redibuja mientras se escribe un tiempo o se busca */
+    if (
+      !forzar && vista && document.activeElement && vista.contains(document.activeElement) &&
+      document.activeElement.matches("input[type=number], input[type=search]")
+    ) {
+
+      return;
+
+    }
+
+
+    var scroll = els.mainInner.parentNode.scrollTop;
+
+
+    var promotores =
+      usuariosConRol("reponedor").slice().sort(
+        function (a, b) {
+
+          return (a.nombre || a.usuario).localeCompare(b.nombre || b.usuario, "es");
+
+        }
+      );
+
+
+    var opcionesProm =
+      [["", "Sin asignar"]]
+        .concat(
+          promotores.map(
+            function (u) {
+
+              return [u.id, u.nombre || u.usuario];
+
+            }
+          )
+        )
+        .concat([["__relleno", "Relleno (sin promotor fijo)"], ["__no", "No lleva reposición"]]);
+
+
+    var buscar = normalizarTexto(state.promBuscar);
+
+
+    var clientes =
+      state.clients
+        .filter(
+          function (c) {
+
+            return !buscar || normalizarTexto([c.nombre, c.razonSocial, c.codigo].join(" ")).indexOf(buscar) !== -1;
+
+          }
+        )
+        .sort(
+          function (a, b) {
+
+            return (a.nombre || "").localeCompare(b.nombre || "", "es");
+
+          }
+        );
+
+
+    var grupos = {};
+
+
+    clientes.forEach(
+      function (c) {
+
+        var g = grupoPromotor(c);
+
+
+        (grupos[g] = grupos[g] || []).push(c);
+
+      }
+    );
+
+
+    var bloques =
+      promotores.map(
+        function (u) {
+
+          return { id: u.id, titulo: u.nombre || u.usuario, abierto: true };
+
+        }
+      ).concat([
+        { id: "sin", titulo: "Lleva reposición, sin promotor asignado", abierto: true },
+        { id: "relleno", titulo: "Relleno (sin promotor fijo)", abierto: false },
+        { id: "no", titulo: "No lleva reposición", abierto: false }
+      ]);
+
+
+    var cuerpo =
+      bloques
+        .filter(
+          function (b) {
+
+            return !state.promFiltro || state.promFiltro === b.id;
+
+          }
+        )
+        .map(
+          function (b) {
+
+            var lista = grupos[b.id] || [];
+
+            var esPromotor = ["sin", "relleno", "no"].indexOf(b.id) === -1;
+
+
+            if (!lista.length && !esPromotor) {
+
+              return "";
+
+            }
+
+
+            var minutos =
+              lista.reduce(
+                function (t, c) {
+
+                  return t + minutosSemanaLocal(c);
+
+                },
+                0
+              );
+
+
+            return (
+              '<details class="dash-card prom-card"' + (b.abierto || buscar || state.promFiltro ? ' open' : '') + '>' +
+                '<summary class="dash-card-head">' +
+                  '<h2 class="dash-card-title">' + escapeHtml(b.titulo) + ' <span class="prom-num">' + lista.length + '</span></h2>' +
+                  (
+                    esPromotor || b.id === "sin"
+                      ? '<span class="dash-card-hint">≈ ' + (Math.round(minutos / 6) / 10).toString().replace(".", ",") + ' h por semana en locales</span>'
+                      : ''
+                  ) +
+                '</summary>' +
+                (
+                  lista.length
+                    ? '<div class="op-tabla-wrap"><table class="op-tabla prom-tabla">' +
+                        '<thead><tr><th>Cliente</th><th>Promotor</th><th>Días de reposición</th><th>Visitas</th><th>Tiempo</th></tr></thead>' +
+                        '<tbody>' +
+                          lista.map(
+                            function (c) {
+
+                              return filaPromotorHtml(c, opcionesProm);
+
+                            }
+                          ).join("") +
+                        '</tbody>' +
+                      '</table></div>'
+                    : '<p class="dash-sub">Sin clientes' + (buscar ? ' con esa búsqueda' : '') + '.</p>'
+                ) +
+              '</details>'
+            );
+
+          }
+        ).join("");
+
+
+    els.mainInner.classList.add("wide");
+
+
+    els.mainInner.innerHTML =
+      '<div class="ops-view prom-view">' +
+        '<div class="dash-head"><div>' +
+          '<h1 class="dash-title">Promotores</h1>' +
+          '<p class="dash-sub">Cada promotor con sus clientes. Cambiá el promotor, los días, las visitas o el tiempo de un local y se guarda al momento.</p>' +
+        '</div></div>' +
+        '<div class="prom-filtros">' +
+          '<input type="search" id="promBuscar" placeholder="Buscar cliente, razón social o número…" value="' + escapeHtml(state.promBuscar) + '">' +
+          '<select class="grupo-select" id="promFiltro">' +
+            '<option value="">Todos</option>' +
+            bloques.map(
+              function (b) {
+
+                return '<option value="' + escapeHtml(b.id) + '"' + (state.promFiltro === b.id ? ' selected' : '') + '>' + escapeHtml(b.titulo) + ' (' + (grupos[b.id] || []).length + ')</option>';
+
+              }
+            ).join("") +
+          '</select>' +
+        '</div>' +
+        (
+          promotores.length
+            ? ''
+            : '<div class="custom-hint">Todavía no hay usuarios con rol Promotor de visibilidad: crealos en <strong>Usuarios</strong>.</div>'
+        ) +
+        cuerpo +
+      '</div>';
+
+
+    els.mainInner.parentNode.scrollTop = scroll;
+
+
+    var vistaNueva = els.mainInner.querySelector(".prom-view");
+
+    var inputBuscar = document.getElementById("promBuscar");
+
+    var esperaBuscar = null;
+
+
+    inputBuscar.addEventListener(
+      "input",
+      function () {
+
+        clearTimeout(esperaBuscar);
+
+
+        esperaBuscar =
+          setTimeout(
+            function () {
+
+              state.promBuscar = inputBuscar.value;
+
+              renderPromotores(true);
+
+
+              var b = document.getElementById("promBuscar");
+
+
+              b.focus();
+
+              b.setSelectionRange(b.value.length, b.value.length);
+
+            },
+            250
+          );
+
+      }
+    );
+
+
+    document.getElementById("promFiltro").addEventListener(
+      "change",
+      function (e) {
+
+        state.promFiltro = e.target.value;
+
+        renderPromotores(true);
+
+      }
+    );
+
+
+    vistaNueva.addEventListener(
+      "change",
+      function (e) {
+
+        var fila = e.target.closest("[data-prom-fila]");
+
+
+        if (fila && (e.target.matches("[data-prom-campo]") || e.target.matches("[data-prom-dia]"))) {
+
+          guardarFilaPromotor(fila, e.target);
+
+        }
+
+      }
+    );
+
+  }
+
+
+
+  function guardarFilaPromotor(fila, campo) {
+
+    var id = fila.getAttribute("data-prom-fila");
+
+    var c = clientePorId(id);
+
+
+    if (!c || !puede("asignar")) {
+
+      return;
+
+    }
+
+
+    /* solo el dato que cambió (dos cambios seguidos no se pisan) */
+    var datos = {};
+
+    var cambio = "";
+
+
+    if (campo.getAttribute("data-prom-campo") === "promotor") {
+
+      var v = campo.value;
+
+
+      datos["logistica.reponedorId"] = v.indexOf("__") === 0 ? "" : v;
+
+      datos["logistica.relleno"] = v === "__relleno";
+
+      datos["logistica.sinReposicion"] = v === "__no";
+
+
+      cambio =
+        "promotor: " +
+        (v === "__no" ? "no lleva reposición" : v === "__relleno" ? "relleno (sin promotor fijo)" : v ? nombreUsuario(v) : "sin asignar");
+
+    } else if (campo.hasAttribute("data-prom-dia")) {
+
+      var dias =
+        Array.prototype.map.call(
+          fila.querySelectorAll("[data-prom-dia]:checked"),
+          function (x) {
+
+            return Number(x.getAttribute("data-prom-dia"));
+
+          }
+        ).sort();
+
+
+      datos["logistica.diasReposicion"] = dias;
+
+      cambio = "días de reposición: " + (diasTexto(dias) || "ninguno");
+
+    } else if (campo.getAttribute("data-prom-campo") === "visitas") {
+
+      datos["logistica.visitasSemana"] = Number(campo.value) || 0;
+
+      cambio = "visitas del promotor: " + (frecuenciaRepTexto(Number(campo.value) || 0) || "según los días").toLowerCase();
+
+    } else if (campo.getAttribute("data-prom-campo") === "tiempo") {
+
+      var min = campo.value === "" ? null : Math.round(Number(campo.value));
+
+
+      if (min !== null && !(min >= 0 && min <= 600)) {
+
+        showToast("El tiempo tiene que estar entre 0 y 600 minutos.");
+
+        return;
+
+      }
+
+
+      datos.tiempoAsignado = min > 0 ? min : null;
+
+      cambio = "tiempo asignado: " + (datos.tiempoAsignado ? datos.tiempoAsignado + " min" : "sin cargar");
+
+    }
+
+
+    if (!cambio) {
+
+      return;
+
+    }
+
+
+    var ahora = Date.now();
+
+
+    datos.updatedAt = ahora;
+
+    datos.historial =
+      firebase.firestore.FieldValue.arrayUnion({
+        fecha: ahora,
+        usuario: usuarioActual(),
+        cambios: ["Promotores: " + cambio]
+      });
+
+
+    state.db.doc("clientes/" + id).update(datos)
+      .then(
+        function () {
+
+          showToast("Guardado · " + (c.nombre || "cliente") + " · " + cambio + ".");
+
+        }
+      )
+      .catch(
+        function (err) {
+
+          avisarError(err, "No se pudo guardar. Revisá tu conexión.");
+
+          renderPromotores(true);
+
+        }
+      );
+
+  }
+
+
+
+  /* ========================================================
      TARJETERO VIRTUAL (promotores)
      Marcas: inicio de actividad (en el primer cliente), inicio y
      fin de descanso, fin de actividad. Se guardan por mes en
@@ -37056,7 +37849,7 @@ body[data-vista="manual"] #avisoBar {
       state.pestana !== "clientes" &&
       !state.manualView &&
       /* el supervisor puede estar en Operaciones, Tarjetero o Tareas */
-      !(rol === "supervisor" && (state.opsView || state.tarjeteroView || state.tareasView))
+      !(rol === "supervisor" && (state.opsView || state.tarjeteroView || state.tareasView || state.promotoresView))
     );
 
   }
@@ -37067,6 +37860,8 @@ body[data-vista="manual"] #avisoBar {
 
     return state.manualView
       ? "manual"
+      : state.promotoresView
+      ? "promotores"
       : state.opsView
       ? "operaciones"
       : state.tarjeteroView
@@ -37095,13 +37890,13 @@ body[data-vista="manual"] #avisoBar {
 
     var lista =
       rol === "admin"
-        ? [["clientes", "Clientes"], ["operaciones", "Operaciones"], ["tarjetero", "Tarjetero"], ["tareas", "Tareas"], ["manual", "Manual"]]
+        ? [["clientes", "Clientes"], ["operaciones", "Operaciones"], ["tarjetero", "Tarjetero"], ["tareas", "Tareas"], ["manual", "Manual"], ["promotores", "Promotores"]]
         : rol === "camionero"
           ? [["ruta", "Mi ruta de entregas"], ["clientes", "Clientes"]]
           : rol === "reponedor"
             ? [["ruta", "Mi ruta de reposición"], ["clientes", "Clientes"], ["manual", "Manual"]]
             : rol === "supervisor"
-              ? [["ruta", "Mi ruta de reposición"], ["clientes", "Clientes"], ["operaciones", "Operaciones"], ["tarjetero", "Tarjetero"], ["tareas", "Tareas"], ["manual", "Manual"]]
+              ? [["ruta", "Mi ruta de reposición"], ["clientes", "Clientes"], ["operaciones", "Operaciones"], ["tarjetero", "Tarjetero"], ["tareas", "Tareas"], ["manual", "Manual"], ["promotores", "Promotores"]]
               : [];
 
 
@@ -37193,6 +37988,16 @@ body[data-vista="manual"] #avisoBar {
     if (p === "manual") {
 
       abrirManual();
+
+      return;
+
+    }
+
+
+    /* promotores y sus clientes (administrador y supervisor) */
+    if (p === "promotores") {
+
+      abrirPromotores();
 
       return;
 
