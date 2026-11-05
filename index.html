@@ -5571,7 +5571,7 @@ button.dash-tile:focus-visible {
 
 .prom-filtros select {
 
-  flex: 0 1 280px;
+  flex: 1 1 170px;
 
 }
 
@@ -5646,6 +5646,42 @@ button.dash-tile:focus-visible {
 .prom-cli {
 
   min-width: 170px;
+
+}
+
+
+.prom-extra {
+
+  display: block;
+
+  width: fit-content;
+
+  margin-top: 3px;
+
+  padding: 1px 8px;
+
+  border-radius: 99px;
+
+  background: #fbf0dc;
+
+  color: #8a5a12;
+
+  font-size: 11.5px;
+
+  font-weight: 700;
+
+}
+
+
+.op-persona-botones {
+
+  display: flex;
+
+  flex-wrap: wrap;
+
+  justify-content: flex-end;
+
+  gap: 6px;
 
 }
 
@@ -33948,7 +33984,13 @@ body[data-vista="manual"] #avisoBar {
 
   state.promFiltro = "";
 
+  /* día de reposición ("" = todos) y tipo ("" todos, "fijo", "extra") */
+  state.promDia = "";
 
+  state.promTipo = "";
+
+  /* se abrió desde Operaciones (botón "Clientes" de un promotor) */
+  state.promDesdeOps = false;
   var PROM_VISITAS = [
     ["", "Según los días"], ["0.5", "Cada 15 días"], ["1", "1 por semana"], ["2", "2 por semana"],
     ["3", "3 por semana"], ["4", "4 por semana"], ["5", "Todos los días"]
@@ -33956,7 +33998,8 @@ body[data-vista="manual"] #avisoBar {
 
 
 
-  function abrirPromotores() {
+  /* desdeOps: viene del botón "Clientes" de un promotor en Operaciones */
+  function abrirPromotores(desdeOps) {
 
     if (!puede("asignar")) {
 
@@ -33985,6 +34028,20 @@ body[data-vista="manual"] #avisoBar {
     state.draft = null;
 
     state.promotoresView = true;
+
+    state.promDesdeOps = !!desdeOps;
+
+
+    /* desde la pestaña se ven todos (sin el filtro de un promotor) */
+    if (!desdeOps) {
+
+      state.promFiltro = "";
+
+      state.promDia = "";
+
+      state.promTipo = "";
+
+    }
 
 
     render();
@@ -34036,7 +34093,7 @@ body[data-vista="manual"] #avisoBar {
 
 
 
-  function filaPromotorHtml(c, opcionesProm) {
+  function filaPromotorHtml(c, opcionesProm, extraDias) {
 
     var l = logisticaDe(c);
 
@@ -34054,6 +34111,11 @@ body[data-vista="manual"] #avisoBar {
         '<td class="prom-cli">' +
           '<button type="button" class="op-link" data-dash-client="' + id + '">' + escapeHtml(c.nombre || "Sin nombre") + '</button>' +
           (c.codigo ? ' <small>#' + escapeHtml(c.codigo) + '</small>' : '') +
+          (
+            extraDias
+              ? '<span class="prom-extra" title="Va como segundo promotor, además del fijo">Extra · ' + escapeHtml(diasTexto(extraDias) || "sin días") + '</span>'
+              : ''
+          ) +
         '</td>' +
         '<td>' +
           '<select class="grupo-select prom-sel" data-prom-campo="promotor" aria-label="Promotor de ' + escapeHtml(c.nombre || "") + '">' +
@@ -34168,16 +34230,43 @@ body[data-vista="manual"] #avisoBar {
         );
 
 
+    var dia = state.promDia === "" ? null : Number(state.promDia);
+
+
     var grupos = {};
 
 
     clientes.forEach(
       function (c) {
 
+        var l = logisticaDe(c);
+
         var g = grupoPromotor(c);
 
 
-        (grupos[g] = grupos[g] || []).push(c);
+        if (state.promTipo !== "extra" && (dia === null || l.diasReposicion.indexOf(dia) !== -1)) {
+
+          (grupos[g] = grupos[g] || []).push({ c: c });
+
+        }
+
+
+        /* también aparece en el promotor que va de segundo (extra) */
+        if (state.promTipo !== "fijo") {
+
+          l.promotoresExtra.forEach(
+            function (pe) {
+
+              if (pe.uid && pe.uid !== g && usuarioPorId(pe.uid) && (dia === null || (pe.dias || []).indexOf(dia) !== -1)) {
+
+                (grupos[pe.uid] = grupos[pe.uid] || []).push({ c: c, extraDias: pe.dias || [] });
+
+              }
+
+            }
+          );
+
+        }
 
       }
     );
@@ -34223,9 +34312,9 @@ body[data-vista="manual"] #avisoBar {
 
             var minutos =
               lista.reduce(
-                function (t, c) {
+                function (t, x) {
 
-                  return t + minutosSemanaLocal(c);
+                  return t + (x.extraDias ? 0 : minutosSemanaLocal(x.c));
 
                 },
                 0
@@ -34233,7 +34322,7 @@ body[data-vista="manual"] #avisoBar {
 
 
             return (
-              '<details class="dash-card prom-card"' + (b.abierto || buscar || state.promFiltro ? ' open' : '') + '>' +
+              '<details class="dash-card prom-card"' + (b.abierto || buscar || state.promFiltro || dia !== null ? ' open' : '') + '>' +
                 '<summary class="dash-card-head">' +
                   '<h2 class="dash-card-title">' + escapeHtml(b.titulo) + ' <span class="prom-num">' + lista.length + '</span></h2>' +
                   (
@@ -34248,15 +34337,15 @@ body[data-vista="manual"] #avisoBar {
                         '<thead><tr><th>Cliente</th><th>Promotor</th><th>Días de reposición</th><th>Visitas</th><th>Tiempo</th></tr></thead>' +
                         '<tbody>' +
                           lista.map(
-                            function (c) {
+                            function (x) {
 
-                              return filaPromotorHtml(c, opcionesProm);
+                              return filaPromotorHtml(x.c, opcionesProm, x.extraDias);
 
                             }
                           ).join("") +
                         '</tbody>' +
                       '</table></div>'
-                    : '<p class="dash-sub">Sin clientes' + (buscar ? ' con esa búsqueda' : '') + '.</p>'
+                    : '<p class="dash-sub">Sin clientes' + (buscar || dia !== null || state.promTipo ? ' con esos filtros' : '') + '.</p>'
                 ) +
               '</details>'
             );
@@ -34270,6 +34359,7 @@ body[data-vista="manual"] #avisoBar {
 
     els.mainInner.innerHTML =
       '<div class="ops-view prom-view">' +
+        (state.promDesdeOps ? '<button type="button" class="back-link" data-prom-volver="1">&larr; Operaciones</button>' : '') +
         '<div class="dash-head"><div>' +
           '<h1 class="dash-title">Promotores</h1>' +
           '<p class="dash-sub">Cada promotor con sus clientes. Cambiá el promotor, los días, las visitas o el tiempo de un local y se guarda al momento.</p>' +
@@ -34282,6 +34372,25 @@ body[data-vista="manual"] #avisoBar {
               function (b) {
 
                 return '<option value="' + escapeHtml(b.id) + '"' + (state.promFiltro === b.id ? ' selected' : '') + '>' + escapeHtml(b.titulo) + ' (' + (grupos[b.id] || []).length + ')</option>';
+
+              }
+            ).join("") +
+          '</select>' +
+          '<select class="grupo-select" id="promDia" aria-label="Día de reposición">' +
+            '<option value="">Todos los días</option>' +
+            DIAS_SEMANA.map(
+              function (d) {
+
+                return '<option value="' + d[0] + '"' + (state.promDia === String(d[0]) ? ' selected' : '') + '>' + d[1] + '</option>';
+
+              }
+            ).join("") +
+          '</select>' +
+          '<select class="grupo-select" id="promTipo" aria-label="Tipo">' +
+            [["", "Fijos y extra"], ["fijo", "Solo fijos"], ["extra", "Solo extra (segundo promotor)"]].map(
+              function (o) {
+
+                return '<option value="' + o[0] + '"' + (state.promTipo === o[0] ? ' selected' : '') + '>' + o[1] + '</option>';
 
               }
             ).join("") +
@@ -34347,6 +34456,40 @@ body[data-vista="manual"] #avisoBar {
 
       }
     );
+
+
+    document.getElementById("promDia").addEventListener(
+      "change",
+      function (e) {
+
+        state.promDia = e.target.value;
+
+        renderPromotores(true);
+
+      }
+    );
+
+
+    document.getElementById("promTipo").addEventListener(
+      "change",
+      function (e) {
+
+        state.promTipo = e.target.value;
+
+        renderPromotores(true);
+
+      }
+    );
+
+
+    var volver = vistaNueva.querySelector("[data-prom-volver]");
+
+
+    if (volver) {
+
+      volver.addEventListener("click", abrirOperaciones);
+
+    }
 
 
     vistaNueva.addEventListener(
@@ -41388,7 +41531,10 @@ body[data-vista="manual"] #avisoBar {
               (esHoy ? '<small>' + (pos ? "&#128205; Ubicación " + haceTexto(pos.at) : "Sin ubicación reciente") + '</small>' : '') +
               extra +
             '</span>' +
-            (esHoy ? '<button type="button" class="btn btn-ghost" data-ver-ruta="' + escapeHtml(u.id) + '">Ver ruta</button>' : '') +
+            '<span class="op-persona-botones">' +
+              (esHoy ? '<button type="button" class="btn btn-ghost" data-ver-ruta="' + escapeHtml(u.id) + '">Ver ruta</button>' : '') +
+              (esPromotorRol(rol) ? '<button type="button" class="btn btn-ghost" data-ver-clientes="' + escapeHtml(u.id) + '" title="Todos los clientes de este promotor, de todos los días">Clientes</button>' : '') +
+            '</span>' +
           '</div>'
         );
 
@@ -43504,6 +43650,24 @@ body[data-vista="manual"] #avisoBar {
     if (e.target.closest("[data-abrir-ops]")) {
 
       abrirOperaciones();
+
+      return true;
+
+    }
+
+
+    /* todos los clientes de un promotor (pestaña Promotores filtrada) */
+    if ((el = e.target.closest("[data-ver-clientes]"))) {
+
+      state.promFiltro = el.getAttribute("data-ver-clientes");
+
+      state.promBuscar = "";
+
+      state.promDia = "";
+
+      state.promTipo = "";
+
+      abrirPromotores(true);
 
       return true;
 
