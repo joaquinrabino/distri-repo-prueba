@@ -19203,6 +19203,14 @@ body[data-vista="manual"] #avisoBar {
                 'Replicar acuerdo' +
               '</button>' +
 
+              (
+                c.codigo
+                  ? '<button class="btn btn-ghost" data-separar="' + escapeHtml(c.id) + '" ' +
+                      'title="Si a este cliente se le unió por error otro local del sistema: le saca los datos del sistema para que, al importar el Excel, ese local vuelva a crearse aparte">' +
+                      'Separar' +
+                    '</button>'
+                  : ''
+              ) +
               '<button class="btn btn-ghost" data-fusionar="' + escapeHtml(c.id) + '" ' +
                 'title="Unir con otro cliente que es el MISMO local cargado dos veces. El otro se borra.">' +
                 'Unir duplicado' +
@@ -41961,20 +41969,6 @@ body[data-vista="manual"] #avisoBar {
     ];
 
 
-    if (verCuenta) {
-
-      filas.push(["Condición de pago", c.condicionPago]);
-
-      filas.push([
-        "Estado de cuenta",
-        c.estadoCuenta
-          ? c.estadoCuenta + (c.deuda ? " · deuda " + plata(c.deuda) : "")
-          : ""
-      ]);
-
-    }
-
-
     filas =
       filas.filter(
         function (f) {
@@ -41998,14 +41992,10 @@ body[data-vista="manual"] #avisoBar {
         filas.map(
           function (f) {
 
-            var malo =
-              f[0] === "Estado de cuenta" && /MOROSO|VENCIDO/i.test(f[1]);
-
-
             return (
               '<div class="cli-dato">' +
                 '<span>' + escapeHtml(f[0]) + '</span>' +
-                '<strong' + (malo ? ' class="op-rojo"' : '') + '>' + escapeHtml(f[1]) + '</strong>' +
+                '<strong>' + escapeHtml(f[1]) + '</strong>' +
               '</div>'
             );
 
@@ -42979,6 +42969,15 @@ body[data-vista="manual"] #avisoBar {
     }
 
 
+    if ((el = e.target.closest("[data-separar]"))) {
+
+      separarDelSistema(el.getAttribute("data-separar"));
+
+      return true;
+
+    }
+
+
     if ((el = e.target.closest("[data-fusionar]"))) {
 
       abrirFusion(el.getAttribute("data-fusionar"));
@@ -43576,8 +43575,6 @@ body[data-vista="manual"] #avisoBar {
                 email: txt("email").toLowerCase(),
                 horario: txt("horario") ? interpretarHorario(txt("horario")) : null,
                 lugarEntrega: txt("lugar"),
-                condicionPago: txt("condiciones"),
-                estadoCuenta: /^(AL DIA|MOROSO|VENCIDO)$/i.test(txt("estado")) ? txt("estado").toUpperCase() : "",
                 deuda: numeroErp(C.deuda === -1 ? 0 : f[C.deuda]),
                 creditoMaximo: credito > 0 && credito < 99999999 ? credito : 0,
                 lat: ubicado ? Number(lat.toFixed(6)) : null,
@@ -43848,8 +43845,6 @@ body[data-vista="manual"] #avisoBar {
       contacto: x.contacto,
       lugarEntrega: x.lugarEntrega,
       direccionFiscal: x.direccionFiscal,
-      condicionPago: x.condicionPago,
-      estadoCuenta: x.estadoCuenta,
       deuda: x.deuda,
       creditoMaximo: x.creditoMaximo,
       rutas: x.rutas,
@@ -44468,8 +44463,6 @@ body[data-vista="manual"] #avisoBar {
       localidad: texto(data.localidad),
       lugarEntrega: texto(data.lugarEntrega),
       direccionFiscal: texto(data.direccionFiscal),
-      condicionPago: texto(data.condicionPago),
-      estadoCuenta: texto(data.estadoCuenta),
       deuda: Number(data.deuda) || 0,
       creditoMaximo: Number(data.creditoMaximo) || 0,
       rutas: Array.isArray(data.rutas) ? data.rutas.map(texto) : [],
@@ -44555,7 +44548,7 @@ body[data-vista="manual"] #avisoBar {
 
   var CAMPOS_ERP = [
     "codigo", "razonSocial", "rut", "departamento", "localidad", "contacto",
-    "lugarEntrega", "direccionFiscal", "condicionPago", "estadoCuenta", "deuda", "creditoMaximo",
+    "lugarEntrega", "direccionFiscal", "deuda", "creditoMaximo",
     "rutas", "vendedoresErp", "importacion"
   ];
 
@@ -45025,6 +45018,85 @@ body[data-vista="manual"] #avisoBar {
 
 
   /* Ventana para elegir con qué cliente fusionar */
+
+  /* Deshace un "Unir duplicado" hecho por error: el cliente pierde los
+     datos del sistema (código, razón social, RUT, rutas…) que le pasó el
+     otro local; al volver a importar el Excel, ese local se crea aparte.
+     Lo cargado a mano (acuerdo, espacios, fotos, notas) no se toca. */
+  function separarDelSistema(id) {
+
+    var c = clientePorId(id);
+
+
+    if (!c || !state.canEdit || !c.codigo) {
+
+      return;
+
+    }
+
+
+    elegirOpcion(
+      "Separar «" + (c.nombre || "este cliente") + "»",
+      "Se le quitan los datos del sistema del código <strong>#" + escapeHtml(c.codigo) + "</strong>" +
+        (c.razonSocial ? " (" + escapeHtml(c.razonSocial) + ")" : "") +
+        ": código, razón social, RUT, rutas y datos de facturación. Lo cargado a mano (acuerdo, espacios, fotos y notas) queda igual. " +
+        "Después importá el Excel de clientes: el local #" + escapeHtml(c.codigo) + " y los demás que se habían unido vuelven a crearse como clientes aparte.",
+      [
+        { valor: "si", label: "Separar", clase: "btn-primary" }
+      ]
+    ).then(
+      function (r) {
+        if (r !== "si") {
+
+          return;
+
+        }
+
+
+        var borrar = firebase.firestore.FieldValue.delete();
+
+        var datos = { condicionPago: borrar, estadoCuenta: borrar, updatedAt: Date.now() };
+
+
+        CAMPOS_ERP.forEach(
+          function (f) {
+
+            datos[f] = borrar;
+
+          }
+        );
+
+
+        datos.historial =
+          firebase.firestore.FieldValue.arrayUnion({
+            fecha: Date.now(),
+            usuario: usuarioActual(),
+            cambios: ["Separado del cliente del sistema #" + c.codigo + (c.razonSocial ? " (" + c.razonSocial + ")" : "")]
+          });
+
+
+        state.db.doc("clientes/" + id).update(datos)
+          .then(
+            function () {
+
+              showToast("Listo. Ahora importá el Excel de clientes para volver a crear #" + c.codigo + " aparte.");
+
+            }
+          )
+          .catch(
+            function (err) {
+
+              avisarError(err, "No se pudo separar. Revisá tu conexión.");
+
+            }
+          );
+
+      }
+    );
+
+  }
+
+
 
   function abrirFusion(keepId) {
 
@@ -49487,6 +49559,58 @@ body[data-vista="manual"] #avisoBar {
         state.tareas = tareas;
 
         state.planes = planes;
+
+
+        /* la condición de pago y el estado de cuenta ya no se usan: se borran de la base */
+        if (state.canEdit && !state.cuentasLimpias) {
+
+          var conCuenta =
+            snap.docs.filter(
+              function (doc) {
+
+                var d = doc.id.charAt(0) === "_" ? null : doc.data();
+
+
+                return d && (d.condicionPago !== undefined || d.estadoCuenta !== undefined);
+
+              }
+            );
+
+
+          if (conCuenta.length) {
+
+            state.cuentasLimpias = true;
+
+
+            escribirEnTandas(
+              conCuenta.map(
+                function (doc) {
+
+                  return {
+                    id: doc.id,
+                    datos: {
+                      condicionPago: firebase.firestore.FieldValue.delete(),
+                      estadoCuenta: firebase.firestore.FieldValue.delete()
+                    }
+                  };
+
+                }
+              ),
+              "update"
+            ).catch(
+              function (err) {
+
+                console.error(err);
+
+                /* se reintenta en la próxima actualización */
+                state.cuentasLimpias = false;
+
+              }
+            );
+
+          }
+
+        }
 
         aplicarConfig(config);
 
