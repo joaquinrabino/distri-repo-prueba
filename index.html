@@ -5401,6 +5401,142 @@ button.dash-tile:focus-visible {
    RENOVAR ACUERDO (modal)
 ========================================================== */
 
+/* ---------- configuración (solo administrador) ---------- */
+
+.config-btn {
+
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  padding-left: 10px;
+
+  padding-right: 10px;
+
+}
+
+
+.config-btn svg {
+
+  width: 18px;
+
+  height: 18px;
+
+}
+
+
+.cfg-card {
+
+  max-width: 560px;
+
+  max-height: calc(100vh - 32px);
+
+  overflow-y: auto;
+
+}
+
+
+.cfg-sec {
+
+  margin: 0 0 14px;
+
+  padding: 10px 14px 12px;
+
+  border: 1px solid var(--border);
+
+  border-radius: 10px;
+
+}
+
+
+.cfg-sec legend {
+
+  padding: 0 6px;
+
+  font-family: var(--font-display);
+
+  font-weight: 700;
+
+  font-size: 14px;
+
+  color: var(--accent);
+
+}
+
+
+.cfg-campo + .cfg-campo {
+
+  margin-top: 12px;
+
+}
+
+
+.cfg-input {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 8px;
+
+}
+
+
+.ac-field .cfg-input input {
+
+  width: 130px;
+
+}
+
+
+.ac-field .cfg-duracion input {
+
+  width: 72px;
+
+}
+
+
+.cfg-input span {
+
+  font-size: 13px;
+
+  color: var(--ink-soft);
+
+}
+
+
+.cfg-ayuda {
+
+  display: block;
+
+  margin-top: 4px;
+
+  font-size: 12px;
+
+  color: var(--ink-faint);
+
+  line-height: 1.35;
+
+}
+
+
+.cfg-acciones {
+
+  flex-wrap: wrap;
+
+}
+
+
+.cfg-espacio {
+
+  flex: 1;
+
+}
+
+
+
 .modal-backdrop {
 
   position: fixed;
@@ -12533,6 +12669,17 @@ body[data-vista="manual"] #avisoBar {
           Usuarios
         </button>
 
+        <button
+          id="configBtn"
+          type="button"
+          class="btn btn-ghost logout-btn config-btn"
+          title="Configuración (solo administrador)"
+          aria-label="Configuración"
+          style="display:none;"
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        </button>
+
 
         <button
           id="logoutBtn"
@@ -13261,6 +13408,9 @@ body[data-vista="manual"] #avisoBar {
 
     usersBtn:
       document.getElementById("usersBtn"),
+
+    configBtn:
+      document.getElementById("configBtn"),
 
     pestanas:
       document.getElementById("pestanas"),
@@ -27638,6 +27788,10 @@ body[data-vista="manual"] #avisoBar {
     els.usersBtn.style.display =
       canEdit ? "" : "none";
 
+    /* la configuración (⚙) también es solo del administrador */
+    els.configBtn.style.display =
+      canEdit ? "" : "none";
+
   }
 
 
@@ -30300,7 +30454,7 @@ body[data-vista="manual"] #avisoBar {
 
         var plan =
           propios.length
-            ? planificarRuta(propios, { servicio: 20, usarTiempoAsignado: true, inicio: inicio })
+            ? planificarRuta(propios, { servicio: MIN_LOCAL_DEFECTO, usarTiempoAsignado: true, inicio: inicio })
             : null;
 
 
@@ -30337,7 +30491,7 @@ body[data-vista="manual"] #avisoBar {
           function (a, b) {
 
             return prioridadDe(a) - prioridadDe(b) ||
-              tiempoAsignadoDe(b, 20) - tiempoAsignadoDe(a, 20) ||
+              tiempoAsignadoDe(b, MIN_LOCAL_DEFECTO) - tiempoAsignadoDe(a, MIN_LOCAL_DEFECTO) ||
               String(a.nombre || "").localeCompare(String(b.nombre || ""), "es");
 
           }
@@ -30370,7 +30524,7 @@ body[data-vista="manual"] #avisoBar {
       }
 
 
-      return Math.round(tiempoAsignadoDe(c, 20) + viaje * 2);
+      return Math.round(tiempoAsignadoDe(c, MIN_LOCAL_DEFECTO) + viaje * 2);
 
     };
 
@@ -33064,6 +33218,479 @@ body[data-vista="manual"] #avisoBar {
 
 
   /* ========================================================
+     CONFIGURACIÓN (solo el administrador, botón ⚙ de arriba)
+     Valores que antes estaban fijos en el código: distancia para
+     marcar la llegada, horarios de los promotores, tiempos por local,
+     locales de relleno y productos por vencer. Se guardan en
+     clientes/_config y llegan a todos en vivo; lo que no se cargó
+     usa el valor de fábrica.
+  ======================================================== */
+
+  var CONFIG_DOC_ID = "_config";
+
+  /* minutos por local cuando la ficha no tiene tiempo asignado */
+  var MIN_LOCAL_DEFECTO = 20;
+
+  /* minutos por entrega del camionero (para calcular los horarios de la ruta) */
+  var MIN_ENTREGA_DEFECTO = 5;
+
+  state.config = {};
+
+
+  var CONFIG_DEF = [
+    {
+      seccion: "Llegada al local",
+      campos: [
+        { clave: "radioLocal", label: "Distancia máxima para marcar la llegada", unidad: "metros", min: 30, max: 2000, def: 250,
+          ayuda: "Camioneros y promotores solo pueden marcar la llegada si el celular está a esta distancia del local o menos." }
+      ]
+    },
+    {
+      seccion: "Promotores",
+      campos: [
+        { clave: "inicioPromotor", tipo: "hora", label: "Hora de inicio de la jornada", def: "08:30",
+          ayuda: "Desde cuándo se calcula la jornada del promotor." },
+        { clave: "jornadaPromotor", tipo: "duracion", label: "Duración de la jornada", def: 8 * 60 + 45,
+          ayuda: "Horas y minutos, con el descanso incluido." },
+        { clave: "descansoPromotor", label: "Descanso", unidad: "minutos", min: 0, max: 180, def: 30 },
+        { clave: "minLocal", label: "Tiempo por local (si la ficha no tiene)", unidad: "minutos", min: 5, max: 240, def: 20,
+          ayuda: "Se usa cuando el cliente no tiene «Tiempo asignado» cargado." },
+        { clave: "minExtension", label: "Minutos que suma cada pedido de más tiempo", unidad: "minutos", min: 1, max: 60, def: 10 }
+      ]
+    },
+    {
+      seccion: "Locales de relleno (sin promotor fijo)",
+      campos: [
+        { clave: "rellenoMin", label: "No se ofrecen antes de", unidad: "días", min: 1, max: 60, def: 14,
+          ayuda: "Días desde la última reposición para volver a ofrecerlo como local extra." },
+        { clave: "rellenoCada", label: "Prioridad a partir de", unidad: "días", min: 1, max: 90, def: 21,
+          ayuda: "Los que llevan estos días o más sin visita se ofrecen primero." }
+      ]
+    },
+    {
+      seccion: "Camioneros",
+      campos: [
+        { clave: "minEntrega", label: "Tiempo por entrega", unidad: "minutos", min: 1, max: 60, def: 5,
+          ayuda: "Para calcular a qué hora llega a cada cliente de la ruta." }
+      ]
+    },
+    {
+      seccion: "Productos por vencer",
+      campos: [
+        { clave: "prodAlerta", label: "Avisar cuando faltan", unidad: "días", min: 1, max: 180, def: 30 },
+        { clave: "prodBorrado", label: "Borrar los vencidos después de", unidad: "días", min: 1, max: 365, def: 20 }
+      ]
+    }
+  ];
+
+
+
+  function camposConfig() {
+
+    return CONFIG_DEF.reduce(
+      function (acc, s) {
+
+        return acc.concat(s.campos);
+
+      },
+      []
+    );
+
+  }
+
+
+
+  /* valor guardado si es válido; si no, el de fábrica */
+  function valorConfig(campo, guardados) {
+
+    var v = (guardados || {})[campo.clave];
+
+
+    if (campo.tipo === "hora") {
+
+      return typeof v === "string" && /^([01]\d|2[0-3]):[0-5]\d$/.test(v) ? v : campo.def;
+
+    }
+
+
+    v = Number(v);
+
+
+    if (campo.tipo === "duracion") {
+
+      return v >= 60 && v <= 16 * 60 ? Math.round(v) : campo.def;
+
+    }
+
+
+    return isFinite(v) && v >= campo.min && v <= campo.max ? v : campo.def;
+
+  }
+
+
+
+  function aplicarConfig(doc) {
+
+    state.config = doc || {};
+
+
+    var g = state.config.valores || {};
+
+    var val = {};
+
+
+    camposConfig().forEach(
+      function (c) {
+
+        val[c.clave] = valorConfig(c, g);
+
+      }
+    );
+
+
+    RADIO_LOCAL_M = val.radioLocal;
+
+    INICIO_PROMOTOR = val.inicioPromotor;
+
+    JORNADA_PROMOTOR_MIN = val.jornadaPromotor;
+
+    DESCANSO_PROMOTOR_MIN = val.descansoPromotor;
+
+    MIN_LOCAL_DEFECTO = val.minLocal;
+
+    MINUTOS_EXTENSION = val.minExtension;
+
+    RELLENO_MIN_DIAS = val.rellenoMin;
+
+    RELLENO_CADA_DIAS = val.rellenoCada;
+
+    MIN_ENTREGA_DEFECTO = val.minEntrega;
+
+    PROD_DIAS_ALERTA = val.prodAlerta;
+
+    PROD_DIAS_BORRADO = val.prodBorrado;
+
+  }
+
+
+
+  function inputConfig(c, valor) {
+
+    var id = "cfg_" + c.clave;
+
+
+    var input =
+      c.tipo === "hora"
+        ? '<input type="time" id="' + id + '" value="' + escapeHtml(valor) + '">'
+        : c.tipo === "duracion"
+          ? '<input type="number" id="' + id + '_h" inputmode="numeric" min="1" max="16" step="1" value="' + Math.floor(valor / 60) + '" aria-label="Horas"><span>h</span>' +
+            '<input type="number" id="' + id + '_m" inputmode="numeric" min="0" max="59" step="5" value="' + (valor % 60) + '" aria-label="Minutos"><span>min</span>'
+          : '<input type="number" id="' + id + '" inputmode="numeric" min="' + c.min + '" max="' + c.max + '" step="1" value="' + valor + '">';
+
+
+    return (
+      '<div class="ac-field cfg-campo">' +
+        '<label for="' + id + (c.tipo === "duracion" ? '_h' : '') + '">' + escapeHtml(c.label) + '</label>' +
+        '<div class="cfg-input' + (c.tipo === "duracion" ? ' cfg-duracion' : '') + '">' + input + (c.unidad ? '<span>' + escapeHtml(c.unidad) + '</span>' : '') + '</div>' +
+        '<small class="cfg-ayuda">' +
+          (c.ayuda ? escapeHtml(c.ayuda) + ' ' : '') +
+          'De fábrica: ' + escapeHtml(c.tipo === "duracion" ? Math.floor(c.def / 60) + ' h ' + (c.def % 60) + ' min' : c.def + (c.unidad ? ' ' + c.unidad : '')) + '.' +
+        '</small>' +
+      '</div>'
+    );
+
+  }
+
+
+
+  /* lee el formulario; devuelve { valores } o { error } */
+  function leerConfig(bd) {
+
+    var valores = {};
+
+    var error = "";
+
+
+    camposConfig().forEach(
+      function (c) {
+
+        if (error) {
+
+          return;
+
+        }
+
+
+        if (c.tipo === "duracion") {
+
+          var h = Number(bd.querySelector("#cfg_" + c.clave + "_h").value);
+
+          var mi = Number(bd.querySelector("#cfg_" + c.clave + "_m").value || 0);
+
+          var m = Math.round(h) * 60 + Math.round(mi);
+
+
+          if (!(mi >= 0 && mi <= 59) || !(m >= 60 && m <= 16 * 60)) {
+
+            error = "«" + c.label + "» tiene que estar entre 1 y 16 horas (y de 0 a 59 minutos).";
+
+            return;
+
+          }
+
+          valores[c.clave] = m;
+
+          return;
+
+        }
+
+
+        var txt = String(bd.querySelector("#cfg_" + c.clave).value || "").trim();
+
+
+        if (c.tipo === "hora") {
+
+          if (!/^\d{2}:\d{2}$/.test(txt)) {
+
+            error = "Revisá «" + c.label + "».";
+
+            return;
+
+          }
+
+          valores[c.clave] = txt;
+
+          return;
+
+        }
+
+
+        var n = Number(txt.replace(",", "."));
+
+
+        if (txt === "" || !isFinite(n) || n < c.min || n > c.max) {
+
+          error = "«" + c.label + "» tiene que estar entre " + c.min + " y " + c.max + (c.unidad ? " " + c.unidad : "") + ".";
+
+          return;
+
+        }
+
+        valores[c.clave] = Math.round(n);
+
+      }
+    );
+
+
+    if (!error && valores.descansoPromotor >= valores.jornadaPromotor) {
+
+      error = "El descanso no puede ser más largo que la jornada.";
+
+    }
+
+
+    if (!error && valores.rellenoCada < valores.rellenoMin) {
+
+      error = "En locales de relleno, «Prioridad a partir de» no puede ser menor que «No se ofrecen antes de».";
+
+    }
+
+
+    return error ? { error: error } : { valores: valores };
+
+  }
+
+
+
+  function abrirConfiguracion() {
+
+    if (!state.canEdit || document.querySelector(".cfg-modal")) {
+
+      return;
+
+    }
+
+
+    var g = (state.config || {}).valores || {};
+
+    var act = (state.config || {}).actualizado;
+
+
+    var bd = document.createElement("div");
+
+
+    bd.className = "modal-backdrop cfg-modal";
+
+
+    bd.innerHTML =
+      '<div class="modal-card cfg-card" role="dialog" aria-modal="true" aria-labelledby="cfgTitulo">' +
+        '<h2 class="modal-title" id="cfgTitulo">&#9881; Configuración</h2>' +
+        '<p class="modal-sub">' +
+          'Solo el administrador ve esta pantalla. Los cambios se aplican a todos al guardar.' +
+          (act && act.at ? '<br>Último cambio: ' + escapeHtml(act.porNombre || "Administrador") + ' · ' + escapeHtml(fmtDate(isoDia(new Date(act.at)))) + ' ' + horaDe(act.at) : '') +
+        '</p>' +
+        '<form class="cfg-form" novalidate>' +
+          CONFIG_DEF.map(
+            function (s) {
+
+              return (
+                '<fieldset class="cfg-sec">' +
+                  '<legend>' + escapeHtml(s.seccion) + '</legend>' +
+                  s.campos.map(
+                    function (c) {
+
+                      return inputConfig(c, valorConfig(c, g));
+
+                    }
+                  ).join("") +
+                '</fieldset>'
+              );
+
+            }
+          ).join("") +
+          '<div class="login-error cfg-error" role="alert"></div>' +
+          '<div class="modal-actions cfg-acciones">' +
+            '<button type="button" class="btn btn-ghost" data-cfg="fabrica">Valores de fábrica</button>' +
+            '<span class="cfg-espacio"></span>' +
+            '<button type="button" class="btn btn-ghost" data-cfg="cancelar">Cancelar</button>' +
+            '<button type="submit" class="btn btn-primary">Guardar</button>' +
+          '</div>' +
+        '</form>' +
+      '</div>';
+
+
+    document.body.appendChild(bd);
+
+
+    var errorEl = bd.querySelector(".cfg-error");
+
+
+    var cerrar = function () {
+
+      bd.remove();
+
+      document.removeEventListener("keydown", tecla);
+
+    };
+
+
+    var tecla = function (e) {
+
+      if (e.key === "Escape") {
+
+        cerrar();
+
+      }
+
+    };
+
+
+    document.addEventListener("keydown", tecla);
+
+
+    bd.addEventListener(
+      "click",
+      function (e) {
+
+        var b = e.target.closest("[data-cfg]");
+
+
+        if (e.target === bd || (b && b.getAttribute("data-cfg") === "cancelar")) {
+
+          cerrar();
+
+          return;
+
+        }
+
+
+        /* vuelve a poner los valores de fábrica (se guardan al tocar Guardar) */
+        if (b && b.getAttribute("data-cfg") === "fabrica") {
+
+          camposConfig().forEach(
+            function (c) {
+
+              if (c.tipo === "duracion") {
+
+                bd.querySelector("#cfg_" + c.clave + "_h").value = Math.floor(c.def / 60);
+
+                bd.querySelector("#cfg_" + c.clave + "_m").value = c.def % 60;
+
+                return;
+
+              }
+
+
+              bd.querySelector("#cfg_" + c.clave).value = c.def;
+
+            }
+          );
+
+          errorEl.textContent = "";
+
+        }
+
+      }
+    );
+
+
+    bd.querySelector("form").addEventListener(
+      "submit",
+      function (e) {
+
+        e.preventDefault();
+
+
+        var r = leerConfig(bd);
+
+
+        if (r.error) {
+
+          errorEl.textContent = r.error;
+
+          return;
+
+        }
+
+
+        var boton = bd.querySelector("button[type=submit]");
+
+
+        boton.disabled = true;
+
+
+        state.db.doc("clientes/" + CONFIG_DOC_ID)
+          .set({ valores: r.valores, actualizado: firma() })
+          .then(
+            function () {
+
+              cerrar();
+
+              showToast("Configuración guardada.");
+
+            }
+          )
+          .catch(
+            function (err) {
+
+              boton.disabled = false;
+
+              avisarError(err, "No se pudo guardar la configuración. Revisá tu conexión.");
+
+            }
+          );
+
+      }
+    );
+
+
+    bd.querySelector("#cfg_" + camposConfig()[0].clave).focus();
+
+  }
+
+
+
+  /* ========================================================
      TARJETERO VIRTUAL (promotores)
      Marcas: inicio de actividad (en el primer cliente), inicio y
      fin de descanso, fin de actividad. Se guardan por mes en
@@ -34388,7 +35015,7 @@ body[data-vista="manual"] #avisoBar {
                               '<td><strong>' + escapeHtml(x.c.nombre || "") + '</strong>' + (x.c.codigo ? ' <small>#' + escapeHtml(x.c.codigo) + '</small>' : '') +
                                 (estadoGuardado(x.c).reposicion ? '<br><small>&#10003; ya repuesto</small>' : '') + '</td>' +
                               '<td>' + prioridadDe(x.c) + '</td>' +
-                              '<td>' + tiempoAsignadoDe(x.c, 20) + ' min</td>' +
+                              '<td>' + tiempoAsignadoDe(x.c, MIN_LOCAL_DEFECTO) + ' min</td>' +
                               '<td>' +
                                 (admin
                                   ? '<select class="mov-sel" data-aus-reparto="' + escapeHtml(x.c.id) + '">' + opcionesPara(x, aus) + '</select>'
@@ -36810,7 +37437,7 @@ body[data-vista="manual"] #avisoBar {
         origen: origen,
         fijo: fijo,
         manual: manual,
-        servicio: 5,
+        servicio: MIN_ENTREGA_DEFECTO,
         postergados: postergados
       });
 
@@ -37167,7 +37794,8 @@ body[data-vista="manual"] #avisoBar {
   /* ========================================================
      JORNADA DEL PROMOTOR Y LOCALES EXTRA
      El promotor trabaja 8 h 45 (con 30 min de descanso) de lunes a
-     viernes, desde que llega al primer cliente (≈ 8:30). Primero van
+     viernes, desde que llega al primer cliente (≈ 8:30). Los tres
+     valores se cambian en Configuración (⚙). Primero van
      sus locales; si le sobra tiempo se le suman locales SIN promotor
      fijo, los más cercanos a su recorrido, hasta completar las horas.
      Se recalcula solo a medida que avanza el día.
@@ -37433,7 +38061,7 @@ body[data-vista="manual"] #avisoBar {
     var planPropio =
       planificarRuta(pendientesPropios, {
         origen: origen,
-        servicio: 20,
+        servicio: MIN_LOCAL_DEFECTO,
         usarTiempoAsignado: true,
         inicio: Math.round(jornada.ahora)
       });
@@ -37466,7 +38094,7 @@ body[data-vista="manual"] #avisoBar {
 
       extras.push(elegido);
 
-      sobra -= tiempoAsignadoDe(elegido, 20);
+      sobra -= tiempoAsignadoDe(elegido, MIN_LOCAL_DEFECTO);
 
     }
 
@@ -37525,7 +38153,7 @@ body[data-vista="manual"] #avisoBar {
 
 
             /* ida y vuelta al recorrido + el tiempo en el local */
-            return { c: c, costo: cerca * 2 + tiempoAsignadoDe(c, 20) };
+            return { c: c, costo: cerca * 2 + tiempoAsignadoDe(c, MIN_LOCAL_DEFECTO) };
 
           }
         )
@@ -37603,7 +38231,7 @@ body[data-vista="manual"] #avisoBar {
         origen: origen,
         fijo: fijo,
         manual: manual,
-        servicio: 20,
+        servicio: MIN_LOCAL_DEFECTO,
         usarTiempoAsignado: true
       });
 
@@ -37973,7 +38601,7 @@ body[data-vista="manual"] #avisoBar {
                   (esExtra(c) ? '<span class="op-extra">Extra</span> ' : '') +
                   (cubreA(c) ? '<span class="op-extra">Cubre a ' + escapeHtml(nombreUsuario(cubreA(c))) + '</span> ' : '') +
                   (e.entrega ? "Entregado a las " + horaDe(e.entrega.at) : "Sin entrega hoy") +
-                  " · " + tiempoAsignadoDe(c, 20) + " min asignados" +
+                  " · " + tiempoAsignadoDe(c, MIN_LOCAL_DEFECTO) + " min asignados" +
                   (nTareas ? " · " + plural(nTareas, "tarea", "tareas") : "")
               });
 
@@ -38068,7 +38696,7 @@ body[data-vista="manual"] #avisoBar {
                   irAhora: true,
                   detalle:
                     '<span class="op-extra">Sin promotor fijo</span> ' +
-                    tiempoAsignadoDe(x.c, 20) + " min asignados" +
+                    tiempoAsignadoDe(x.c, MIN_LOCAL_DEFECTO) + " min asignados" +
                     (r.origen ? " · a " + Math.round(x.d) + " min" : "")
                 });
 
@@ -38155,7 +38783,7 @@ body[data-vista="manual"] #avisoBar {
         (e.entrega
           ? '<span class="ruta-hora">Entregado a las ' + horaDe(e.entrega.at) + ' por ' + escapeHtml(e.entrega.porNombre) + '</span>'
           : '') +
-        (v ? '' : '<span class="op-chip op-sin">&#9201; ' + tiempoAsignadoDe(c, 20) + ' min asignados</span>') +
+        (v ? '' : '<span class="op-chip op-sin">&#9201; ' + tiempoAsignadoDe(c, MIN_LOCAL_DEFECTO) + ' min asignados</span>') +
         productosChip(c),
       despues:
         (v ? cuentaRegresivaHtml(c, r.ruta[1] || null) : '') +
@@ -44816,7 +45444,7 @@ body[data-vista="manual"] #avisoBar {
 
   function plazoVisitaMin(v) {
 
-    return (Number(v.plazoMin) || 20) + MINUTOS_EXTENSION * ((v.extensiones || []).length);
+    return (Number(v.plazoMin) || MIN_LOCAL_DEFECTO) + MINUTOS_EXTENSION * ((v.extensiones || []).length);
 
   }
 
@@ -44901,7 +45529,7 @@ body[data-vista="manual"] #avisoBar {
     }
 
 
-    var plazo = tiempoAsignadoDe(c, 20);
+    var plazo = tiempoAsignadoDe(c, MIN_LOCAL_DEFECTO);
 
 
     return modificarJornada(
@@ -47012,7 +47640,7 @@ body[data-vista="manual"] #avisoBar {
             inicio: inicio,
             horarios: horarios,
             manual: manual,
-            servicio: 5
+            servicio: MIN_ENTREGA_DEFECTO
           });
 
 
@@ -48343,6 +48971,13 @@ body[data-vista="manual"] #avisoBar {
       );
 
 
+    els.configBtn
+      .addEventListener(
+        "click",
+        abrirConfiguracion
+      );
+
+
     els.pestanas
       .addEventListener(
         "click",
@@ -48503,6 +49138,8 @@ body[data-vista="manual"] #avisoBar {
 
         var planes = {};
 
+        var config = {};
+
 
         snap.docs.forEach(
           function (doc) {
@@ -48529,6 +49166,10 @@ body[data-vista="manual"] #avisoBar {
 
               planes = doc.data() || {};
 
+            } else if (doc.id === CONFIG_DOC_ID) {
+
+              config = doc.data() || {};
+
             }
 
           }
@@ -48548,6 +49189,8 @@ body[data-vista="manual"] #avisoBar {
         state.tareas = tareas;
 
         state.planes = planes;
+
+        aplicarConfig(config);
 
 
         /* qué documentos cambiaron (para no redibujar de más: por ejemplo,
