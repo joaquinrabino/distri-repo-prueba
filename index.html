@@ -43329,7 +43329,19 @@ body[data-vista="manual"] #avisoBar {
             estado: col("estado"),
             lat: col("latitud"),
             lng: col("longitud"),
-            rutas: col("ruta id")
+
+            rutas: col("ruta id"),
+
+            /* columnas de reposición (opcionales, al final del Excel) */
+            reposicion: col("reposicion"),
+
+            promotor: col("promotor"),
+
+            tiempoRep: col("tiempo de reposicion en minutos"),
+
+            visitasRep: col("cantidad visita semanal"),
+
+            diasRep: col("dia de visita del promotor")
           };
 
 
@@ -43356,6 +43368,10 @@ body[data-vista="manual"] #avisoBar {
 
 
               f = f.slice();
+
+
+              /* las columnas de reposición están al final y no vienen corridas */
+              var original = f.slice();
 
 
               /* algunas filas vienen corridas (un email partido en dos celdas) */
@@ -43414,7 +43430,10 @@ body[data-vista="manual"] #avisoBar {
 
               if (C.rutas !== -1) {
 
-                for (var k = C.rutas; k < f.length; k += 5) {
+                var finRutas = C.reposicion > C.rutas ? C.reposicion : f.length;
+
+
+                for (var k = C.rutas; k + 4 < finRutas; k += 5) {
 
                   var nombreRuta = String(f[k + 1] || "").replace(/\s+/g, " ").trim();
 
@@ -43510,6 +43529,39 @@ body[data-vista="manual"] #avisoBar {
               var credito = numeroErp(C.credito === -1 ? 0 : f[C.credito]);
 
 
+              /* reposición: SI / NO, promotor, minutos, visitas por semana y días */
+              var txtRep = function (k) {
+
+                return C[k] === -1 ? "" : limpiarTextoErp(original[C[k]]);
+
+              };
+
+              var lleva = normalizarTexto(txtRep("reposicion"));
+
+              var diasRep = [];
+
+
+              normalizarTexto(txtRep("diasRep")).split(" ").forEach(
+                function (palabra) {
+
+                  if (DIAS_POR_NOMBRE.hasOwnProperty(palabra) && diasRep.indexOf(DIAS_POR_NOMBRE[palabra]) === -1) {
+
+                    diasRep.push(DIAS_POR_NOMBRE[palabra]);
+
+                  }
+
+                }
+              );
+
+
+              diasRep.sort();
+
+
+              var tiempoRep = numeroErp(C.tiempoRep === -1 ? 0 : original[C.tiempoRep]);
+
+              var visitasRep = numeroErp(C.visitasRep === -1 ? 0 : original[C.visitasRep]);
+
+
               clientes.push({
                 codigo: C.id === -1 ? "" : String(f[C.id]).trim(),
                 nombre: txt("nombre"),
@@ -43534,6 +43586,15 @@ body[data-vista="manual"] #avisoBar {
                 vendedores: vendedores,
                 vendedor: vendedores[0] || "",
                 diasVisita: dias,
+
+                reposicion: {
+                  lleva: lleva === "si" ? true : lleva === "no" ? false : null,
+                  promotor: txtRep("promotor"),
+                  tiempo: tiempoRep > 0 ? Math.round(tiempoRep) : null,
+                  visitas: visitasRep > 0 ? visitasRep : 0,
+                  dias: diasRep
+                },
+
                 frecuencia:
                   nDias >= 5 ? "Todos los días hábiles"
                     : nDias === 4 ? "4 veces por semana"
@@ -43636,6 +43697,141 @@ body[data-vista="manual"] #avisoBar {
 
   /* Datos a escribir para una fila (sin pisar lo cargado a mano) */
 
+  /* promotor del Excel ("FLORENCIA") → usuario promotor de la web */
+  function promotorPorNombre(nombre) {
+
+    var n = normalizarTexto(nombre);
+
+
+    if (!n) {
+
+      return null;
+
+    }
+
+
+    var lista = usuariosConRol("reponedor");
+
+
+    var nombreDe = function (u) {
+
+      return normalizarTexto(u.nombre || u.usuario);
+
+    };
+
+
+    var exacto =
+      lista.filter(
+        function (u) {
+
+          return nombreDe(u) === n || normalizarTexto(u.usuario) === n;
+
+        }
+      );
+
+
+    if (exacto.length === 1) {
+
+      return exacto[0];
+
+    }
+
+
+    /* "FLORENCIA" con el usuario "Florencia Pérez" (solo si hay uno) */
+    var primero =
+      lista.filter(
+        function (u) {
+
+          return nombreDe(u).split(" ")[0] === n.split(" ")[0];
+
+        }
+      );
+
+
+    return primero.length === 1 ? primero[0] : null;
+
+  }
+
+
+
+  /* Logística de reposición del Excel; en clientes que ya existen solo
+     completa lo que está vacío (no pisa lo cargado a mano) */
+  function logisticaImportacion(x, c) {
+
+    var r = x.reposicion;
+
+
+    if (!r || (r.lleva === null && !r.promotor && !r.dias.length && !r.visitas)) {
+
+      return null;
+
+    }
+
+
+    var prom = r.lleva === false ? null : promotorPorNombre(r.promotor);
+
+    var l = logisticaDe(c);
+
+    var nueva = {};
+
+
+    /* ya tiene elegido el tipo de reposición (promotor, relleno o "no lleva") */
+    var definido = !!(l.reponedorId || l.sinReposicion || l.relleno);
+
+
+    if (!definido) {
+
+      if (r.lleva === false) {
+
+        nueva.sinReposicion = true;
+
+      } else if (prom) {
+
+        nueva.reponedorId = prom.id;
+
+      } else if (r.lleva === true && !r.promotor) {
+
+        nueva.relleno = true;
+
+      }
+
+    }
+
+
+    if (!l.diasReposicion.length && r.dias.length && r.lleva !== false) {
+
+      nueva.diasReposicion = r.dias;
+
+    }
+
+
+    if (!l.visitasSemana && r.visitas && r.lleva !== false) {
+
+      nueva.visitasSemana = r.visitas;
+
+    }
+
+
+    return Object.keys(nueva).length ? nueva : null;
+
+  }
+
+
+
+  /* minutos de reposición del Excel, si el cliente todavía no tiene */
+  function tiempoImportacion(x, c) {
+
+    var r = x.reposicion;
+
+
+    return r && r.tiempo && r.lleva !== false && !(c && Number(c.tiempoAsignado) > 0)
+      ? r.tiempo
+      : null;
+
+  }
+
+
+
   function datosImportacion(item, archivo, ahora, usuario) {
 
     var x = item.x;
@@ -43688,6 +43884,11 @@ body[data-vista="manual"] #avisoBar {
           frecuencia: x.frecuencia,
           horario: x.horario,
           mapa: mapa,
+
+          logistica: logisticaImportacion(x, null) || {},
+
+          tiempoAsignado: tiempoImportacion(x, null),
+
           historial: [{ fecha: ahora, usuario: usuario, cambios: ["Cliente importado desde el Excel " + archivo] }]
         })
       };
@@ -43721,6 +43922,18 @@ body[data-vista="manual"] #avisoBar {
     completar("frecuencia", x.frecuencia, !c.frecuencia);
 
     completar("horario", x.horario, !horarioTexto(c, true));
+
+    completar("tiempoAsignado", tiempoImportacion(x, c), true);
+
+
+    var logi = logisticaImportacion(x, c);
+
+
+    if (logi) {
+
+      datos.logistica = logi;
+
+    }
 
 
     /* la ubicación se completa si no tenía (no se pisa un punto corregido a mano) */
@@ -43804,6 +44017,54 @@ body[data-vista="manual"] #avisoBar {
       var conDias = plan.filter(function (p) { return p.x.diasVisita.length; }).length;
 
 
+      /* reposición: qué se va a completar y promotores que no tienen usuario */
+      var conColumnasRep = plan.some(function (p) { return p.x.reposicion && p.x.reposicion.lleva !== null; });
+
+      var rep = { cambios: 0, promotor: 0, relleno: 0, noLleva: 0 };
+
+      var sinUsuario = {};
+
+
+      plan.forEach(
+        function (p) {
+
+          var r = p.x.reposicion;
+
+          var logi = logisticaImportacion(p.x, p.existente);
+
+
+          if (logi || tiempoImportacion(p.x, p.existente)) {
+
+            rep.cambios++;
+
+          }
+
+
+          if (logi && logi.sinReposicion) {
+
+            rep.noLleva++;
+
+          } else if (logi && logi.relleno) {
+
+            rep.relleno++;
+
+          } else if (logi && logi.reponedorId) {
+
+            rep.promotor++;
+
+          }
+
+
+          if (r && r.promotor && r.lleva !== false && !promotorPorNombre(r.promotor)) {
+
+            sinUsuario[r.promotor] = (sinUsuario[r.promotor] || 0) + 1;
+
+          }
+
+        }
+      );
+
+
       var porVendedor = {};
 
 
@@ -43825,7 +44086,30 @@ body[data-vista="manual"] #avisoBar {
           dashTile({ label: "Ya estaban en la web", dot: "#6f5bd3", value: existentes.length, sub: "se completan sin pisar nada" }) +
           dashTile({ label: "Con ubicación", dot: "#2563eb", value: conUbic, sub: (plan.length - conUbic) + " sin coordenadas" }) +
           dashTile({ label: "Con horario de recepción", value: conHorario, sub: conDias + " con días de visita" }) +
+          (
+            conColumnasRep
+              ? dashTile({ label: "Reposición a completar", dot: "#e0a526", value: rep.cambios, sub: rep.promotor + " con promotor · " + rep.relleno + " relleno · " + rep.noLleva + " no llevan" })
+              : ''
+          ) +
         '</div>' +
+        (
+          Object.keys(sinUsuario).length
+            ? '<div class="dash-card">' +
+                '<div class="dash-card-head"><h2 class="dash-card-title">&#9888; Promotores sin usuario en la web</h2>' +
+                  '<span class="dash-card-hint">Esos clientes quedan sin promotor</span></div>' +
+                '<p class="dash-sub">Creá su usuario (rol Promotor de visibilidad) con ese nombre y volvé a importar el Excel para asignarlos.</p>' +
+                '<div class="import-vendedores">' +
+                  Object.keys(sinUsuario).sort().map(
+                    function (n) {
+
+                      return '<span class="op-chip op-sin">' + escapeHtml(n) + ' · ' + plural(sinUsuario[n], "cliente", "clientes") + '</span>';
+
+                    }
+                  ).join("") +
+                '</div>' +
+              '</div>'
+            : ''
+        ) +
 
         '<div class="dash-card">' +
           '<div class="dash-card-head"><h2 class="dash-card-title">Clientes por vendedor</h2></div>' +
@@ -43861,7 +44145,7 @@ body[data-vista="manual"] #avisoBar {
         '<div class="dash-card">' +
           '<div class="dash-card-head"><h2 class="dash-card-title">Vista previa</h2><span class="dash-card-hint">Primeros 15</span></div>' +
           '<div class="op-tabla-wrap"><table class="op-tabla">' +
-            '<thead><tr><th>Código</th><th>Nombre</th><th>Dirección</th><th>Vendedor</th><th>Visita</th><th>Horario</th><th>Ubicación</th></tr></thead>' +
+            '<thead><tr><th>Código</th><th>Nombre</th><th>Dirección</th><th>Vendedor</th><th>Visita</th><th>Horario</th><th>Ubicación</th>' + (conColumnasRep ? '<th>Reposición</th>' : '') + '</tr></thead>' +
             '<tbody>' +
               plan.slice(0, 15).map(
                 function (p) {
@@ -43878,6 +44162,19 @@ body[data-vista="manual"] #avisoBar {
                       '<td>' + escapeHtml(diasTexto(x.diasVisita)) + '</td>' +
                       '<td>' + escapeHtml(x.horario ? (x.horario.desde || "") + (x.horario.hasta ? "–" + x.horario.hasta : "") : "") + '</td>' +
                       '<td>' + (x.lat !== null ? "✓" : "—") + '</td>' +
+                      (
+                        conColumnasRep
+                          ? '<td>' + escapeHtml(
+                              !x.reposicion || x.reposicion.lleva === null
+                                ? ""
+                                : x.reposicion.lleva === false
+                                  ? "No lleva"
+                                  : (x.reposicion.promotor || "Relleno") +
+                                    (x.reposicion.dias.length ? " · " + diasTexto(x.reposicion.dias) : "") +
+                                    (x.reposicion.tiempo ? " · " + x.reposicion.tiempo + " min" : "")
+                            ) + '</td>'
+                          : ''
+                      ) +
                     '</tr>'
                   );
 
@@ -43906,7 +44203,8 @@ body[data-vista="manual"] #avisoBar {
 
         '<div class="dash-head"><div>' +
           '<h1 class="dash-title">Importar clientes desde Excel</h1>' +
-          '<p class="dash-sub">Carga los clientes con dirección, ubicación, horario de recepción, vendedor, rutas y días de visita. ' +
+          '<p class="dash-sub">Carga los clientes con dirección, ubicación, horario de recepción, vendedor, rutas y días de visita; ' +
+            'si el Excel trae las columnas REPOSICION, PROMOTOR, TIEMPO DE REPOSICION, CANTIDAD VISITA SEMANAL y DIA DE VISITA DEL PROMOTOR, también la reposición. ' +
             'Se puede repetir para actualizar: no se duplican y no se pisa lo que cargaste a mano.</p>' +
         '</div></div>' +
 
