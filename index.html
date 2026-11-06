@@ -5673,6 +5673,19 @@ button.dash-tile:focus-visible {
 }
 
 
+.tarj-excel {
+
+  display: flex;
+
+  flex-wrap: wrap;
+
+  align-items: center;
+
+  gap: 8px;
+
+}
+
+
 .op-persona-botones {
 
   display: flex;
@@ -36383,7 +36396,11 @@ body[data-vista="manual"] #avisoBar {
               '<button type="button" class="btn btn-ghost" data-tarj-dia="1" aria-label="Día siguiente"' + (esHoy ? ' disabled' : '') + '>&#9654;</button>' +
               (esHoy ? '' : '<button type="button" class="btn btn-ghost" data-tarj-dia="hoy">Hoy</button>') +
             '</div>' +
-            '<button type="button" class="btn btn-ghost" data-tarj-excel="1" title="Baja todas las marcas y horas del mes de este día">Excel del mes</button>' +
+            '<div class="tarj-excel">' +
+              '<label class="ops-fecha">Desde <input type="date" id="tarjExcelDesde" value="' + rangoExcelTarjetero().desde + '" max="' + hoyIso() + '"></label>' +
+              '<label class="ops-fecha">Hasta <input type="date" id="tarjExcelHasta" value="' + rangoExcelTarjetero().hasta + '" max="' + hoyIso() + '"></label>' +
+              '<button type="button" class="btn btn-ghost" data-tarj-excel="1" title="Baja las marcas, horas y faltas de los promotores entre esas fechas">Descargar Excel</button>' +
+            '</div>' +
           '</div>' +
         '</div>' +
 
@@ -36526,6 +36543,23 @@ body[data-vista="manual"] #avisoBar {
       document.getElementById(focoAus).focus();
 
     }
+
+
+    /* fechas del Excel: quedan guardadas aunque la pantalla se redibuje */
+    ["tarjExcelDesde", "tarjExcelHasta"].forEach(
+      function (id) {
+
+        document.getElementById(id).addEventListener(
+          "change",
+          function (e) {
+
+            state[id === "tarjExcelDesde" ? "tarjExcelDesde" : "tarjExcelHasta"] = e.target.value;
+
+          }
+        );
+
+      }
+    );
 
 
     var input =
@@ -36701,14 +36735,108 @@ body[data-vista="manual"] #avisoBar {
 
 
 
+  /* rango del Excel: por defecto, del 1° del mes del día elegido hasta ese día */
+  function rangoExcelTarjetero() {
+
+    var dia = state.tarjeteroFecha || hoyIso();
+
+
+    return {
+      desde: state.tarjExcelDesde || dia.slice(0, 8) + "01",
+      hasta: state.tarjExcelHasta || dia
+    };
+
+  }
+
+
+
+  /* meses ("AAAA-MM") que toca un rango de fechas */
+  function mesesEntre(desde, hasta) {
+
+    var out = [];
+
+    var a = Number(desde.slice(0, 4)) * 12 + Number(desde.slice(5, 7)) - 1;
+
+    var b = Number(hasta.slice(0, 4)) * 12 + Number(hasta.slice(5, 7)) - 1;
+
+
+    for (var m = a; m <= b; m++) {
+
+      out.push(Math.floor(m / 12) + "-" + String(m % 12 + 1).padStart(2, "0"));
+
+    }
+
+
+    return out;
+
+  }
+
+
+
   function excelTarjetero() {
 
-    var mes =
-      (state.tarjeteroFecha || hoyIso()).slice(0, 7);
+    var rango = rangoExcelTarjetero();
+
+    var desde = rango.desde;
+
+    var hasta = rango.hasta > hoyIso() ? hoyIso() : rango.hasta;
+
+
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(desde) || !/^\d{4}-\d{2}-\d{2}$/.test(hasta)) {
+
+      showToast("Elegí las fechas Desde y Hasta.");
+
+      return;
+
+    }
+
+
+    if (desde > hasta) {
+
+      showToast("La fecha «Desde» tiene que ser anterior a «Hasta».");
+
+      return;
+
+    }
+
+
+    var meses = mesesEntre(desde, hasta);
+
+
+    if (meses.length > 24) {
+
+      showToast("Elegí un período de 2 años como máximo.");
+
+      return;
+
+    }
+
+
+    var enRango = function (f) {
+
+      return f.fecha >= desde && f.fecha <= hasta;
+
+    };
 
 
     var filas =
-      filasTarjetero(mes).slice().reverse();
+      meses
+        .reduce(
+          function (acc, mes) {
+
+            return acc.concat(filasTarjetero(mes));
+
+          },
+          []
+        )
+        .filter(enRango)
+        .sort(
+          function (a, b) {
+
+            return a.fecha.localeCompare(b.fecha) || a.nombre.localeCompare(b.nombre, "es");
+
+          }
+        );
 
 
     /* rendimiento de cada día (tiempo en locales, traslados…) */
@@ -36796,7 +36924,17 @@ body[data-vista="manual"] #avisoBar {
 
 
           /* faltas: resumen por promotor y el detalle de cada día */
-          var faltas = faltasDelMes(mes);
+          var faltas =
+            meses
+              .reduce(
+                function (acc, mes) {
+
+                  return acc.concat(faltasDelMes(mes));
+
+                },
+                []
+              )
+              .filter(enRango);
 
           var resumen = {};
 
@@ -36864,7 +37002,7 @@ body[data-vista="manual"] #avisoBar {
           XLSX.utils.book_append_sheet(libro, XLSX.utils.aoa_to_sheet(hojaFaltas), "Faltas");
 
 
-          XLSX.writeFile(libro, "tarjetero-" + mes + ".xlsx");
+          XLSX.writeFile(libro, "tarjetero-" + (desde === hasta ? desde : desde + "-al-" + hasta) + ".xlsx");
 
         }
       )
